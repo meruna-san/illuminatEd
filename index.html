@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IlluminatEd | Aesthetic Focus</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital@1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        #time-limit-drawer {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%) translateX(100%);
+            width: 220px;
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            padding: 20px;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 9999;
+        }
+        #time-limit-drawer.open {
+            transform: translateY(-50%) translateX(0);
+        }
+        #drawer-toggle {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: none;
+            color: #e0e0e0;
+            padding: 12px 10px;
+            cursor: pointer;
+            border-radius: 8px 0 0 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .drawer-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        #drawer-time-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+    </style>
+    <script src="script_fixed.js" defer></script>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div id="time-limit-drawer">
+        <button id="drawer-toggle" onclick="toggleTimeDrawer()">LIMIT</button>
+        <div class="drawer-title">Time Horizon</div>
+        <div id="drawer-time-display">00:25:00</div>
+    </div>
+
+    <nav>
+        <div class="nav-brand" onclick="showPage('home')">IlluminatEd</div>
+        <div class="nav-links">
+            <span id="nav-home" class="nav-item active-link" onclick="showPage('home')">Home</span>
+            <span id="nav-timer" class="nav-item" onclick="showPage('timer')">Timer</span>
+            <span id="nav-dashboard" class="nav-item" onclick="showPage('dashboard')">Dashboard</span>
+            <span id="nav-launchpad" class="nav-item" onclick="showPage('launchpad')">Launchpad</span>
+            <span id="nav-vault" class="nav-item" onclick="showPage('vault')">Vault of Fame</span>
+            <span id="nav-thoughts" class="nav-item" onclick="showPage('thoughts')">Thoughts</span>
+        </div>
+    </nav>
+
+
+    <main id="main-content">
+        <section id="home-page" class="page active">
+            <div class="hero">
+                <h1 class="breathing-logo">IlluminatEd</h1>
+                <p class="base-quote">“expect the unexpected; believe the unbelievable; achieve the unachievable.”</p>
+                <button class="glow-button" onclick="showPage('timer')">Start Focusing</button>
+            </div>
+        </section>
+
+        <section id="timer-page" class="page">
+            <div class="timer-container">
+                <div class="timer-card glass">
+                    <div class="modes">
+                        <button class="mode-btn active" onclick="setTimer(25, this)">Focus</button>
+                        <button class="mode-btn" onclick="setTimer(5, this)">Short Break</button>
+                        <button class="mode-btn" onclick="setTimer(15, this)">Long Break</button>
+                        <button class="mode-btn" onclick="toggleSettings()">Custom</button>
+                    </div>
+
+                    <h2 id="time-display">00:25:00</h2>
+
+                    <div class="controls">
+                        <button id="start-btn" class="glow-button">START</button>
+                        <button id="reset-btn" class="pill-button">RESET</button>
+                    </div>
+
+                    <div id="custom-settings" class="settings-panel">
+                        <input type="number" id="custom-min" placeholder="Min" min="1">
+                        <button onclick="applyCustomTime()" class="pill-button small">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboard-page" class="page">
+            <div class="bento-grid">
+
+                <div class="workspace-stack">
+                    <div class="card glass">
+                        <h3>Tasks</h3>
+                        <div class="input-box">
+                            <input type="text" id="task-input" placeholder="What are we doing?">
+                            <button onclick="addTask()">+</button>
+                        </div>
+                        <ul id="task-list" class="scroll-list"></ul>
+                    </div>
+
+                    <div class="card glass">
+                        <h3>Goals</h3>
+                        <div class="input-box">
+                            <input type="text" id="goal-input" placeholder="Weekly target...">
+                            <button onclick="addGoal()">+</button>
+                        </div>
+                        <ul id="goal-list" class="scroll-list"></ul>
+                    </div>
+                </div>
+
+                <div class="metrics-stack">
+                    <div class="card glass streak-box">
+                        <div class="streak-meta">
+                            <span class="label">STREAK VELOCITY</span>
+                            <span id="streak-count-display" class="count">0 DAYS</span>
+                        </div>
+                        <div class="trail-container">
+                            <canvas id="trail-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card glass constellation-box">
+                        <div class="constellation-header">
+                            <h3 id="constellation-title">LOADING...</h3>
+                            <span id="constellation-difficulty" class="difficulty-tag">LEVEL 1</span>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="app-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="launchpad-page" class="page">
+            <div class="vault-hero" style="margin-bottom: 2.5rem;">
+                <h2>Launchpad</h2>
+                <p class="vault-subtitle">Explore top-tier opportunities, hackathons, and independent projects</p>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" data-type="main" onclick="filterMain('all', this)">All Sectors</button>
+                <button class="filter-btn" data-type="main" onclick="filterMain('competition', this)">Competitions</button>
+                <button class="filter-btn" data-type="main" onclick="filterMain('summer', this)">Summer Programs</button>
+                <button class="filter-btn" data-type="main" onclick="filterMain('learning', this)">Learning & Projects</button>
+                <button class="filter-btn" data-type="main" onclick="filterMain('scholarship', this)">Scholarships</button>
+            </div>
+
+            <div id="sub-filter-container" class="sub-filter-bar hidden"></div>
+
+            <div id="opps-grid" class="opps-grid"></div>
+        </section>
+
+        <section id="vault-page" class="page">
+            <div class="vault-hero">
+                <h2>Cosmic Archive</h2>
+                <p class="vault-subtitle">Your collection of finalized historical star formations</p>
+            </div>
+            <div class="vault-container glass">
+                <div id="vault-gallery" class="vault-grid-layout scroll-list"></div>
+            </div>
+        </section>
+
+        <section id="thoughts-page" class="page">
+            <div class="thoughts-studio-shell">
+                <div class="thoughts-controls">
+                    <button class="toggle-sidebar-btn" id="focus-toggle" type="button" onclick="IlluminatEdThoughts.toggleFocusMode()">[ ✕ Close Studio ]</button>
+                    <button class="chronicle-btn" id="chronicle-toggle" type="button" onclick="IlluminatEdThoughts.toggleChronicleMode()">📖 VIEW CHRONICLES</button>
+                </div>
+
+                <div class="thoughts-workspace-container" id="workspace">
+                    <div class="archive-sidebar">
+
+                        <div class="page-changer-header-row">
+                            <span>PAGE PALETTE</span>
+                            <div>
+                                <button class="tri-arrow-btn" type="button" onclick="IlluminatEdThoughts.cycleGourmetPageColor(-1)" title="Previous Style">▲</button>
+                                <button class="tri-arrow-btn" type="button" onclick="IlluminatEdThoughts.cycleGourmetPageColor(1)" title="Next Style">▼</button>
+                            </div>
+                        </div>
+
+                        <div class="archive-section">
+                            <h4>Personal Logbook</h4>
+
+                            <div class="title-box-container">
+                                <input type="text" id="book-title" value="Thoughts" placeholder="Rename..." autocomplete="off" spellcheck="false" title="Rename Book">
+                            </div>
+
+                            <div class="book-view-wrapper">
+                                <div class="book-preview-card" id="book-cover">
+                                    <div class="book-texture-layer" id="book-texture"></div>
+
+                                    <div class="book-half book-left-half">
+                                        <div class="book-title-static" id="book-left-title-render">Thoughts</div>
+                                    </div>
+
+                                    <div class="book-half book-right-half" id="preview-right-page-element">
+                                        <div class="book-page-body" id="book-mirror-text">...</div>
+                                    </div>
+
+                                    <div class="flipping-page-mesh" id="flipping-paper-sheet"></div>
+                                </div>
+                            </div>
+
+                            <div id="book-count" class="book-meta">0 DAYS COMPILED</div>
+
+                            <div class="page-turner-ui">
+                                <button class="turn-btn" type="button" onclick="IlluminatEdThoughts.triggerPageTurnAnimation(-1)">◀</button>
+                                <span class="turn-indicator" id="page-index">0 / 0</span>
+                                <button class="turn-btn" type="button" onclick="IlluminatEdThoughts.triggerPageTurnAnimation(1)">▶</button>
+                            </div>
+                        </div>
+
+                        <div class="archive-section">
+                            <h4>Aesthetics</h4>
+                            <div class="design-matrix">
+                                <div class="matrix-row">
+                                    <span>PASTEL</span>
+                                    <div class="swatch-group">
+                                        <div class="swatch" style="background: #4a5d4e; border-color: #6a7f6e;" onclick="IlluminatEdThoughts.applyCoverPreset('#4a5d4e', '')"></div>
+                                        <div class="swatch" style="background: #6e5555; border-color: #8c7373;" onclick="IlluminatEdThoughts.applyCoverPreset('#6e5555', '')"></div>
+                                        <div class="swatch" style="background: #735d49; border-color: #917a65;" onclick="IlluminatEdThoughts.applyCoverPreset('#735d49', '')"></div>
+                                        <div class="swatch" style="background: #4c516d; border-color: #696f8c;" onclick="IlluminatEdThoughts.applyCoverPreset('#4c516d', '')"></div>
+                                    </div>
+                                </div>
+
+                                <div class="matrix-row">
+                                    <span>MATTE</span>
+                                    <div class="swatch-group">
+                                        <div class="swatch" style="background: #1c1a12;" onclick="IlluminatEdThoughts.applyCoverPreset('#1c1a12', '')"></div>
+                                        <div class="swatch" style="background: #141f1a;" onclick="IlluminatEdThoughts.applyCoverPreset('#141f1a', '')"></div>
+                                        <div class="swatch" style="background: #251616;" onclick="IlluminatEdThoughts.applyCoverPreset('#251616', '')"></div>
+                                        <div class="swatch" style="background: #151a26;" onclick="IlluminatEdThoughts.applyCoverPreset('#151a26', '')"></div>
+                                    </div>
+                                </div>
+
+                                <div class="matrix-row">
+                                    <span>GRADIENT</span>
+                                    <div class="swatch-group">
+                                        <div class="swatch" style="background: linear-gradient(135deg, #200122, #6f0000);" onclick="IlluminatEdThoughts.applyCoverPreset('linear-gradient(135deg, #200122, #6f0000)', '')"></div>
+                                        <div class="swatch" style="background: linear-gradient(135deg, #0f2027, #2c5364);" onclick="IlluminatEdThoughts.applyCoverPreset('linear-gradient(135deg, #0f2027, #2c5364)', '')"></div>
+                                        <div class="swatch" style="background: linear-gradient(135deg, #1f4037, #99f2c8);" onclick="IlluminatEdThoughts.applyCoverPreset('linear-gradient(135deg, #1f4037, #99f2c8)', '')"></div>
+                                        <div class="swatch" style="background: linear-gradient(135deg, #2c3e50, #000000);" onclick="IlluminatEdThoughts.applyCoverPreset('linear-gradient(135deg, #2c3e50, #000000)', '')"></div>
+                                    </div>
+                                </div>
+
+                                <div class="matrix-row">
+                                    <span>TEXTURE</span>
+                                    <div class="swatch-group">
+                                        <div class="swatch" style="background: #2a2a2a;" onclick="IlluminatEdThoughts.applyCoverPreset('#1a1a1a', 'repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(255,204,0,0.1) 10px, rgba(255,204,0,0.1) 11px)')"></div>
+                                        <div class="swatch" style="background: #222;" onclick="IlluminatEdThoughts.applyCoverPreset('#111', 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)')"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="archive-section receipt-log">
+                            <h4>Receipt Log</h4>
+                            <ul class="entry-history-list" id="history-shelf"></ul>
+                        </div>
+                    </div>
+
+                    <div class="journal-card">
+                        <div class="journal-header">
+                            <h3 id="studio-header-title">Thoughts</h3>
+                            <span id="journal-date" class="stamp-tag">DAY 1</span>
+                        </div>
+
+                        <div class="textarea-container">
+                            <textarea id="journal-input" autocomplete="off" spellcheck="false"></textarea>
+                            <div id="quote-placeholder" class="faint-overlay-quote">"Discipline looks boring until you see what it builds."</div>
+                        </div>
+
+                        <div class="commit-row">
+                            <button class="commit-btn" type="button" onclick="IlluminatEdThoughts.commitCurrentDayLog()">💾 COMMIT DAY</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage" id="realistic-stage">
+                    <div id="deck-card-container" class="single-deck-card display-cover">
+                        <div id="transition-wrapper" class="content-transition-layer"></div>
+                    </div>
+
+                    <div class="realistic-navigation-ui">
+                        <button class="turn-btn" type="button" onclick="IlluminatEdThoughts.turnSingleChronicleDeck(-1)">◀</button>
+                        <span class="turn-indicator" id="chronicle-page-index">COVER</span>
+                        <button class="turn-btn" type="button" onclick="IlluminatEdThoughts.turnSingleChronicleDeck(1)">▶</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

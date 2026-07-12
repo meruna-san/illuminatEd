@@ -1,0 +1,1052 @@
+:root {
+    --accent: #ffcc00;
+    --accent-dim: rgba(255, 204, 0, 0.1);
+    --accent-gold: #d4af37;
+    --bg: #0a0a0a;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-hover: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-muted: #666;
+    --text-normal: #ccc;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+.bg-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Subtle, even vignette to avoid harsh horizontal banding shown in screenshots */
+    background: radial-gradient(circle at 50% 50%, #1a1a00 0%, #0a0a0a 100%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* NAV LINKS WITH SELECTION UNDERLINE EFFECT */
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem 10%;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 100;
+}
+.nav-brand { font-family: 'JetBrains Mono'; cursor: pointer; font-weight: bold; color: var(--accent); letter-spacing: 2px; }
+.nav-links { display: flex; gap: 2rem; }
+.nav-item { 
+    color: #555; 
+    text-decoration: none; 
+    transition: color 0.3s ease; 
+    font-size: 0.85rem; 
+    position: relative;
+    padding-bottom: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+.nav-item:hover { color: white; }
+.nav-item.active-link { color: white; }
+.nav-item.active-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: underlineExpand 0.4s ease forwards;
+}
+@keyframes underlineExpand { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* STRUCTURAL ROUTING FRAMES */
+.page { 
+    display: none; 
+    padding: 1.5rem 10%; 
+    min-height: 70vh; 
+    animation: fadeIn 0.6s ease forwards; 
+    box-sizing: border-box; 
+    position: relative;
+    z-index: 5;
+}
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.hero { min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.breathing-logo { font-size: 5rem; font-family: 'JetBrains Mono'; letter-spacing: 12px; animation: breathe 4s ease-in-out infinite; margin: 0; }
+@keyframes breathe { 0%, 100% { opacity: 0.3; transform: scale(0.97); } 50% { opacity: 1; transform: scale(1); } }
+.base-quote { font-family: 'Playfair Display'; font-style: italic; color: #444; margin: 2rem 0; font-size: 1.1rem; text-align: center; }
+
+/* TIMER SETUP */
+.timer-container { display: flex; justify-content: center; align-items: center; min-height: 60vh; }
+.glass { background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(25px); border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.timer-card { padding: 4rem; text-align: center; width: 550px; position: relative; z-index: 20; }
+.modes { display: flex; gap: 8px; justify-content: center; margin-bottom: 2rem; position: relative; z-index: 25; }
+.mode-btn { background: transparent; border: 1px solid var(--glass-border); color: #555; padding: 8px 18px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; position: relative; z-index: 30; }
+.mode-btn.active { border-color: var(--accent); color: white; background: rgba(255,204,0,0.05); }
+
+#time-display { font-size: 5.5rem; font-family: 'JetBrains Mono'; margin: 1.5rem 0; color: white; letter-spacing: -1px; }
+
+/* BUTTONS */
+.controls { display: flex; gap: 15px; justify-content: center; position: relative; z-index: 25; }
+.glow-button { background: var(--accent); color: black; border: none; padding: 1.1rem 3.5rem; border-radius: 100px; font-weight: 600; cursor: pointer; position: relative; z-index: 30; }
+.pill-button { background: transparent; border: 1px solid var(--glass-border); color: #555; padding: 1.1rem 2.5rem; border-radius: 100px; cursor: pointer; outline: none; position: relative; z-index: 30; }
+.pill-button.small { padding: 0.8rem 2rem; font-size: 0.9rem; }
+
+/* CUSTOM SETTINGS */
+.settings-panel { max-height: 0; opacity: 0; overflow: hidden; transition: 0.5s ease; display: flex; justify-content: center; gap: 15px; position: relative; z-index: 25; }
+.settings-panel.open { max-height: 100px; opacity: 1; margin-top: 2rem; }
+
+#custom-min {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 100px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    max-width: 80px;
+    text-align: center;
+    outline: none;
+    position: relative;
+    z-index: 30;
+}
+#custom-min::-webkit-outer-spin-button,
+#custom-min::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* BENTO STRUCTURE */
+.bento-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 25px; align-items: start; }
+.workspace-stack, .metrics-stack { display: flex; flex-direction: column; gap: 25px; }
+.card { padding: 2rem; border-radius: 24px; position: relative; }
+.card h3 { margin: 0 0 1rem 0; font-family: 'JetBrains Mono'; font-size: 0.85rem; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+
+/* CUSTOM SCROLLBAR DESIGN */
+.scroll-list { list-style: none; padding: 0; margin: 0; max-height: 20vh; overflow-y: auto; }
+.scroll-list::-webkit-scrollbar { width: 6px; background: transparent; }
+.scroll-list::-webkit-scrollbar-track { background: transparent; }
+.scroll-list::-webkit-scrollbar-thumb { background: rgba(255, 204, 0, 0.1); border-radius: 10px; transition: background 0.3s; }
+.scroll-list:hover::-webkit-scrollbar-thumb { background: rgba(255, 204, 0, 0.3); box-shadow: 0 0 8px rgba(255, 204, 0, 0.2); }
+
+/* INPUT LOGS */
+.input-box { display: flex; gap: 10px; margin-bottom: 1.2rem; position: relative; z-index: 20; }
+.input-box input { flex: 1; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); color: white; padding: 12px 16px; border-radius: 14px; outline: none; position: relative; z-index: 25; }
+.input-box input:focus { border-color: var(--accent); }
+.input-box button { background: none; border: 1px solid var(--glass-border); color: #555; width: 45px; border-radius: 14px; cursor: pointer; position: relative; z-index: 25; }
+.input-box button:hover { color: var(--accent); border-color: var(--accent); }
+
+.scroll-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 6px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.scroll-list li span { font-size: 0.95rem; color: #ccc; text-align: left; word-break: break-all; }
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 15px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    position: relative;
+    z-index: 25;
+}
+input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+
+/* METRICS STACK BOXES */
+.streak-box { display: flex; flex-direction: column; gap: 12px; padding: 1.2rem 2rem; }
+.streak-meta { display: flex; justify-content: space-between; align-items: center; }
+.streak-meta .label { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #444; letter-spacing: 1px; }
+.streak-meta .count { font-family: 'JetBrains Mono'; font-size: 1.15rem; color: var(--accent); font-weight: bold; }
+.trail-container { height: 20px; position: relative; background: rgba(0,0,0,0.2); border-radius: 6px; overflow: hidden; width: 100%; }
+#trail-canvas { width: 100%; height: 100%; display: block; }
+
+/* CANVAS PREVIEW CONFIG */
+.constellation-box { display: flex; flex-direction: column; }
+.constellation-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.constellation-header h3 { margin: 0; }
+.difficulty-tag { font-family: 'JetBrains Mono'; font-size: 0.65rem; background: rgba(255,204,0,0.06); color: var(--accent); padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(255,204,0,0.15); }
+.canvas-container { width: 100%; height: 180px; background: rgba(0,0,0,0.25); border-radius: 14px; position: relative; overflow: hidden; }
+#app-canvas { width: 100%; height: 100%; display: block; position: absolute; top:0; left:0; }
+
+/* =========================
+   THOUGHTS (INLINE STUDIO)
+   ========================= */
+
+/* Hide legacy unused iframe selectors */
+.thoughts-iframe-wrap,
+.thoughts-iframe { display:none; }
+
+.thoughts-studio-shell {
+    position: relative;
+    padding-top: 90px; /* keep below app navbar */
+    min-height: 70vh;
+}
+
+.thoughts-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: transparent;
+    border-bottom: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    z-index: 99999;
+    backdrop-filter: blur(10px);
+    padding: 0 12px;
+}
+
+.thoughts-controls .toggle-sidebar-btn,
+.thoughts-controls .chronicle-btn {
+    background: rgba(20,20,20,0.95);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #ccc;
+    padding: 0.95rem 1.4rem;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.thoughts-controls .toggle-sidebar-btn:hover,
+.thoughts-controls .chronicle-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+    color: white;
+    background: rgba(255,204,0,0.08);
+}
+
+.thoughts-controls .chronicle-btn {
+    background: rgba(255,204,0,0.1);
+    color: var(--accent);
+    border-color: rgba(255,204,0,0.25);
+}
+
+.thoughts-controls .chronicle-btn:hover {
+    background: var(--accent);
+    color: black;
+}
+
+/* Layout container (match app bento) */
+.thoughts-workspace-container {
+    display: flex;
+    gap: 25px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 70px 6% 2.2rem;
+    box-sizing: border-box;
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar,
+.thoughts-workspace-container .journal-card {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(25px);
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+
+/* Make the journal writing area take more space than the sidebar */
+.thoughts-workspace-container .journal-card {
+    /* make journal scale responsively beside archive */
+    flex: 1 1 68%;
+    min-width: 360px;
+    transition: all 0.35s cubic-bezier(0.2,0.9,0.2,1);
+}
+
+.thoughts-workspace-container .archive-sidebar {
+    flex: 0 0 28%;
+    min-width: 180px;
+    max-width: 320px;
+    /* nudge studio left for visual balance */
+    transform: translateX(-12px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 1.5rem;
+    min-height: 520px;
+    overflow: hidden;
+}
+
+/* Animated hide/expand helpers for studio focus mode (faster) */
+.thoughts-workspace-container .archive-sidebar {
+    /* slightly slower hide so it's readable but still snappy */
+    transition: transform 0.32s cubic-bezier(0.2,0.9,0.2,1), opacity 0.32s cubic-bezier(0.2,0.9,0.2,1), width 0.32s ease;
+}
+.thoughts-workspace-container .archive-sidebar.shrink-out {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.98);
+}
+.thoughts-workspace-container .archive-sidebar.hide-mode {
+    display: none !important;
+}
+
+/* When workspace is in focus-mode (studio hidden), shift the journal slightly left into the studio area */
+.thoughts-workspace-container.focus-mode {
+    justify-content: center;
+}
+
+.thoughts-workspace-container.focus-mode .archive-sidebar {
+    width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+    transform: translateX(-24px) !important;
+    pointer-events: none !important;
+    border: none !important;
+}
+
+.thoughts-workspace-container.focus-mode .journal-card {
+    flex: 0 0 700px;
+    max-width: 700px;
+    width: 700px;
+    min-width: 700px;
+    margin: 0 auto !important;
+    transform: translateX(-100px) !important;
+    transition: all 0.35s cubic-bezier(0.2,0.9,0.2,1) !important;
+    animation: journal-pop 360ms cubic-bezier(0.2,0.9,0.2,1) both;
+}
+
+@keyframes journal-pop {
+    0% { transform: translateY(0) scale(1); }
+    60% { transform: translateY(-10px) scale(1.06); }
+    100% { transform: translateY(-6px) scale(1.03); }
+}
+
+.thoughts-workspace-container .journal-card.expanded {
+    /* gentler pop: smaller overshoot and subtle final scale */
+    flex: 1 1 88%;
+    min-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: journal-pop 360ms cubic-bezier(0.2,0.9,0.2,1) both;
+}
+
+.thoughts-workspace-container .archive-sidebar .archive-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.thoughts-workspace-container .archive-sidebar .archive-section h4 {
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.thoughts-workspace-container .archive-sidebar .page-changer-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+}
+
+.thoughts-workspace-container .archive-sidebar .page-changer-header-row span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: #bbb;
+    letter-spacing: 1px;
+}
+
+.thoughts-workspace-container .archive-sidebar .tri-arrow-btn {
+    background: transparent;
+    border: none;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 0.82rem;
+    padding: 0 6px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar .tri-arrow-btn:hover {
+    color: white;
+    transform: scale(1.2);
+}
+
+.thoughts-workspace-container .archive-sidebar .title-box-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.thoughts-workspace-container .archive-sidebar #book-title {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #f2f2f2;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-style: italic;
+    text-align: center;
+    width: 90%;
+    max-width: 220px;
+    outline: none;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar #book-title:focus {
+    border-color: var(--accent);
+    background: rgba(255,255,255,0.1);
+}
+
+.thoughts-workspace-container .archive-sidebar .book-view-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-preview-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 260px;
+    height: 170px;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+    display: flex;
+    overflow: hidden;
+    transition: background 0.3s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-preview-card::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0;
+    width: 2px; height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.12));
+    z-index: 10;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-texture-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    opacity: 0.08;
+    z-index: 1;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-half {
+    width: 50%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-left-half {
+    border-right: 1px solid rgba(255,255,255,0.08);
+    align-items: center;
+    justify-content: center;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-right-half {
+    background: var(--book-page, rgba(255,255,255,0.08));
+    transition: background 0.3s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-title-static {
+    color: #f3f3f3;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-page-body {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.1rem;
+    color: var(--page-text, #ddd);
+    line-height: 1.4;
+    margin: 0;
+    margin-top: 14px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    display: block;
+    max-height: 100%;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-page-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.thoughts-workspace-container .archive-sidebar .book-page-body::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+.thoughts-workspace-container .archive-sidebar .flipping-page-mesh {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: var(--cover-color, rgba(0,0,0,0.5));
+    box-shadow: inset 10px 0 20px rgba(0,0,0,0.4);
+    transition: transform 0.4s ease-in-out, opacity 0.4s;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.thoughts-workspace-container .archive-sidebar .flipping-page-mesh.flip-forward {
+    left: 50%;
+    transform-origin: left center;
+    opacity: 1;
+    transform: rotateY(-180deg);
+}
+
+.thoughts-workspace-container .archive-sidebar .flipping-page-mesh.flip-backward {
+    right: 50%;
+    transform-origin: right center;
+    opacity: 1;
+    transform: rotateY(180deg);
+}
+
+.thoughts-workspace-container .archive-sidebar .book-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.thoughts-workspace-container .archive-sidebar .page-turner-ui {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 0.6rem;
+}
+
+.thoughts-workspace-container .archive-sidebar .turn-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #eee;
+    border-radius: 999px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar .turn-btn:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.thoughts-workspace-container .archive-sidebar .turn-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: #bbb;
+}
+
+.thoughts-workspace-container .archive-sidebar .design-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    padding: 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.thoughts-workspace-container .archive-sidebar .matrix-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.thoughts-workspace-container .archive-sidebar .matrix-row span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #ccc;
+}
+
+.thoughts-workspace-container .archive-sidebar .swatch-group {
+    display: flex;
+    gap: 6px;
+}
+
+.thoughts-workspace-container .archive-sidebar .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: transform 0.2s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar .swatch:hover {
+    transform: scale(1.15);
+}
+
+.thoughts-workspace-container .archive-sidebar .entry-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.thoughts-workspace-container .archive-sidebar .entry-history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.thoughts-workspace-container .archive-sidebar .entry-history-list::-webkit-scrollbar-thumb {
+    background: rgba(255,204,0,0.18);
+    border-radius: 999px;
+}
+
+.thoughts-workspace-container .archive-sidebar .entry-history-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.thoughts-workspace-container .archive-sidebar .history-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #ddd;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(255,255,255,0.02);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.thoughts-workspace-container .archive-sidebar .history-item:hover {
+    color: white;
+    background: rgba(255,255,255,0.08);
+}
+
+.thoughts-workspace-container .journal-card {
+    /* use percentage basis so journal scales and stays beside archive */
+    flex: 1 1 68%;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.thoughts-workspace-container .journal-card .journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.thoughts-workspace-container .journal-card .journal-header h3 {
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: #eee;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.thoughts-workspace-container .journal-card .textarea-container {
+    position: relative;
+    width: 100%;
+    /* slightly reduced vertical writing space (~10% down from previous) */
+    min-height: 620px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.03);
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.thoughts-workspace-container .journal-card .commit-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
+
+.thoughts-workspace-container .journal-card .commit-btn {
+    background: rgba(20,20,20,0.95);
+    border: 1px solid rgba(255,204,0,0.25);
+    color: var(--accent);
+    padding: 0.95rem 1.6rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.thoughts-workspace-container .journal-card .commit-btn:hover {
+    transform: translateY(-1px);
+    background: var(--accent);
+    color: #111;
+    border-color: var(--accent);
+}
+
+.thoughts-workspace-container #journal-input {
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    resize: none;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #eee;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.thoughts-workspace-container .faint-overlay-quote {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    right: 1.25rem;
+    color: rgba(255, 255, 255, 0.12);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.45;
+    pointer-events: none;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    user-select: none;
+}
+
+.thoughts-workspace-container .commit-row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Constrain journal textarea height so it doesn’t blow layout */
+.thoughts-workspace-container #journal-input {
+    font-size: 0.95rem;
+}
+
+.thoughts-workspace-container #book-mirror-text {
+    font-size: 0.5rem;
+}
+
+/* Improve receipt log spacing */
+.thoughts-workspace-container .entry-history-list {
+    max-height: 200px;
+}
+
+/* Add missing studio transition/focus classes so inline studio behaves like standalone */
+.thoughts-workspace-container.hide-mode { display: none !important; }
+.thoughts-workspace-container.shrink-out { opacity: 0; transform: scale(0.92); pointer-events: none; }
+.thoughts-workspace-container.focus-mode .archive-sidebar {
+    width: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    transform: translateX(-30px);
+    pointer-events: none;
+    border: none;
+}
+
+.stage {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    width: 100%;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    opacity: 0;
+    transform: scale(0.92);
+}
+
+.stage.show-mode {
+    display: flex !important;
+}
+
+.stage.grow-in {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#realistic-stage {
+    width: 100%;
+    max-width: 420px;
+    min-height: 560px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+#realistic-stage .single-deck-card {
+    width: 100%;
+    min-height: 560px;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#realistic-stage .single-deck-card.display-cover,
+#realistic-stage .single-deck-card.display-page {
+    width: 100%;
+    min-height: 560px;
+}
+
+#realistic-stage .single-deck-card.display-cover {
+    background: linear-gradient(135deg, #2b1f11 0%, #1c150c 100%);
+    border: 3px solid var(--accent-gold);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+    text-align: center;
+    box-shadow: 0 0 0 2px #0a0a0a, 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+#realistic-stage .single-deck-card.display-page {
+    border: none;
+    padding: 1.5rem 1.2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#realistic-stage .content-transition-layer {
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.25s ease-in-out;
+    opacity: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#realistic-stage .content-transition-layer.is-switching { opacity: 0; }
+
+#realistic-stage .cover-title-text {
+    font-family: 'Cinzel', serif;
+    color: var(--accent-gold);
+    font-size: 2.2rem;
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 0px 4px 10px rgba(0,0,0,0.6);
+}
+
+#realistic-stage .cover-separator {
+    width: 70px;
+    height: 2px;
+    background: var(--accent-gold);
+    margin: 2rem 0;
+}
+
+#realistic-stage .cover-sub-text {
+    font-size: 1rem;
+    color: #8c7653;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-family: 'IM Fell English SC', serif;
+    margin: 0;
+}
+
+#realistic-stage .page-header-real {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: #8a7a63;
+    letter-spacing: 2px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding-bottom: 8px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+#realistic-stage .page-body-real {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    height: 380px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+    padding-right: 8px;
+}
+
+#realistic-stage .page-body-real::-webkit-scrollbar {
+    width: 6px;
+}
+
+#realistic-stage .page-body-real::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.16);
+    border-radius: 999px;
+}
+
+#realistic-stage .realistic-navigation-ui {
+    display: flex;
+    gap: 16px;
+    margin-top: 1.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+#realistic-stage .turn-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(20,20,20,0.9);
+    color: #eee;
+    font-size: 1rem;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+#realistic-stage .turn-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+    background: rgba(255,204,0,0.18);
+    color: #111;
+}
+
+#realistic-stage .turn-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #eee;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 420px) {
+    .thoughts-workspace-container {
+        flex-direction: column;
+        padding: 80px 5% 2.2rem;
+    }
+
+    .thoughts-workspace-container .archive-sidebar,
+    .thoughts-workspace-container .journal-card,
+    #realistic-stage {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .thoughts-workspace-container .archive-sidebar {
+        min-height: auto;
+    }
+
+    #realistic-stage {
+        margin-top: 1.5rem;
+    }
+}
+
+.workspace-container.hide-mode { display: none !important; }
+.workspace-container.shrink-out { opacity: 0; transform: scale(0.92); pointer-events: none; }
+
+.content-transition-layer.is-switching { opacity: 0; }
+.fead-ignored { }
+
+.flipping-page-mesh.flip-forward { left: 50%; transform-origin: left center; opacity: 1; transform: rotateY(-180deg); }
+.flipping-page-mesh.flip-backward { right: 50%; transform-origin: right center; opacity: 1; transform: rotateY(180deg); }
+
+
+
+
+/* LAUNCHPAD GRID MODULE MODULE OVERLAYS */
+.filter-bar, .sub-filter-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+.sub-filter-bar { margin-bottom: 3rem; background: rgba(255, 255, 255, 0.01); padding: 12px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.02); max-width: fit-content; margin-left: auto; margin-right: auto; }
+.sub-filter-bar.hidden { display: none; }
+.filter-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-normal); padding: 10px 20px; border-radius: 100px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease; }
+.sub-btn { padding: 6px 14px; font-size: 0.75rem; background: transparent; border-color: rgba(255, 255, 255, 0.1); }
+.filter-btn:hover { border-color: rgba(255, 204, 0, 0.3); color: white; }
+.filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(255, 204, 0, 0.1); }
+
+.opps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+.opp-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 1.8rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; backdrop-filter: blur(20px); animation: fadeIn 0.4s ease forwards; }
+.opp-card:hover { transform: translateY(-3px); border-color: rgba(255, 204, 0, 0.2); background: var(--glass-hover); }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+.category-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 4px 10px; border-radius: 6px; color: #888; text-transform: uppercase; }
+.tag-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--accent); background: rgba(255, 204, 0, 0.05); padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+.deadline-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #ff5500; }
+.opp-card h3 { margin: 0 0 0.6rem 0; font-size: 1.2rem; font-weight: 600; line-height: 1.3; color: white; letter-spacing: -0.5px; }
+.opp-card p { margin: 0 0 1.5rem 0; font-size: 0.85rem; color: #777; line-height: 1.6; flex-grow: 1; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; }
+.opp-meta { font-size: 0.75rem; color: #444; font-family: 'JetBrains Mono', monospace; }
+.apply-link { color: var(--accent); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+
+/* ARCHIVE VAULT SCREEN DESIGN */
+.vault-hero { text-align: center; margin-bottom: 1.5rem; }
+.vault-hero h2 { font-family: 'JetBrains Mono'; font-size: 2rem; letter-spacing: 4px; margin: 0; color: white; }
+.vault-subtitle { font-family: 'Playfair Display'; font-style: italic; color: #555; margin: 0.5rem 0 0 0; font-size: 1rem; }
+.vault-container { max-width: 900px; margin: 0 auto; padding: 2.5rem; border-radius: 28px; }
+.vault-grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; max-height: 48vh !important; }
+.vault-card { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 18px; display: flex; flex-direction: column; gap: 12px; text-align: center; transition: border 0.3s ease; }
+.vault-card:hover { border-color: rgba(255,204,0,0.2); }
+.vault-card .title { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: #ccc; letter-spacing: 1px; }
+.vault-card .stars { color: var(--accent); font-size: 0.75rem; letter-spacing: 2px; opacity: 0.8; }
+.vault-card .date { font-size: 0.7rem; color: #333; font-family: 'JetBrains Mono'; }
+.empty-vault-notice { grid-column: 1 / -1; text-align: center; color: #333; font-style: italic; padding: 3rem 0; font-size: 0.95rem; }
+
+@keyframes thermalPulse { 0%, 100% { filter: drop-shadow(0 0 4px rgba(255,85,0,0.2)); } 50% { filter: drop-shadow(0 0 14px rgba(255,204,0,0.5)); } }
+.hot-streak { animation: thermalPulse 2s infinite; }
