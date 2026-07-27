@@ -74,7 +74,6 @@ let timerId = null;
 let display = null;
 let startBtn = null;
 
-// Audio Chime Synthesizer
 function playChime() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -132,7 +131,6 @@ window.setTimer = function(minutes, element) {
     window.updateDisplay();
 };
 
-// Side limit window interaction handler
 window.toggleTimeDrawer = function() {
     const drawer = document.getElementById('time-limit-drawer');
     if(drawer) {
@@ -203,7 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'deck-card-container','transition-wrapper','chronicle-page-index','chronicle-toggle','realistic-stage','page-index','history-shelf'
     ]);
     
-    // Load lists from storage immediately
     loadStoredLists();
 
     startBtn = document.getElementById('start-btn');
@@ -656,16 +653,9 @@ window.addEventListener('resize', () => {
 });
 
 // ===============================
-// Thoughts Studio (inline) - based on `we are done.html`
-// Namespaced to avoid clashing with app globals.
+// Thoughts Studio Core Engine
 // ===============================
-window.IlluminatEdThoughts = (function(){
-    // If Thoughts DOM not present, do nothing.
-    const mustHave = ['book-title','journal-input','book-cover'];
-    for (const id of mustHave) {
-        if (!document.getElementById(id)) return {};
-    }
-
+const IlluminatEdThoughts = (function(){
     const Storage = {
         save: (key, val) => localStorage.setItem(`book_studio_${key}`, JSON.stringify(val)),
         get: (key, fallback) => {
@@ -716,14 +706,10 @@ window.IlluminatEdThoughts = (function(){
     const pageIndexDisplay = document.getElementById('page-index');
     const bookMirrorText = document.getElementById('book-mirror-text');
     const workspace = document.getElementById('workspace');
-    const focusToggleBtn = document.getElementById('focus-toggle');
     const bookTitleInput = document.getElementById('book-title');
     const bookLeftTitleRender = document.getElementById('book-left-title-render');
-    const flippingPaperSheet = document.getElementById('flipping-paper-sheet');
 
     const realisticStage = document.getElementById('realistic-stage');
-    const chronicleToggleBtn = document.getElementById('chronicle-toggle');
-
     const deckCardContainer = document.getElementById('deck-card-container');
     const transitionWrapper = document.getElementById('transition-wrapper');
     const chroniclePageDisplay = document.getElementById('chronicle-page-index');
@@ -734,6 +720,7 @@ window.IlluminatEdThoughts = (function(){
     }
 
     function updatePageIndicator(){
+        if(!pageIndexDisplay) return;
         if(compiledBookEntries.length === 0) pageIndexDisplay.textContent = '0 / 0';
         else if(currentViewingPageIndex === -1) pageIndexDisplay.textContent = `- / ${compiledBookEntries.length}`;
         else pageIndexDisplay.textContent = `${currentViewingPageIndex + 1} / ${compiledBookEntries.length}`;
@@ -742,6 +729,32 @@ window.IlluminatEdThoughts = (function(){
     function updateRandomQuote(){
         const randomIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
         if(overlay) overlay.textContent = MOTIVATIONAL_QUOTES[randomIndex];
+    }
+
+    function updateHistoryUI() {
+        if(historyShelf) {
+            historyShelf.innerHTML = '';
+            compiledBookEntries.forEach((entry, idx) => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.style.cssText = "padding: 8px 12px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer;";
+                item.innerHTML = `<strong>DAY ${idx + 1}</strong> <small style="opacity:0.6;">${entry.date || ''}</small>`;
+                item.onclick = () => loadEntryForEditing(idx);
+                historyShelf.appendChild(item);
+            });
+        }
+        if(bookCount) bookCount.textContent = `${compiledBookEntries.length} ENTRIES`;
+    }
+
+    function loadEntryForEditing(idx) {
+        if(idx < 0 || idx >= compiledBookEntries.length) return;
+        currentViewingPageIndex = idx;
+        const entry = compiledBookEntries[idx];
+        if(input) input.value = entry.text || '';
+        if(bookMirrorText) bookMirrorText.textContent = entry.text || '...';
+        if(overlay) overlay.style.opacity = entry.text ? '0' : '1';
+        if(stamp) stamp.textContent = `DAY ${idx + 1} (EDITING)`;
+        updatePageIndicator();
     }
 
     function resetInputWorkspace(){
@@ -754,17 +767,19 @@ window.IlluminatEdThoughts = (function(){
     }
 
     function renderSingleDeckContent(){
-        const currentTitle = bookTitleInput.value || 'Thoughts';
+        if(!deckCardContainer || !transitionWrapper || !chroniclePageDisplay) return;
+
+        const currentTitle = (bookTitleInput && bookTitleInput.value) || 'Thoughts';
         const currentPalette = WEALTHY_FOOD_PALETTES[currentPaletteIndex];
 
         if(singleChronicleIndex === 0){
             deckCardContainer.className = 'single-deck-card display-cover';
-            deckCardContainer.style.background = bookCover.style.background || 'linear-gradient(135deg, #2b1f11 0%, #1c150c 100%)';
+            if(bookCover) deckCardContainer.style.background = bookCover.style.background || 'linear-gradient(135deg, #2b1f11 0%, #1c150c 100%)';
             deckCardContainer.style.color = 'white';
             chroniclePageDisplay.textContent = 'COVER';
 
             transitionWrapper.innerHTML = `
-                <div style="margin: auto;">
+                <div style="margin: auto; text-align: center;">
                     <h1 class="cover-title-text">${currentTitle.toUpperCase()}</h1>
                     <div class="cover-separator" style="margin: 1.5rem auto;"></div>
                     <p class="cover-sub-text">Volume I</p>
@@ -783,8 +798,8 @@ window.IlluminatEdThoughts = (function(){
         const entryBodyText = `[ DAY ${singleChronicleIndex} ]\n\n${entry ? entry.text : 'No data collected.'}`;
 
         transitionWrapper.innerHTML = `
-            <div class="page-header-real" style="color: ${currentPalette.text}; opacity: 0.7; border-bottom-color: rgba(0,0,0,0.15);">${currentTitle}</div>
-            <div id="inner-deck-body" class="page-body-real" style="color: ${currentPalette.text};"></div>
+            <div class="page-header-real" style="color: ${currentPalette.text}; opacity: 0.7; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 8px; margin-bottom: 12px; font-weight:600;">${currentTitle}</div>
+            <div id="inner-deck-body" class="page-body-real" style="color: ${currentPalette.text}; whitespace: pre-wrap; line-height: 1.6;"></div>
         `;
         const inner = document.getElementById('inner-deck-body');
         if(inner) inner.textContent = entryBodyText;
@@ -794,12 +809,12 @@ window.IlluminatEdThoughts = (function(){
         document.documentElement.style.setProperty('--cover-color', backgroundStyle.includes('gradient') ? '#222' : backgroundStyle);
         if(bookCover) bookCover.style.background = backgroundStyle;
         if(bookTexture) {
-            bookTexture.style.backgroundImage = textureStyle;
-            if(textureStyle !== '') bookTexture.style.backgroundSize = '12px 12px';
+            bookTexture.style.backgroundImage = textureStyle || '';
+            if(textureStyle) bookTexture.style.backgroundSize = '12px 12px';
         }
 
         Storage.save('cover_bg', backgroundStyle);
-        Storage.save('cover_tex', textureStyle);
+        Storage.save('cover_tex', textureStyle || '');
 
         if(singleChronicleIndex === 0) renderSingleDeckContent();
     }
@@ -820,10 +835,68 @@ window.IlluminatEdThoughts = (function(){
             if(bodyTextNode) bodyTextNode.style.color = selectedPalette.text;
         }
 
+        renderSingleDeckContent();
+    }
+
+    function commitCurrentDayLog() {
+        const text = input ? input.value.trim() : '';
+        if(!text) {
+            alert("Please write a log entry before committing!");
+            return;
+        }
+        const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+        if(currentViewingPageIndex !== -1) {
+            compiledBookEntries[currentViewingPageIndex] = { text: text, date: todayStr };
+        } else {
+            compiledBookEntries.push({ text: text, date: todayStr });
+        }
+
+        Storage.save('entries', compiledBookEntries);
+        updateHistoryUI();
+        resetInputWorkspace();
+        updateRandomQuote();
+
+        singleChronicleIndex = compiledBookEntries.length;
+        renderSingleDeckContent();
+    }
+
+    function turnSingleChronicleDeck(direction) {
+        const maxIndex = compiledBookEntries.length;
+        singleChronicleIndex += direction;
+        if(singleChronicleIndex < 0) singleChronicleIndex = 0;
+        if(singleChronicleIndex > maxIndex) singleChronicleIndex = maxIndex;
+        renderSingleDeckContent();
+    }
+
+    function toggleChronicleMode() {
+        isChronicleModeActive = !isChronicleModeActive;
+        if (realisticStage) {
+    realisticStage.classList.toggle("show-mode", isChronicleModeActive);
+    realisticStage.classList.toggle("grow-in", isChronicleModeActive);
+}
+        if(workspace) workspace.style.display = isChronicleModeActive ? 'none' : 'flex';
         if(isChronicleModeActive) renderSingleDeckContent();
     }
 
-    // Wiring inputs
+    function toggleFocusMode() {
+        if(workspace) workspace.classList.toggle('focus-mode');
+    }
+
+    function triggerPageTurnAnimation(direction) {
+        if(currentViewingPageIndex === -1 && direction < 0) {
+            if(compiledBookEntries.length > 0) loadEntryForEditing(compiledBookEntries.length - 1);
+        } else {
+            let newIdx = currentViewingPageIndex + direction;
+            if(newIdx >= 0 && newIdx < compiledBookEntries.length) {
+                loadEntryForEditing(newIdx);
+            } else if(newIdx >= compiledBookEntries.length) {
+                resetInputWorkspace();
+            }
+        }
+    }
+
+    // Input Events
     if(bookTitleInput){
         bookTitleInput.oninput = () => {
             const titleValue = bookTitleInput.value || 'Thoughts';
@@ -831,7 +904,7 @@ window.IlluminatEdThoughts = (function(){
             const studioHeaderTitle = document.getElementById('studio-header-title');
             if(studioHeaderTitle) studioHeaderTitle.textContent = titleValue;
             Storage.save('title', titleValue);
-            if(isChronicleModeActive) renderSingleDeckContent();
+            renderSingleDeckContent();
         };
     }
 
@@ -849,7 +922,7 @@ window.IlluminatEdThoughts = (function(){
         };
     }
 
-    // init
+    // Initialize Studio on DOM Ready
     (function initStudio(){
         const savedTitle = Storage.get('title','Thoughts');
         if(bookTitleInput) bookTitleInput.value = savedTitle;
@@ -865,6 +938,7 @@ window.IlluminatEdThoughts = (function(){
         resetInputWorkspace();
         cycleGourmetPageColor(0);
         updateRandomQuote();
+        renderSingleDeckContent();
     })();
 
     return {
@@ -874,6 +948,11 @@ window.IlluminatEdThoughts = (function(){
         applyCoverPreset,
         triggerPageTurnAnimation,
         turnSingleChronicleDeck,
-        commitCurrentDayLog
+        commitCurrentDayLog,
+        updateHistoryUI,
+        resetInputWorkspace
     };
 })();
+
+// Attach globally so HTML buttons work!
+window.IlluminatEdThoughts = IlluminatEdThoughts;
