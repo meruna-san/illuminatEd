@@ -956,3 +956,12 @@ const IlluminatEdThoughts = (function(){
 
 // Attach globally so HTML buttons work!
 window.IlluminatEdThoughts = IlluminatEdThoughts;
+
+function toggleMobileMenu(){
+
+    document
+        .querySelector(".mobile-menu")
+        .classList
+        .toggle("show");
+
+}

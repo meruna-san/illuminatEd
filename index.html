@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IlluminatEd | Aesthetic Focus</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital@1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         #time-limit-drawer {
@@ -79,17 +80,37 @@
         <div id="drawer-time-display">00:25:00</div>
     </div>
 
-    <nav>
-        <div class="nav-brand" onclick="showPage('home')">IlluminatEd</div>
-        <div class="nav-links">
-            <span id="nav-home" class="nav-item active-link" onclick="showPage('home')">Home</span>
-            <span id="nav-timer" class="nav-item" onclick="showPage('timer')">Timer</span>
-            <span id="nav-dashboard" class="nav-item" onclick="showPage('dashboard')">Dashboard</span>
-            <span id="nav-launchpad" class="nav-item" onclick="showPage('launchpad')">Launchpad</span>
-            <span id="nav-vault" class="nav-item" onclick="showPage('vault')">Vault of Fame</span>
-            <span id="nav-thoughts" class="nav-item" onclick="showPage('thoughts')">Thoughts</span>
-        </div>
-    </nav>
+   <nav>
+
+    <div class="nav-brand" onclick="showPage('home')">
+        IlluminatEd
+    </div>
+
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <img src="lightbulb.png" alt="Menu">
+    </button>
+
+    <div class="nav-links">
+        <span id="nav-home" class="nav-item active-link" onclick="showPage('home')">Home</span>
+        <span id="nav-timer" class="nav-item" onclick="showPage('timer')">Timer</span>
+        <span id="nav-dashboard" class="nav-item" onclick="showPage('dashboard')">Dashboard</span>
+        <span id="nav-launchpad" class="nav-item" onclick="showPage('launchpad')">Launchpad</span>
+        <span id="nav-vault" class="nav-item" onclick="showPage('vault')">Vault of Fame</span>
+        <span id="nav-thoughts" class="nav-item" onclick="showPage('thoughts')">Thoughts</span>
+    </div>
+
+</nav>
+
+<div class="mobile-menu">
+
+    <span onclick="showPage('home')">Home</span>
+    <span onclick="showPage('timer')">Timer</span>
+    <span onclick="showPage('dashboard')">Dashboard</span>
+    <span onclick="showPage('launchpad')">Launchpad</span>
+    <span onclick="showPage('vault')">Vault of Fame</span>
+    <span onclick="showPage('thoughts')">Thoughts</span>
+
+</div>
 
 
     <main id="main-content">
