@@ -78,8 +78,8 @@
 
     /* Lightbulb size */
     .mobile-menu-btn img {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
     }
 
     /* Hide desktop navigation */
@@ -141,5 +141,57 @@
 
 .modes{
     flex-wrap:wrap;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.bento-grid{
+    grid-template-columns:1fr;
+    gap:20px;
+}
+
+.workspace-stack,
+.metrics-stack{
+    width:100%;
+}
+
+.card{
+    padding:1.2rem;
+}
+.streak-meta{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:6px;
+}
+
+.constellation-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+}
+.input-box{
+    flex-direction:row;
+    align-items:center;
+}
+
+.input-box input{
+    flex:1;
+}
+
+.input-box button{
+    width:46px;
+    height:46px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:1.3rem;
+
+    border-radius:14px;
 }
 }
