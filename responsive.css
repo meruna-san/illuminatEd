@@ -108,4 +108,38 @@
     transform:translate(0);
     pointer-events:auto;
 }
+
+/* =========================
+   TIMER
+========================= */
+
+.timer-container{
+    padding:20px;
+}
+
+.timer-card{
+    width:100%;
+    max-width:340px;
+    padding:2rem 1.5rem;
+    border-radius:24px;
+}
+
+#time-display{
+    font-size:3.2rem;
+}
+
+.controls{
+    flex-direction:column;
+    gap:12px;
+}
+
+.glow-button,
+.pill-button{
+    width:100%;
+    padding:1rem;
+}
+
+.modes{
+    flex-wrap:wrap;
+}
 }
