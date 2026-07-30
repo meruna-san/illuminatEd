@@ -194,4 +194,56 @@
 
     border-radius:14px;
 }
+
+/* =========================
+   LAUNCHPAD MOBILE
+========================= */
+
+.filter-bar,
+.sub-filter-bar{
+    gap:8px;
+    margin-bottom:1rem;
+}
+
+.filter-btn{
+    padding:8px 14px;
+    font-size:0.8rem;
+}
+
+.sub-btn{
+    padding:6px 12px;
+    font-size:0.7rem;
+}
+
+.opps-grid{
+    grid-template-columns:1fr;
+    gap:18px;
+}
+
+.opp-card{
+    padding:1.35rem;
+    min-height:auto;
+}
+
+.opp-card h3{
+    font-size:1.1rem;
+}
+
+.opp-card p{
+    font-size:0.82rem;
+    margin-bottom:1rem;
+}
+
+.card-top{
+    margin-bottom:0.8rem;
+}
+
+.card-footer{
+    margin-top:0.4rem;
+}
+.card-top{
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:0.7rem
+}
 }
