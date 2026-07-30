@@ -347,13 +347,23 @@ function renderVaultGallery() {
         return;
     }
 
-    shelf.innerHTML = vaultCollection.map(item => `
-        <div class="vault-card">
-            <div class="title">🌌 ${item.name}</div>
-            <div class="stars">${"★".repeat(item.stars)}</div>
-            <div class="date">DISCOVERED: ${item.date}</div>
+shelf.innerHTML = vaultCollection.map(item => `
+    <div class="vault-card">
+        <div class="icon">🌌</div>
+
+        <div class="title">
+            ${item.name}
         </div>
-    `).join('');
+
+        <div class="stars">
+            ${"★".repeat(item.stars)}
+        </div>
+
+        <div class="date">
+            ${item.date}
+        </div>
+    </div>
+`).join('');
 }
 
 function renderAppCanvasLoop() {

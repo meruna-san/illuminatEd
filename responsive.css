@@ -246,4 +246,56 @@
     gap:6px;
     margin-bottom:0.7rem
 }
+
+/* =========================
+   VAULT MOBILE
+========================= */
+
+.vault-hero{
+    margin-bottom:1.2rem;
+}
+
+.vault-hero h2{
+    font-size:1.7rem;
+    letter-spacing:2px;
+}
+
+.vault-subtitle{
+    font-size:0.9rem;
+    line-height:1.5;
+    padding:0 14px;
+}
+
+.vault-container{
+    padding:1.5rem;
+}
+
+.vault-grid-layout{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.vault-card{
+    padding:1rem;
+    gap:8px;
+}
+
+.vault-card .title{
+    font-size:0.8rem;
+    letter-spacing:1px;
+}
+
+.vault-card .stars{
+    font-size:0.65rem;
+}
+
+.vault-card .date{
+    font-size:0.6rem;
+    opacity:.75;
+}
+
+.empty-vault-notice{
+    font-size:0.9rem;
+    padding:2rem 0;
+}
 }
