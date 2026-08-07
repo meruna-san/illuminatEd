@@ -298,4 +298,168 @@
     font-size:0.9rem;
     padding:2rem 0;
 }
+
+/* ======================================
+   THOUGHTS MOBILE
+====================================== */
+
+.thoughts-workspace-container{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:20px;
+
+    padding:90px 18px 30px;
+
+}
+
+/* ===========================
+MOBILE THOUGHTS STUDIO
+=========================== */
+
+.archive-sidebar{
+
+    order:-1;
+
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+
+    transform:none!important;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:14px;
+
+    padding:0;
+
+    background:none!important;
+    border:none!important;
+    box-shadow:none!important;
+
+}
+
+.archive-section{
+
+    padding:16px;
+
+    min-height:120px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.book-view-wrapper{
+    display:none;
+}
+
+.page-turner-ui{
+    display:none;
+}
+
+#book-count{
+    display:none;
+}
+
+.design-matrix{
+
+    padding:8px;
+
+    gap:8px;
+
+}
+
+.entry-history-list{
+
+    max-height:90px;
+
+}
+
+.journal-card{
+
+    width:100%!important;
+
+    min-width:0!important;
+
+    padding:24px;
+
+}
+
+.textarea-container{
+
+    min-height:600px;
+
+}
+
+#journal-input{
+
+    min-height:540px;
+
+}
+
+#realistic-stage{
+
+    max-width:360px;
+
+}
+
+#realistic-stage .single-deck-card{
+
+    min-height:500px;
+
+}
+.studio-tabs{
+
+    display:flex;
+
+    gap:10px;
+
+    margin:14px 0;
+
+}
+
+.studio-tab{
+
+    flex:1;
+
+    height:46px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.05);
+
+    color:white;
+
+    cursor:pointer;
+
+}
+
+.studio-tab.active{
+
+    background:#f4b942;
+
+    color:#171717;
+
+}
+
+.studio-panel{
+
+    display:none;
+
+}
+
+.studio-panel.active-panel{
+
+    display:block;
+
+}
 }

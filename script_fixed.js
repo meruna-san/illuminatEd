@@ -989,13 +989,28 @@ document.addEventListener("click", function(e) {
 
     const menu = document.querySelector(".mobile-menu");
     const button = document.querySelector(".mobile-menu-btn");
-
-    if (
+});
+ if (
         menu.classList.contains("show") &&
         !menu.contains(e.target) &&
         !button.contains(e.target)
     ) {
         closeMobileMenu();
     }
+function showStudioTab(tab, button) {
 
-});
+    // remove active state from all buttons
+    document.querySelectorAll(".studio-tab")
+        .forEach(btn => btn.classList.remove("active"));
+
+    // activate clicked button
+    button.classList.add("active");
+
+    // hide all panels
+    document.querySelectorAll(".studio-panel")
+        .forEach(panel => panel.style.display = "none");
+
+    // show requested panel
+    const panel = document.getElementById("studio-" + tab);
+    if (panel) panel.style.display = "block";
+}

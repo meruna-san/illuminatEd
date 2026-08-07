@@ -242,8 +242,27 @@
                                 <button class="tri-arrow-btn" type="button" onclick="IlluminatEdThoughts.cycleGourmetPageColor(1)" title="Next Style">▼</button>
                             </div>
                         </div>
+                        <div class="studio-tabs">
 
-                        <div class="archive-section">
+    <button class="studio-tab"
+            onclick="showStudioTab('logbook', this)">
+        📖
+    </button>
+
+    <button class="studio-tab"
+            onclick="showStudioTab('aesthetics', this)">
+        🎨
+    </button>
+
+    <button class="studio-tab"
+            onclick="showStudioTab('receipt', this)">
+        🧾
+    </button>
+
+</div>
+
+                        <div class="archive-section studio-panel active-panel"
+                        id="studio-logbook">
                             <h4>Personal Logbook</h4>
 
                             <div class="title-box-container">
@@ -275,7 +294,7 @@
                             </div>
                         </div>
 
-                        <div class="archive-section">
+                        <div class="archive-section studio-panel" id="studio-aesthetics">
                             <h4>Aesthetics</h4>
                             <div class="design-matrix">
                                 <div class="matrix-row">
@@ -318,7 +337,7 @@
                             </div>
                         </div>
 
-                        <div class="archive-section receipt-log">
+                        <div class="archive-section receipt-log studio-panel" id="studio-receipt">
                             <h4>Receipt Log</h4>
                             <ul class="entry-history-list" id="history-shelf"></ul>
                         </div>
