@@ -989,14 +989,18 @@ document.addEventListener("click", function(e) {
 
     const menu = document.querySelector(".mobile-menu");
     const button = document.querySelector(".mobile-menu-btn");
-});
- if (
+
+    if (
+        menu &&
+        button &&
         menu.classList.contains("show") &&
         !menu.contains(e.target) &&
         !button.contains(e.target)
     ) {
         closeMobileMenu();
     }
+
+});
 function showStudioTab(tab, button) {
 
     // remove active state from all buttons
@@ -1006,6 +1010,8 @@ function showStudioTab(tab, button) {
     // activate clicked button
     button.classList.add("active");
 
+    startStudioParticles(button);
+
     // hide all panels
     document.querySelectorAll(".studio-panel")
         .forEach(panel => panel.style.display = "none");
@@ -1013,4 +1019,75 @@ function showStudioTab(tab, button) {
     // show requested panel
     const panel = document.getElementById("studio-" + tab);
     if (panel) panel.style.display = "block";
+}
+let studioSparkLoop = null;
+
+function stopStudioParticles(){
+
+    clearInterval(studioSparkLoop);
+
+}
+
+function startStudioParticles(button){
+
+    stopStudioParticles();
+
+    studioSparkLoop = setInterval(()=>{
+
+        const spark = document.createElement("div");
+        spark.className = "spark-particle";
+
+        const side = Math.floor(Math.random() * 4);
+
+switch(side){
+
+    // top
+    case 0:
+        spark.style.left = Math.random() * 100 + "%";
+        spark.style.top = "-4px";
+        break;
+
+    // right
+    case 1:
+        spark.style.left = "calc(100% + 4px)";
+        spark.style.top = Math.random() * 100 + "%";
+        break;
+
+    // bottom
+    case 2:
+        spark.style.left = Math.random() * 100 + "%";
+        spark.style.top = "calc(100% + 4px)";
+        break;
+
+    // left
+    case 3:
+        spark.style.left = "-4px";
+        spark.style.top = Math.random() * 100 + "%";
+        break;
+
+}
+
+        const angle = Math.random() * Math.PI * 2;
+const distance = 35 + Math.random() * 45;
+
+spark.style.setProperty(
+    "--x",
+    Math.cos(angle) * distance + "px"
+);
+
+spark.style.setProperty(
+    "--y",
+    Math.sin(angle) * distance + "px"
+);
+
+        button.appendChild(spark);
+
+        spark.addEventListener("animationend",()=>{
+
+            spark.remove();
+
+        });
+
+    },350);
+
 }

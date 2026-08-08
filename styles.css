@@ -183,6 +183,10 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
    THOUGHTS (INLINE STUDIO)
    ========================= */
 
+   .studio-tabs{
+    display: none;
+}
+
 /* Hide legacy unused iframe selectors */
 .thoughts-iframe-wrap,
 .thoughts-iframe { display:none; }

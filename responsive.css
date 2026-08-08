@@ -304,6 +304,7 @@
 ====================================== */
 
 .thoughts-workspace-container{
+    align-items:center;
 
     display:flex;
     flex-direction:column;
@@ -322,15 +323,18 @@ MOBILE THOUGHTS STUDIO
 
     order:-1;
 
-    width:100%!important;
-    max-width:none!important;
+    width:min(100%, 360px);
+    max-width:360px;
     min-width:0!important;
 
     transform:none!important;
 
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
+   .archive-sidebar{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+}
 
     gap:14px;
 
@@ -339,7 +343,16 @@ MOBILE THOUGHTS STUDIO
     background:none!important;
     border:none!important;
     box-shadow:none!important;
+    
+    align-items:center;
+    justify-content:center;
 
+}
+
+.archive-sidebar,
+.journal-card,
+#realistic-stage{
+    margin-inline:auto;
 }
 
 .archive-section{
@@ -369,11 +382,27 @@ MOBILE THOUGHTS STUDIO
 }
 
 .design-matrix{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    padding:12px 0;
 
-    padding:8px;
+}
+.studio-tab {
+    flex: 0 0 56px;   /* don't stretch */
+    width: 56px;
+    height: 56px;
 
-    gap:8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    border: none;
+    border-radius: 16px;
+
+    background: rgba(255,255,255,.05);
+    color: white;
+    cursor: pointer;
 }
 
 .entry-history-list{
@@ -384,9 +413,11 @@ MOBILE THOUGHTS STUDIO
 
 .journal-card{
 
-    width:100%!important;
+    width:min(100%, 360px);
 
-    min-width:0!important;
+    min-width:0;
+
+    margin-inline:auto;
 
     padding:24px;
 
@@ -462,4 +493,141 @@ MOBILE THOUGHTS STUDIO
     display:block;
 
 }
+.thoughts-controls {
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.thoughts-controls .toggle-sidebar-btn,
+.thoughts-controls .chronicle-btn {
+    padding: 0.7rem 1.05rem;
+    font-size: 0.76rem;
+    min-height: 46px;
+}
+.thoughts-controls {
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.thoughts-controls .toggle-sidebar-btn,
+.thoughts-controls .chronicle-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.75rem;
+}
+
+.thoughts-workspace-container {
+    padding-top: 24px;   /* instead of 90px */
+}
+
+/* ===========================
+STUDIO TABS ANIMATION
+=========================== */
+.studio-tab.active{
+    background:#f4b942;
+    color:#171717;
+
+    box-shadow:
+        0 0 10px rgba(244,185,66,.6),
+        0 0 25px rgba(244,185,66,.45),
+        0 0 45px rgba(244,185,66,.25);
+
+    animation: studioPulse 2.5s ease-in-out infinite;
+}
+.studio-tab.active::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-4px;
+
+    border-radius:20px;
+
+    border:1px solid rgba(255,220,90,.35);
+
+    filter:blur(2px);
+
+}
+.studio-tab.active{
+
+    transform:scale(1.08);
+
+}
+.studio-tab{
+    position: relative;
+}
+.spark-particle{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:rgba(255,226,140,.85);
+
+    backdrop-filter:blur(5px);
+
+    box-shadow:
+        0 0 8px rgba(255,220,120,.75),
+        0 0 18px rgba(255,220,120,.35);
+
+    pointer-events:none;
+
+    animation:sparkLife 1.8s linear forwards;
+
+}
+
+}
+@keyframes studioPulse{
+
+    0%,100%{
+        box-shadow:
+            0 0 8px rgba(244,185,66,.45),
+            0 0 22px rgba(244,185,66,.35),
+            0 0 38px rgba(244,185,66,.15);
+    }
+
+    50%{
+        box-shadow:
+            0 0 16px rgba(244,185,66,.8),
+            0 0 42px rgba(244,185,66,.55),
+            0 0 80px rgba(244,185,66,.25);
+    }
+
+}
+@keyframes sparkLife{
+
+    0%{
+
+        opacity:1;
+
+        transform:
+            translate(0,0)
+            scale(1);
+
+    }
+
+    70%{
+
+        opacity:.8;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+            translate(var(--x),var(--y))
+            scale(.2);
+
+    }
+
 }
