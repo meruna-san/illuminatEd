@@ -883,11 +883,29 @@ const IlluminatEdThoughts = (function(){
 
     function toggleChronicleMode() {
         isChronicleModeActive = !isChronicleModeActive;
+        const controls = document.getElementById("thoughts-controls");
+const chronicleBtn = controls?.querySelector(".chronicle-btn");
+const toggleBtn = controls?.querySelector(".toggle-sidebar-btn");
         if (realisticStage) {
     realisticStage.classList.toggle("show-mode", isChronicleModeActive);
     realisticStage.classList.toggle("grow-in", isChronicleModeActive);
 }
         if(workspace) workspace.style.display = isChronicleModeActive ? 'none' : 'flex';
+        if (chronicleBtn) {
+
+    chronicleBtn.textContent = isChronicleModeActive
+        ? "← Back to Studio"
+        : "View Chronicles";
+
+}
+
+if (toggleBtn) {
+
+    toggleBtn.style.display = isChronicleModeActive
+        ? "none"
+        : "";
+
+}
         if(isChronicleModeActive) renderSingleDeckContent();
     }
 
@@ -1014,11 +1032,14 @@ function showStudioTab(tab, button) {
 
     // hide all panels
     document.querySelectorAll(".studio-panel")
-        .forEach(panel => panel.style.display = "none");
+        .forEach(panel => panel.classList.remove("active-panel"));
 
     // show requested panel
     const panel = document.getElementById("studio-" + tab);
-    if (panel) panel.style.display = "block";
+
+    if (panel) {
+        panel.classList.add("active-panel");
+    }
 }
 let studioSparkLoop = null;
 
