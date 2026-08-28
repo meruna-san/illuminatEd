@@ -571,6 +571,7 @@ window.handleItemCompletion = function(checkboxElement) {
         const isSpamShieldClean = checkAntiSpamValidity(processingContentString);
 
         if (isSpamShieldClean) {
+            ActivityTracker.addTask(processingContentString);
             advanceAstronomicalProgress();
             verifyStreakIntegrity(true);
         } else {
@@ -750,7 +751,21 @@ const IlluminatEdThoughts = (function(){
                 const item = document.createElement('div');
                 item.className = 'history-item';
                 item.style.cssText = "padding: 8px 12px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer;";
-                item.innerHTML = `<strong>DAY ${idx + 1}</strong> <small style="opacity:0.6;">${entry.date || ''}</small>`;
+                item.innerHTML = `
+<div class="receipt-day">
+    DAY ${String(idx + 1).padStart(2,"0")}
+</div>
+
+<div class="receipt-date">
+    ${(entry.date || "").toUpperCase()}
+</div>
+
+<div class="receipt-divider"></div>
+
+<div class="receipt-meta">
+    ARCHIVED ENTRY
+</div>
+`;
                 item.onclick = () => loadEntryForEditing(idx);
                 historyShelf.appendChild(item);
             });
