@@ -707,6 +707,17 @@ const IlluminatEdThoughts = (function(){
     let isChronicleModeActive = false;
     let singleChronicleIndex = 0;
 
+    // MIGRATION: convert old string entries to array-of-parts
+compiledBookEntries = compiledBookEntries.map(entry => {
+    if (typeof entry.text === 'string') {
+        // split old entries on the em-dash separator
+        const parts = entry.text.split(/\n*— — —\n*/).map(p => p.trim()).filter(Boolean);
+        return { text: parts.length ? parts : [entry.text], date: entry.date };
+    }
+    return entry; // already array
+});
+Storage.save('entries', compiledBookEntries);
+
     // Elements
     const input = document.getElementById('journal-input');
     const overlay = document.getElementById('quote-placeholder');
@@ -773,24 +784,35 @@ const IlluminatEdThoughts = (function(){
     }
 
     function loadEntryForEditing(idx) {
-        if(idx < 0 || idx >= compiledBookEntries.length) return;
-        currentViewingPageIndex = idx;
-        const entry = compiledBookEntries[idx];
-        if(input) input.value = entry.text || '';
-        if(bookMirrorText) bookMirrorText.textContent = entry.text || '...';
-        if(overlay) overlay.style.opacity = entry.text ? '0' : '1';
-        if(stamp) stamp.textContent = `DAY ${idx + 1} (EDITING)`;
-        updatePageIndicator();
+    if(idx < 0 || idx >= compiledBookEntries.length) return;
+    currentViewingPageIndex = idx;
+    const entry = compiledBookEntries[idx];
+
+    const parts = Array.isArray(entry.text) ? entry.text : [entry.text || ''];
+
+    if(input) {
+        input.innerHTML = parts
+            .map(p => `<div class="entry-part">${String(p)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>')}</div>`)
+            .join('<hr class="entry-divider" contenteditable="false">');
     }
+    if(bookMirrorText) bookMirrorText.textContent = parts.join('\n\n') || '...';
+    if(overlay) overlay.style.opacity = parts.join('').trim() ? '0' : '1';
+    if(stamp) stamp.textContent = `DAY ${idx + 1} (EDITING)`;
+    updatePageIndicator();
+}
 
     function resetInputWorkspace(){
-        if(input) input.value = '';
-        if(bookMirrorText) bookMirrorText.textContent = '...';
-        if(overlay) overlay.style.opacity = '1';
-        currentViewingPageIndex = -1;
-        if(stamp) stamp.textContent = getCurrentActiveDayLabel();
-        updatePageIndicator();
-    }
+    if(input) input.innerHTML = '';
+    if(bookMirrorText) bookMirrorText.textContent = '...';
+    if(overlay) overlay.style.opacity = '1';
+    currentViewingPageIndex = -1;
+    if(stamp) stamp.textContent = getCurrentActiveDayLabel();
+    updatePageIndicator();
+}
 
     function renderSingleDeckContent(){
         if(!deckCardContainer || !transitionWrapper || !chroniclePageDisplay) return;
@@ -821,14 +843,18 @@ const IlluminatEdThoughts = (function(){
         chroniclePageDisplay.textContent = `${singleChronicleIndex} / ${compiledBookEntries.length}`;
 
         const entry = compiledBookEntries[singleChronicleIndex - 1];
-        const entryBodyText = `[ DAY ${singleChronicleIndex} ]\n\n${entry ? entry.text : 'No data collected.'}`;
+const parts = entry && Array.isArray(entry.text)
+    ? entry.text
+    : (entry ? [entry.text] : ['No data collected.']);
 
-        transitionWrapper.innerHTML = `
-            <div class="page-header-real" style="color: ${currentPalette.text}; opacity: 0.7; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 8px; margin-bottom: 12px; font-weight:600;">${currentTitle}</div>
-            <div id="inner-deck-body" class="page-body-real" style="color: ${currentPalette.text}; whitespace: pre-wrap; line-height: 1.6;"></div>
-        `;
-        const inner = document.getElementById('inner-deck-body');
-        if(inner) inner.textContent = entryBodyText;
+const bodyHtml = parts
+    .map(p => `<div class="chronicle-part" style="white-space: pre-wrap; line-height: 1.6;">${p.replace(/</g, '&lt;')}</div>`)
+    .join('<hr class="entry-divider">');
+
+transitionWrapper.innerHTML = `
+    <div class="page-header-real" style="color: ${currentPalette.text}; opacity: 0.7; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 8px; margin-bottom: 12px; font-weight:600;">${currentTitle}</div>
+    <div id="inner-deck-body" class="page-body-real" style="color: ${currentPalette.text};">[ DAY ${singleChronicleIndex} ]<br><br>${bodyHtml}</div>
+`;
     }
 
     function applyCoverPreset(backgroundStyle, textureStyle){
@@ -864,28 +890,82 @@ const IlluminatEdThoughts = (function(){
         renderSingleDeckContent();
     }
 
-    function commitCurrentDayLog() {
-        const text = input ? input.value.trim() : '';
-        if(!text) {
-            alert("Please write a log entry before committing!");
-            return;
-        }
-        const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    function extractPartsFromEditor(el) {
+    if (!el) return [];
 
-        if(currentViewingPageIndex !== -1) {
-            compiledBookEntries[currentViewingPageIndex] = { text: text, date: todayStr };
-        } else {
-            compiledBookEntries.push({ text: text, date: todayStr });
-        }
+    const parts = [];
+    let current = '';
 
-        Storage.save('entries', compiledBookEntries);
-        updateHistoryUI();
-        resetInputWorkspace();
-        updateRandomQuote();
+    const flush = () => {
+        const trimmed = current.trim();
+        if (trimmed) parts.push(trimmed);
+        current = '';
+    };
 
-        singleChronicleIndex = compiledBookEntries.length;
-        renderSingleDeckContent();
+    const walk = (node) => {
+        node.childNodes.forEach(child => {
+            if (child.nodeType === 1) {
+                // element node
+                if (child.tagName === 'HR' && child.classList.contains('entry-divider')) {
+                    flush();
+                } else if (child.tagName === 'BR') {
+                    current += '\n';
+                } else if (child.tagName === 'DIV' || child.tagName === 'P') {
+                    // block → treat as line break before/after
+                    if (current && !current.endsWith('\n')) current += '\n';
+                    walk(child);
+                    if (current && !current.endsWith('\n')) current += '\n';
+                } else {
+                    walk(child);
+                }
+            } else if (child.nodeType === 3) {
+                // text node
+                current += child.textContent;
+            }
+        });
+    };
+
+    walk(el);
+    flush();
+
+    return parts;
+}
+
+   function commitCurrentDayLog() {
+    const parts = extractPartsFromEditor(input);
+
+    if(parts.length === 0) {
+        alert("Please write a log entry before committing!");
+        return;
     }
+
+    const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+    if(currentViewingPageIndex !== -1) {
+        compiledBookEntries[currentViewingPageIndex] = { text: parts, date: todayStr };
+    } else {
+        const lastIndex = compiledBookEntries.length - 1;
+        const lastEntry = lastIndex >= 0 ? compiledBookEntries[lastIndex] : null;
+
+        if(lastEntry && lastEntry.date === todayStr) {
+            const lastParts = Array.isArray(lastEntry.text) ? lastEntry.text : [lastEntry.text];
+            compiledBookEntries[lastIndex] = {
+                text: [...lastParts, ...parts],
+                date: todayStr
+            };
+        } else {
+            compiledBookEntries.push({ text: parts, date: todayStr });
+        }
+    }
+
+    Storage.save('entries', compiledBookEntries);
+    updateHistoryUI();
+    resetInputWorkspace();
+    updateRandomQuote();
+
+    singleChronicleIndex = compiledBookEntries.length;
+    renderSingleDeckContent();
+}
 
     function turnSingleChronicleDeck(direction) {
         const maxIndex = compiledBookEntries.length;
@@ -953,7 +1033,7 @@ if (toggleBtn) {
 
     if(input){
         input.oninput = () => {
-            const v = input.value;
+            const v = input.innerText || '';
             if(v && v.length > 0){
                 if(overlay) overlay.style.opacity = '0';
                 if(bookMirrorText) bookMirrorText.textContent = v;
