@@ -783,6 +783,70 @@ Storage.save('entries', compiledBookEntries);
         if(bookCount) bookCount.textContent = `${compiledBookEntries.length} ENTRIES`;
     }
 
+    function updateMobilePastButtonState() {
+    const pastBtn = document.getElementById('mobile-past-btn');
+    const commitBtn = document.getElementById('commit-day-btn');
+    if (!pastBtn) return;
+
+    if (currentViewingPageIndex === -1) {
+        pastBtn.textContent = '◀ PAST';
+        if (commitBtn) commitBtn.style.display = '';
+    } else {
+        pastBtn.textContent = 'NOW ▶';
+        if (commitBtn) commitBtn.style.display = 'none';
+    }
+}
+
+function handleMobilePastButton() {
+    if (currentViewingPageIndex === -1) {
+        openMobileHistory();
+    } else {
+        resetInputWorkspace();
+    }
+}
+
+function openMobileHistory() {
+    const overlay = document.getElementById('mobile-history-overlay');
+    if (!overlay) return;
+    updateMobileHistoryUI();
+    overlay.classList.add('open');
+}
+
+function closeMobileHistory(event) {
+    const overlay = document.getElementById('mobile-history-overlay');
+    if (!overlay) return;
+    if (event && event.target !== overlay) return;
+    overlay.classList.remove('open');
+}
+
+function updateMobileHistoryUI() {
+    const list = document.getElementById('mobile-history-list');
+    if (!list) return;
+
+    list.innerHTML = '';
+    if (compiledBookEntries.length === 0) {
+        list.innerHTML = `<div style="text-align:center;color:#666;padding:2rem 0;font-style:italic;">No past entries yet.</div>`;
+        return;
+    }
+
+    compiledBookEntries.forEach((entry, idx) => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+            <div class="receipt-day">DAY ${String(idx + 1).padStart(2, "0")}</div>
+            <div class="receipt-date">${(entry.date || "").toUpperCase()}</div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-meta">TAP TO EDIT</div>
+        `;
+        item.onclick = () => {
+            loadEntryForEditing(idx);
+            closeMobileHistory();
+            updateMobilePastButtonState();
+        };
+        list.appendChild(item);
+    });
+}
+
     function loadEntryForEditing(idx) {
     if(idx < 0 || idx >= compiledBookEntries.length) return;
     currentViewingPageIndex = idx;
@@ -803,6 +867,7 @@ Storage.save('entries', compiledBookEntries);
     if(overlay) overlay.style.opacity = parts.join('').trim() ? '0' : '1';
     if(stamp) stamp.textContent = `DAY ${idx + 1} (EDITING)`;
     updatePageIndicator();
+    updateMobilePastButtonState();
 }
 
     function resetInputWorkspace(){
@@ -812,6 +877,7 @@ Storage.save('entries', compiledBookEntries);
     currentViewingPageIndex = -1;
     if(stamp) stamp.textContent = getCurrentActiveDayLabel();
     updatePageIndicator();
+    updateMobilePastButtonState();
 }
 
     function renderSingleDeckContent(){
@@ -1072,7 +1138,11 @@ if (toggleBtn) {
         turnSingleChronicleDeck,
         commitCurrentDayLog,
         updateHistoryUI,
-        resetInputWorkspace
+        resetInputWorkspace,
+        handleMobilePastButton,
+        openMobileHistory,
+        closeMobileHistory,
+        updateMobileHistoryUI
     };
 })();
 

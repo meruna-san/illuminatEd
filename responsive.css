@@ -474,4 +474,17 @@
         0 8px 25px rgba(0, 0, 0, 0.55),
         0 0 18px rgba(244, 185, 66, 0.3);
 }
+
+    .thoughts-workspace-container .journal-card .textarea-container {
+        min-height: 320px;
+    }
+
+    .thoughts-workspace-container #journal-input {
+        min-height: 240px;
+    }
+
+    .thoughts-workspace-container .journal-card {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
 }

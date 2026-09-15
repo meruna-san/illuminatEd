@@ -355,8 +355,9 @@
                         </div>
 
                         <div class="commit-row">
-                            <button class="commit-btn" type="button" onclick="IlluminatEdThoughts.commitCurrentDayLog()">💾 COMMIT DAY</button>
-                        </div>
+    <button class="mobile-past-btn" type="button" id="mobile-past-btn" onclick="IlluminatEdThoughts.handleMobilePastButton()">◀ PAST</button>
+    <button class="commit-btn" type="button" id="commit-day-btn" onclick="IlluminatEdThoughts.commitCurrentDayLog()">💾 COMMIT DAY</button>
+</div>
                     </div>
                 </div>
 
@@ -372,6 +373,15 @@
                     </div>
                 </div>
             </div>
+                    <div id="mobile-history-overlay" class="mobile-history-overlay" onclick="IlluminatEdThoughts.closeMobileHistory(event)">
+            <div class="mobile-history-sheet" onclick="event.stopPropagation()">
+                <div class="mobile-history-header">
+                    <span>PAST ENTRIES</span>
+                    <button class="mobile-history-close" type="button" onclick="IlluminatEdThoughts.closeMobileHistory()">✕</button>
+                </div>
+                <div class="mobile-history-list" id="mobile-history-list"></div>
+            </div>
+        </div>
         </section>
     </main>
 </body>
