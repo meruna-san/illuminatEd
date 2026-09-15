@@ -721,7 +721,6 @@ const IlluminatEdThoughts = (function(){
     const workspace = document.getElementById('workspace');
     const bookTitleInput = document.getElementById('book-title');
     const bookLeftTitleRender = document.getElementById('book-left-title-render');
-
     const realisticStage = document.getElementById('realistic-stage');
     const deckCardContainer = document.getElementById('deck-card-container');
     const transitionWrapper = document.getElementById('transition-wrapper');
@@ -927,7 +926,6 @@ if (toggleBtn) {
     function toggleFocusMode() {
         if(workspace) workspace.classList.toggle('focus-mode');
     }
-
     function triggerPageTurnAnimation(direction) {
         if(currentViewingPageIndex === -1 && direction < 0) {
             if(compiledBookEntries.length > 0) loadEntryForEditing(compiledBookEntries.length - 1);
@@ -985,7 +983,6 @@ if (toggleBtn) {
         updateRandomQuote();
         renderSingleDeckContent();
     })();
-
     return {
         toggleFocusMode,
         toggleChronicleMode,

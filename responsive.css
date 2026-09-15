@@ -315,319 +315,163 @@
 
 }
 
-/* ===========================
-MOBILE THOUGHTS STUDIO
-=========================== */
-
-.archive-sidebar{
-
-    order:-1;
-
-    width:min(100%, 360px);
-    max-width:360px;
-    min-width:0!important;
-
-    transform:none!important;
-
-   .archive-sidebar{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:18px;
+/* HIDE THOUGHTS STUDIO ON MOBILE */
+.archive-sidebar {
+    display: none !important;
 }
 
-    gap:14px;
+/* =========================
+   MOBILE THOUGHTS CLEANUP
+========================= */
 
-    padding:0;
-
-    background:none!important;
-    border:none!important;
-    box-shadow:none!important;
-    
-    align-items:center;
-    justify-content:center;
-
+/* Remove "Close Studio" on mobile */
+.thoughts-controls .toggle-sidebar-btn {
+    display: none !important;
 }
 
-.archive-sidebar,
-.journal-card,
-#realistic-stage{
-    margin-inline:auto;
+/* Center Chronicles */
+.thoughts-controls .chronicle-btn {
+    display: block;
+    width: fit-content;
+    margin-inline: auto;
 }
 
-.archive-section{
-
-    padding:16px;
-
-    min-height:120px;
-
-    border-radius:18px;
-
-    background:rgba(255,255,255,.05);
-
-    border:1px solid rgba(255,255,255,.08);
-
+/* Bring the journal closer to the controls */
+.thoughts-workspace-container {
+    padding-top: 24px;
 }
 
-.book-view-wrapper{
-    display:none;
+/* =========================================
+   MOBILE CHRONICLES MENU
+========================================= */
+
+/* The Chronicles area becomes the positioning anchor */
+#realistic-stage {
+    position: relative;
 }
 
-.page-turner-ui{
-    display:none;
-}
+/* Floating pencil button */
+.chronicle-pencil-btn {
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
 
-#book-count{
-    display:none;
-}
-
-.design-matrix{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    padding:12px 0;
-
-}
-.studio-tab {
-    flex: 0 0 56px;   /* don't stretch */
-    width: 56px;
-    height: 56px;
+    width: 58px;
+    height: 58px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: none;
-    border-radius: 16px;
+    padding: 0;
 
-    background: rgba(255,255,255,.05);
-    color: white;
+    background: #151515;
+    border: 1px solid rgba(244, 185, 66, 0.65);
+    border-radius: 50%;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.55),
+        0 0 18px rgba(244, 185, 66, 0.12);
+
     cursor: pointer;
+    z-index: 20;
 }
 
-.entry-history-list{
-
-    max-height:90px;
-
+/* Pencil SVG */
+.chronicle-pencil-btn img {
+    width: 30px;
+    height: 30px;
+    display: block;
 }
 
-.journal-card{
+/* Popup menu — hidden by default */
+.chronicle-menu {
+    position: absolute;
 
-    width:min(100%, 360px);
+    right: 58px;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
 
-    min-width:0;
+    width: 155px;
 
-    margin-inline:auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 
-    padding:24px;
+    padding: 10px;
 
-}
-
-.textarea-container{
-
-    min-height:600px;
-
-}
-
-#journal-input{
-
-    min-height:540px;
-
-}
-
-#realistic-stage{
-
-    max-width:360px;
-
-}
-
-#realistic-stage .single-deck-card{
-
-    min-height:500px;
-
-}
-.studio-tabs{
-
-    display:flex;
-
-    gap:10px;
-
-    margin:14px 0;
-
-}
-
-.studio-tab{
-
-    flex:1;
-
-    height:46px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:rgba(255,255,255,.05);
-
-    color:white;
-
-    cursor:pointer;
-
-}
-
-.studio-tab.active{
-
-    background:#f4b942;
-
-    color:#171717;
-
-}
-
-.studio-panel{
-
-    display:none;
-
-}
-
-.studio-panel.active-panel{
-
-    display:block;
-
-}
-.thoughts-controls {
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.thoughts-controls .toggle-sidebar-btn,
-.thoughts-controls .chronicle-btn {
-    padding: 0.7rem 1.05rem;
-    font-size: 0.76rem;
-    min-height: 46px;
-}
-.thoughts-controls {
-    margin-bottom: 12px;
-    gap: 10px;
-}
-
-.thoughts-controls .toggle-sidebar-btn,
-.thoughts-controls .chronicle-btn {
-    padding: 0.7rem 1rem;
-    font-size: 0.75rem;
-}
-
-.thoughts-workspace-container {
-    padding-top: 24px;   /* instead of 90px */
-}
-
-/* ===========================
-STUDIO TABS ANIMATION
-=========================== */
-.studio-tab.active{
-    background:#f4b942;
-    color:#171717;
+    background: #151515;
+    border: 1px solid rgba(244, 185, 66, 0.55);
+    border-radius: 18px;
 
     box-shadow:
-        0 0 10px rgba(244,185,66,.6),
-        0 0 25px rgba(244,185,66,.45),
-        0 0 45px rgba(244,185,66,.25);
+        0 15px 40px rgba(0, 0, 0, 0.65),
+        0 0 25px rgba(244, 185, 66, 0.08);
 
-    animation: studioPulse 2.5s ease-in-out infinite;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0.25s ease;
+
+    z-index: 30;
 }
-.studio-tab.active::after{
 
-    content:"";
+/* Individual menu options */
+.chronicle-menu-item {
+    width: 100%;
 
-    position:absolute;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-    inset:-4px;
+    padding: 12px 10px;
 
-    border-radius:20px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
 
-    border:1px solid rgba(255,220,90,.35);
+    color: #eeeeee;
 
-    filter:blur(2px);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
 
+    text-align: left;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
-.studio-tab.active{
 
-    transform:scale(1.08);
-
+.chronicle-menu-item span:first-child {
+    width: 24px;
+    text-align: center;
+    font-size: 1.05rem;
 }
-.studio-tab{
-    position: relative;
+
+.chronicle-menu-item:hover {
+    background: rgba(244, 185, 66, 0.1);
+    color: #f4b942;
 }
-.spark-particle{
 
-    position:absolute;
+/* OPEN STATE */
+.chronicle-menu.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 
-    left:50%;
-    top:50%;
+    transform: translateY(-50%) translateX(0);
+}
 
-    transform:translate(-50%,-50%);
-
-    width:5px;
-    height:5px;
-
-    border-radius:50%;
-
-    background:rgba(255,226,140,.85);
-
-    backdrop-filter:blur(5px);
-
+/* Pencil gets a tiny active glow */
+.chronicle-pencil-btn.open {
     box-shadow:
-        0 0 8px rgba(255,220,120,.75),
-        0 0 18px rgba(255,220,120,.35);
-
-    pointer-events:none;
-
-    animation:sparkLife 1.8s linear forwards;
-
+        0 8px 25px rgba(0, 0, 0, 0.55),
+        0 0 18px rgba(244, 185, 66, 0.3);
 }
-
-}
-@keyframes studioPulse{
-
-    0%,100%{
-        box-shadow:
-            0 0 8px rgba(244,185,66,.45),
-            0 0 22px rgba(244,185,66,.35),
-            0 0 38px rgba(244,185,66,.15);
-    }
-
-    50%{
-        box-shadow:
-            0 0 16px rgba(244,185,66,.8),
-            0 0 42px rgba(244,185,66,.55),
-            0 0 80px rgba(244,185,66,.25);
-    }
-
-}
-@keyframes sparkLife{
-
-    0%{
-
-        opacity:1;
-
-        transform:
-            translate(0,0)
-            scale(1);
-
-    }
-
-    70%{
-
-        opacity:.8;
-
-    }
-
-    100%{
-
-        opacity:0;
-
-        transform:
-            translate(var(--x),var(--y))
-            scale(.2);
-
-    }
-
 }
