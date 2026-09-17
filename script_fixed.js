@@ -1274,3 +1274,137 @@ spark.style.setProperty(
     },350);
 
 }
+// ==========================================
+// SLEEP NOTIFICATION (12AM – 4AM)
+// ==========================================
+
+const SLEEP_MESSAGES = [
+    "The stars are out. Your mind needs sleep to remember what you learned today. Rest — you can pick this up tomorrow.",
+    "It's late. The best students aren't the ones who never stop — they're the ones who know when to rest.",
+    "Nothing you learn at 2 AM will stick like it would tomorrow morning. Sleep is part of the work.",
+    "The embers are dimming. Step away, breathe, sleep. Your future self will thank you.",
+    "You've done enough for today. Rest is not laziness — it's strategy."
+];
+
+function isLateNight() {
+    const hour = new Date().getHours();
+    return hour >= 0 && hour < 4;
+}
+
+function pickSleepMessage() {
+    return SLEEP_MESSAGES[Math.floor(Math.random() * SLEEP_MESSAGES.length)];
+}
+
+function isMobileViewport() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+let sleepToastTimer = null;
+
+function showSleepToast() {
+    const toast = document.getElementById('sleep-toast');
+    const backdrop = document.getElementById('sleep-toast-backdrop');
+    const textEl = document.getElementById('sleep-toast-text');
+    if (!toast) return;
+
+    if (textEl) textEl.textContent = pickSleepMessage();
+
+    if (backdrop) backdrop.classList.add('open');
+
+    toast.classList.remove('dismissing');
+    toast.classList.add('open');
+
+    clearTimeout(sleepToastTimer);
+    sleepToastTimer = setTimeout(() => {
+        dismissSleepToast();
+    }, 9000);
+}
+
+function dismissSleepToast() {
+    const toast = document.getElementById('sleep-toast');
+    const backdrop = document.getElementById('sleep-toast-backdrop');
+    if (!toast) return;
+
+    toast.classList.remove('open');
+    toast.classList.add('dismissing');
+    if (backdrop) backdrop.classList.remove('open');
+
+    clearTimeout(sleepToastTimer);
+
+    setTimeout(() => {
+        toast.classList.remove('dismissing');
+    }, 600);
+}
+
+window.tapSleepToast = function() {
+    // tap → dismiss toast AND show the full modal (mobile users get the ritual card too)
+    dismissSleepToast();
+
+    // temporarily force the modal to show even on mobile for this one tap
+    const modal = document.getElementById('sleep-modal');
+    const textEl = document.getElementById('sleep-modal-text');
+    if (!modal) return;
+
+    if (textEl) textEl.textContent = pickSleepMessage();
+
+    modal.classList.add('open');
+    modal.classList.add('force-show');
+
+    // remove the force-show class once closed
+    const observer = new MutationObserver(() => {
+        if (!modal.classList.contains('open')) {
+            modal.classList.remove('force-show');
+            observer.disconnect();
+        }
+    });
+    observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+};
+
+function showSleepModal() {
+    const modal = document.getElementById('sleep-modal');
+    const textEl = document.getElementById('sleep-modal-text');
+    if (!modal) return;
+
+    if (textEl) textEl.textContent = pickSleepMessage();
+
+    modal.classList.add('open');
+}
+
+window.closeSleepModal = function() {
+    const modal = document.getElementById('sleep-modal');
+    if (!modal) return;
+    if (modal.classList.contains('closing')) return;
+
+    modal.classList.add('closing');
+
+    setTimeout(() => {
+        modal.classList.remove('open');
+        modal.classList.remove('closing');
+    }, 600);
+};
+
+// Override the mobile CSS hide when force-show is on
+const sleepStyle = document.createElement('style');
+sleepStyle.textContent = `
+    @media (max-width: 768px) {
+        .sleep-modal.force-show.open {
+            display: flex !important;
+        }
+    }
+`;
+document.head.appendChild(sleepStyle);
+
+// Trigger on load
+(function initSleepCheck() {
+    if (!isLateNight()) return;
+    if (sessionStorage.getItem('sleep_modal_shown') === 'true') return;
+
+    setTimeout(() => {
+        if (isMobileViewport()) {
+            showSleepToast();
+        } else {
+            showSleepModal();
+        }
+        sessionStorage.setItem('sleep_modal_shown', 'true');
+    }, 1200);
+})();

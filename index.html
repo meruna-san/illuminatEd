@@ -384,5 +384,27 @@
         </div>
         </section>
     </main>
+    <div id="sleep-modal" class="sleep-modal">
+    <div class="sleep-modal-card">
+        <div class="sleep-modal-icon">🌙</div>
+        <h2 class="sleep-modal-title">IT'S LATE</h2>
+        <p class="sleep-modal-text" id="sleep-modal-text">
+            The stars are out. Your mind needs sleep to remember what you learned today. Rest — you can pick this up tomorrow.
+        </p>
+        <button class="sleep-modal-btn" type="button" onclick="closeSleepModal()">
+            I'LL SLEEP SOON
+        </button>
+    </div>
+</div>
+<div id="sleep-toast-backdrop" class="sleep-toast-backdrop"></div>
+<div id="sleep-toast" class="sleep-toast" onclick="tapSleepToast()">
+    <div class="sleep-toast-icon">🌙</div>
+    <div class="sleep-toast-body">
+        <div class="sleep-toast-title">IT'S LATE</div>
+        <div class="sleep-toast-text" id="sleep-toast-text">
+            The stars are out. Rest — you can pick this up tomorrow.
+        </div>
+    </div>
+</div>
 </body>
 </html>
