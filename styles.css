@@ -1435,3 +1435,135 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
         opacity: 0.4;
     }
 }
+
+/* =========================
+   LOGIN SCREEN
+========================= */
+
+#login-page.page {
+    display: none;
+    padding: 0;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+#login-page.page.active {
+    display: flex;
+}
+
+.login-shell {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 204, 0, 0.15);
+    border-radius: 28px;
+    padding: 3rem 2rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(255, 204, 0, 0.06);
+    text-align: center;
+    animation: loginCardIn 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes loginCardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    letter-spacing: 8px;
+    color: var(--accent);
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+}
+
+.login-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0 0 2rem 0;
+}
+
+.login-toggle {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.login-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #555;
+    padding: 10px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+.login-tab.active {
+    color: var(--accent);
+    background: rgba(255, 204, 0, 0.1);
+}
+
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#auth-email, #auth-password {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: white;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+#auth-email:focus, #auth-password:focus {
+    border-color: var(--accent);
+}
+
+.auth-error {
+    color: #ff5555;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 1em;
+    text-align: left;
+    padding-left: 4px;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+}

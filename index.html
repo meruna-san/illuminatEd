@@ -115,6 +115,29 @@
 
 </div>
 
+<section id="login-page" class="page active">
+    <div class="login-shell">
+        <div class="login-card">
+            <h1 class="login-logo">IlluminatEd</h1>
+            <p class="login-tagline">Focus. Build. Illuminate.</p>
+
+            <div class="login-toggle">
+                <button id="tab-signin" class="login-tab active" onclick="switchAuthTab('signin')">Sign In</button>
+                <button id="tab-signup" class="login-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <form id="login-form" onsubmit="handleAuthSubmit(event)">
+                <input type="email" id="auth-email" placeholder="Email" autocomplete="email" required>
+                <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password" required minlength="6">
+                <div id="auth-error" class="auth-error"></div>
+                <button type="submit" id="auth-submit" class="glow-button auth-submit">SIGN IN</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<main id="main-content">
+    <section id="home-page" class="page">
 
     <main id="main-content">
         <section id="home-page" class="page active">
