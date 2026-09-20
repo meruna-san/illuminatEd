@@ -115,7 +115,7 @@
 
 </div>
 
-<section id="login-page" class="page active">
+<section id="login-page" class="page">
     <div class="login-shell">
         <div class="login-card">
             <h1 class="login-logo">IlluminatEd</h1>
@@ -136,12 +136,171 @@
     </div>
 </section>
 
+<section id="story-page" class="page active">
+    <canvas id="story-stars"></canvas>
+
+    <section class="story-section" data-align="center">
+    <div class="story-inner">
+        <h1 class="story-logo reveal">IlluminatEd</h1>
+        <p class="story-tagline reveal">Turn your consistency into a constellation.</p>
+        <button class="illuminate-btn" onclick="showAppPage()">✦ ILLUMINATE TODAY</button>
+        <div class="story-scroll-hint reveal">scroll ↓</div>
+    </div>
+</section>
+    <section class="story-section" data-align="center">
+        <div class="story-inner">
+            <p class="story-label reveal">๋࣭ ⭑ the problem ๋࣭ ⭑</p>
+            <p class="story-big reveal">You don't need another study app.</p>
+            <p class="story-big reveal story-delay-1">You need a reason to keep showing up.</p>
+            <p class="story-small reveal story-delay-2">Spoiler: the problem was never you.</p>
+        </div>
+    </section>
+
+    <section class="story-section" data-align="center">
+        <div class="story-inner">
+            <p class="story-label reveal">๋࣭ ⭑ the shift ๋࣭ ⭑</p>
+            <p class="story-big reveal">What if showing up felt like building something?</p>
+            <p class="story-small reveal story-delay-1">Not tracking. <em>Building.</em></p>
+        </div>
+    </section>
+
+    <section class="story-section story-evidence" data-align="center">
+        <div class="story-inner">
+            <p class="story-label reveal">๋࣭ ⭑ the evidence ๋࣭ ⭑</p>
+            <p class="story-big reveal">We didn't guess. We read the papers.</p>
+            <p class="story-small reveal story-delay-1">Tap a card to see the research behind it.</p>
+            <div class="evidence-grid reveal story-delay-2" id="evidence-grid"></div>
+        </div>
+    </section>
+
+   <!-- INSIDE THE APP — Interactive Previews -->
+<section class="story-section story-previews" data-align="center">
+    <div class="story-inner">
+        <p class="story-label reveal">๋࣭ ⭑ inside the app ๋࣭ ⭑</p>
+        <p class="story-big reveal">A little sneak peek.</p>
+        <p class="story-small reveal story-delay-1">The real one is better.</p>
+
+        <!-- 01 · TIMER -->
+        <div class="preview-card preview-left reveal" data-preview="timer">
+            <div class="preview-text">
+                <div class="preview-num">01</div>
+                <div class="preview-title">A timer that respects your brain</div>
+                <div class="preview-desc">25 minutes. One task. Then a break. Small windows, real progress.</div>
+            </div>
+            <div class="preview-visual">
+                <div class="mini-timer">
+                    <div class="mini-timer-mode">FOCUS</div>
+                    <div class="mini-timer-display" id="preview-timer-display">25:00</div>
+                    <div class="mini-timer-bar"><div class="mini-timer-bar-fill" id="preview-timer-fill"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 02 · JOURNAL -->
+        <div class="preview-card preview-right reveal" data-preview="journal">
+            <div class="preview-visual">
+                <div class="mini-journal">
+                    <div class="mini-journal-header">THOUGHTS</div>
+                    <div class="mini-journal-date">DAY 04</div>
+                    <div class="mini-journal-body" id="preview-journal-body"></div>
+                </div>
+            </div>
+            <div class="preview-text">
+                <div class="preview-num">02</div>
+                <div class="preview-title">A journal that remembers</div>
+                <div class="preview-desc">Write once. Come back later. Everything you wrote stays, exactly where you left it.</div>
+            </div>
+        </div>
+
+        <!-- 03 · CONSTELLATION -->
+<div class="preview-card preview-left reveal" data-preview="constellation">
+    <div class="preview-text">
+        <div class="preview-num">03</div>
+        <div class="preview-title">A sky you built</div>
+        <div class="preview-desc">Every task lights a star. Enough days — a constellation. You don't break constellations. You finish them.</div>
+    </div>
+    <div class="preview-visual">
+        <div class="mini-constellation">
+            <canvas id="preview-constellation-canvas"></canvas>
+            <div class="mini-constellation-label">CASSIOPEIA</div>
+        </div>
+    </div>
+</div>
+
+<!-- 04 · LAUNCHPAD -->
+<div class="preview-card preview-left reveal" data-preview="launchpad">
+    <div class="preview-text">
+        <div class="preview-num">04</div>
+        <div class="preview-title">Opportunities you didn't know existed</div>
+        <div class="preview-desc">Multiple competitions, programs, and scholarships — in one place. Most students never find out in time.</div>
+    </div>
+    <div class="preview-visual">
+        <div class="mini-launchpad">
+            <div class="mini-launchpad-header">LAUNCHPAD</div>
+            <div class="mini-launchpad-scroll" id="preview-launchpad-scroll"></div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</section>
+
+    <section class="story-section" data-align="center">
+        <div class="story-inner">
+            <p class="story-label reveal">๋࣭ ⭑ the quiet part ๋࣭ ⭑</p>
+            <p class="story-big reveal">It even tells you to go to sleep.</p>
+            <p class="story-small reveal story-delay-1">Because we mean it when we say we care about you.</p>
+        </div>
+    </section>
+
+    <section class="story-section story-manifesto" data-align="center">
+
+    <div class="manifesto-constellations">
+        <div class="manifesto-card"><canvas class="manifesto-canvas" id="manifesto-canvas-1"></canvas></div>
+        <div class="manifesto-card"><canvas class="manifesto-canvas" id="manifesto-canvas-2"></canvas></div>
+        <div class="manifesto-card"><canvas class="manifesto-canvas" id="manifesto-canvas-3"></canvas></div>
+        <div class="manifesto-card"><canvas class="manifesto-canvas" id="manifesto-canvas-4"></canvas></div>
+    </div>
+
+    <div class="story-inner" style="position: relative; z-index: 2;">
+        <p class="story-big reveal">You don't break constellations.</p>
+        <p class="story-big reveal story-delay-1">You finish them.</p>
+    </div>
+</section>
+
+    <section class="story-section story-cta" data-align="center">
+        <div class="story-inner">
+            <h2 class="story-cta-title reveal">Try it for free today.</h2>
+<p class="story-cta-sub reveal story-delay-1">
+    No signup. No credit card. Just the app,<br>
+    the way it was meant to be used.
+</p>
+<p class="story-cta-small reveal story-delay-2">
+    Free forever. Built by a student, for students.
+</p>
+            <div class="story-cta-buttons reveal story-delay-2">
+                <button class="glow-button" onclick="enterTryMode()">▶ TRY IT FREE</button>
+            </div>
+        </div>
+    </section>
+
+</section>
+
+<!-- Evidence modal -->
+<div id="evidence-modal" class="evidence-modal" onclick="closeEvidenceModal(event)">
+    <div class="evidence-modal-card" onclick="event.stopPropagation()">
+        <button class="evidence-close" type="button" onclick="closeEvidenceModal()">✕</button>
+        <div class="evidence-modal-label" id="evidence-modal-label"></div>
+        <div class="evidence-modal-stat" id="evidence-modal-stat"></div>
+        <div class="evidence-modal-title" id="evidence-modal-title"></div>
+        <p class="evidence-modal-summary" id="evidence-modal-summary"></p>
+        <a class="evidence-modal-link" id="evidence-modal-link" target="_blank" rel="noopener">Read the study ↗</a>
+    </div>
+</div>
+
 <main id="main-content">
     <section id="home-page" class="page">
-
-    <main id="main-content">
-        <section id="home-page" class="page active">
-            <div class="hero">
+        <div class="hero">
                 <h1 class="breathing-logo">IlluminatEd</h1>
                 <p class="base-quote">“expect the unexpected; believe the unbelievable; achieve the unachievable.”</p>
                 <button class="glow-button" onclick="showPage('timer')">Start Focusing</button>

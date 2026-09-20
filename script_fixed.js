@@ -1408,3 +1408,721 @@ document.head.appendChild(sleepStyle);
         sessionStorage.setItem('sleep_modal_shown', 'true');
     }, 1200);
 })();
+
+// ==========================================
+// STORY PAGE — EVIDENCE CARDS
+// ==========================================
+
+const EVIDENCE_DATA = [
+    {
+        label: 'STREAKS',
+        stat: '+0.17σ',
+        sub: 'higher math scores',
+        summary: 'A field experiment with 60,000 students tested whether highlighting study streaks would boost engagement. It worked — students scored significantly higher on end-of-term math tests and stayed consistent week after week.',
+        link: 'https://www.nber.org/papers/w29161'
+    },
+    {
+        label: 'ACHIEVEMENTS',
+        stat: 'moderate+',
+        sub: 'improvement across courses',
+        summary: 'Research on gamification across university courses found that achievement badges improved student performance and guided behavior — students did the actions that earned them.',
+        link: 'https://www.sciencedirect.com/science/article/abs/pii/S0360131514001625'
+    },
+    {
+        label: 'PROCRASTINATION',
+        stat: 'fear-driven',
+        sub: 'not laziness',
+        summary: 'Fear of failure is a primary driver of academic procrastination. Students don\'t procrastinate because they\'re lazy — it\'s emotional, not a time-management problem.',
+        link: 'https://www.nature.com/articles/s41598-022-26967-2'
+    },
+    {
+        label: 'SLEEP',
+        stat: '-12%',
+        sub: 'exam score drop',
+        summary: 'Sleep efficiency and consistency predict exam performance more than total hours. Students who vary their sleep schedule most score the lowest.',
+        link: 'https://www.nature.com/articles/s41598-023-41990-4'
+    },
+    {
+        label: 'ACTIVE RECALL',
+        stat: '2x',
+        sub: 'better retention',
+        summary: 'Self-testing beats rereading your notes for long-term retention. It feels harder — that\'s why it works.',
+        link: 'https://pubmed.ncbi.nlm.nih.gov/26173288/'
+    },
+    {
+        label: 'OPPORTUNITIES',
+        stat: 'structured',
+        sub: '> random searching',
+        summary: 'Students without structured access to opportunity information miss deadlines and programs they\'d qualify for. The information gap is real.',
+        link: 'https://www.nassp.org/publication/principal-leadership/volume-20/principal-leadership-february-2020/access-to-opportunity-and-the-power-of-networks/'
+    }
+];
+
+(function initEvidence() {
+
+    // Render cards
+    const grid = document.getElementById('evidence-grid');
+    if (!grid) return;
+
+    grid.innerHTML = EVIDENCE_DATA.map((card, i) => `
+        <button class="evidence-card" onclick="openEvidenceModal(${i})">
+            <div class="evidence-card-label">${card.label}</div>
+            <div class="evidence-card-stat">${card.stat}</div>
+            <div class="evidence-card-sub">${card.sub}</div>
+        </button>
+    `).join('');
+
+    // Reveal observer
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('#story-page .reveal').forEach(el => {
+        revealObserver.observe(el);
+    });
+
+})();
+
+window.openEvidenceModal = function(i) {
+    const card = EVIDENCE_DATA[i];
+    if (!card) return;
+
+    document.getElementById('evidence-modal-label').textContent = card.label;
+    document.getElementById('evidence-modal-stat').textContent = card.stat;
+    document.getElementById('evidence-modal-title').textContent = card.sub;
+    document.getElementById('evidence-modal-summary').textContent = card.summary;
+    document.getElementById('evidence-modal-link').href = card.link;
+
+    document.getElementById('evidence-modal').classList.add('open');
+};
+
+window.closeEvidenceModal = function(event) {
+    const modal = document.getElementById('evidence-modal');
+    if (!modal) return;
+    if (event && event.target !== modal) return;
+    modal.classList.remove('open');
+};
+
+// Navigation
+window.enterTryMode = function() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('login-page').classList.add('active');
+};
+
+window.goToLogin = function() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('login-page').classList.add('active');
+};
+
+// ==========================================
+// STORY PAGE — LIVE STARFIELD (with sparkle)
+// ==========================================
+
+(function initStarfield() {
+    const canvas = document.getElementById('story-stars');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    let W, H;
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Evenly spread stars using grid jitter
+    const STAR_COUNT = 220;
+    const stars = [];
+    const cols = Math.ceil(Math.sqrt(STAR_COUNT * (W / H)));
+    const rows = Math.ceil(STAR_COUNT / cols);
+    const cellW = W / cols;
+    const cellH = H / rows;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            stars.push({
+                x: c * cellW + Math.random() * cellW,
+                y: r * cellH + Math.random() * cellH,
+                baseR: Math.random() * 1.1 + 0.3,
+                twinkleOffset: Math.random() * Math.PI * 2,
+                twinkleSpeed: 0.6 + Math.random() * 1.8,
+                isGold: Math.random() < 0.3
+            });
+        }
+    }
+
+    const startTime = Date.now();
+    let t = 0;
+
+    function draw() {
+        t += 0.016;
+        const age = (Date.now() - startTime) / 1000;
+        const globalFade = Math.min(1, age / 2.5); // fade in over 2.5s
+
+        ctx.clearRect(0, 0, W, H);
+
+        stars.forEach(s => {
+            const twinkle = (Math.sin(t * s.twinkleSpeed + s.twinkleOffset) + 1) / 2;
+            const flare = Math.pow(twinkle, 4); // sharp peak = sparkle
+            const alpha = (0.15 + twinkle * 0.5 + flare * 0.5) * globalFade;
+            const radius = s.baseR + flare * 1.2;
+
+            ctx.beginPath();
+            if (s.isGold) {
+                ctx.fillStyle = `rgba(255, 204, 0, ${alpha})`;
+                ctx.shadowBlur = 8 + flare * 14;
+                ctx.shadowColor = 'rgba(255, 204, 0, 0.9)';
+            } else {
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.9})`;
+                ctx.shadowBlur = 5 + flare * 10;
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+            }
+            ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.shadowBlur = 0;
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// PHASE 2 — SELF-ANIMATING PREVIEWS
+// ==========================================
+
+(function initPreviewCards() {
+
+    // -------- 01 · TIMER --------
+    const timerDisplay = document.getElementById('preview-timer-display');
+    const timerFill = document.getElementById('preview-timer-fill');
+
+    if (timerDisplay && timerFill) {
+        let secondsLeft = 25 * 60;
+        const totalSeconds = 25 * 60;
+
+        setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft < 0) secondsLeft = totalSeconds;
+
+            const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+            const s = (secondsLeft % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+            timerFill.style.width = `${(secondsLeft / totalSeconds) * 100}%`;
+        }, 1000);
+    }
+
+    // -------- 02 · JOURNAL (types itself) --------
+    const journalBody = document.getElementById('preview-journal-body');
+    let hasStartedJournal = false;
+
+    function startJournalTyping() {
+        if (hasStartedJournal || !journalBody) return;
+        hasStartedJournal = true;
+
+        journalBody.innerHTML = '';
+
+        const sequence = [
+            { type: 'text', value: "today i studied for 47 minutes. didn't check my phone once." },
+            { type: 'divider' },
+            { type: 'text', value: "started the essay. actually started it." }
+        ];
+
+        let html = '';
+        let sIdx = 0;
+        let cIdx = 0;
+
+        function typeChar() {
+            if (sIdx >= sequence.length) {
+                journalBody.innerHTML = html.replace(/<span class="caret"><\/span>/, '');
+                return;
+            }
+
+            const step = sequence[sIdx];
+
+            if (step.type === 'divider') {
+                html = html.replace(/<span class="caret"><\/span>/, '');
+                html += '<span class="mini-divider"></span>';
+                sIdx++;
+                cIdx = 0;
+                journalBody.innerHTML = html + '<span class="caret"></span>';
+                setTimeout(typeChar, 500);
+                return;
+            }
+
+            const line = step.value;
+            if (cIdx < line.length) {
+                html = html.replace(/<span class="caret"><\/span>/, '');
+                html += line[cIdx];
+                html += '<span class="caret"></span>';
+                cIdx++;
+                journalBody.innerHTML = html;
+                setTimeout(typeChar, 28);
+            } else {
+                html = html.replace(/<span class="caret"><\/span>/, '');
+                if (sIdx < sequence.length - 1) html += '<br><br>';
+                sIdx++;
+                cIdx = 0;
+                journalBody.innerHTML = html + '<span class="caret"></span>';
+                setTimeout(typeChar, 500);
+            }
+        }
+
+        typeChar();
+    }
+
+    // -------- REVEAL OBSERVER --------
+    const previewObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+
+                if (entry.target.dataset.preview === 'journal') {
+                    setTimeout(startJournalTyping, 500);
+                }
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.preview-card').forEach(el => {
+        previewObserver.observe(el);
+    });
+
+})();
+
+// ==========================================
+// PHASE 2 — HALF B PREVIEWS
+// ==========================================
+
+(function initHalfB() {
+
+    // -------- 03 · CONSTELLATION --------
+    const cCanvas = document.getElementById('preview-constellation-canvas');
+    if (cCanvas) {
+        const cCtx = cCanvas.getContext('2d');
+        let cW, cH;
+
+        function resizeC() {
+            const rect = cCanvas.getBoundingClientRect();
+            cW = cCanvas.width = rect.width;
+            cH = cCanvas.height = rect.height;
+        }
+
+        // Cassiopeia — 5 points, normalized
+        const STARS = [
+            { x: 0.15, y: 0.35 },
+            { x: 0.32, y: 0.65 },
+            { x: 0.50, y: 0.40 },
+            { x: 0.68, y: 0.70 },
+            { x: 0.85, y: 0.30 }
+        ];
+
+        let visibleStars = 0;
+        const starRadii = STARS.map(() => 0);
+        let hasStarted = false;
+
+        function drawConstellation() {
+            cCtx.clearRect(0, 0, cW, cH);
+
+            // connecting lines
+            cCtx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
+            cCtx.lineWidth = 1.2;
+            cCtx.beginPath();
+            for (let i = 0; i < visibleStars - 1; i++) {
+                const a = STARS[i];
+                const b = STARS[i + 1];
+                cCtx.moveTo(a.x * cW, a.y * cH);
+                cCtx.lineTo(b.x * cW, b.y * cH);
+            }
+            cCtx.stroke();
+
+            // stars
+            STARS.forEach((s, i) => {
+                if (i >= visibleStars) return;
+                const x = s.x * cW;
+                const y = s.y * cH;
+
+                if (starRadii[i] < 4) starRadii[i] += 0.15;
+
+                cCtx.fillStyle = 'rgba(255, 204, 0, 0.9)';
+                cCtx.shadowBlur = 20;
+                cCtx.shadowColor = '#ffcc00';
+                cCtx.beginPath();
+                cCtx.arc(x, y, starRadii[i], 0, Math.PI * 2);
+                cCtx.fill();
+            });
+            cCtx.shadowBlur = 0;
+
+            requestAnimationFrame(drawConstellation);
+        }
+
+        function startConstellation() {
+            if (hasStarted) return;
+            hasStarted = true;
+
+            resizeC();
+            window.addEventListener('resize', resizeC);
+
+            // reveal one star every 500ms
+            const interval = setInterval(() => {
+                visibleStars++;
+                if (visibleStars >= STARS.length) {
+                    clearInterval(interval);
+                    const label = document.querySelector('.mini-constellation-label');
+                    if (label) label.classList.add('visible');
+                }
+            }, 500);
+
+            drawConstellation();
+        }
+
+        window.__startConstellation = startConstellation;
+    }
+
+    // -------- 04 · SLEEP TOAST --------
+    let sleepInterval = null;
+    function startSleepLoop() {
+        if (sleepInterval) return;
+        const toast = document.querySelector('.mini-sleep-toast');
+        if (!toast) return;
+
+        function showThenHide() {
+            toast.classList.add('visible');
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 4500);
+        }
+
+        // first show after 800ms
+        setTimeout(showThenHide, 800);
+        // then loop every 8s
+        sleepInterval = setInterval(showThenHide, 8000);
+    }
+
+    window.__startSleepLoop = startSleepLoop;
+
+    // -------- 05 · LAUNCHPAD --------
+    function buildLaunchpad() {
+        const scroll = document.getElementById('preview-launchpad-scroll');
+        if (!scroll) return;
+
+        const items = [
+            { title: 'Breakthrough Junior Challenge', meta: '$250K SCHOLARSHIP' },
+            { title: 'NASA Space Apps Challenge', meta: 'FREE // GLOBAL' },
+            { title: 'John Locke Essay Competition', meta: 'OXFORD EVAL' },
+            { title: 'The Gates Scholarship', meta: 'FULL-RIDE' },
+            { title: 'Regeneron Science Talent Search', meta: 'UP TO $250K' },
+            { title: 'Yale Young Global Scholars', meta: 'YALE CAMPUS' }
+        ];
+
+        // duplicate items so scroll loops seamlessly
+        const doubled = [...items, ...items, ...items];
+        scroll.innerHTML = `<div class="mini-launchpad-track">${doubled.map(item => `
+    <div class="mini-launchpad-item">
+        <div class="mini-launchpad-item-title">${item.title}</div>
+        <div class="mini-launchpad-item-meta">${item.meta}</div>
+    </div>
+`).join('')}</div>`;
+    }
+    buildLaunchpad();
+
+    // -------- TRIGGER ALL THREE ON SCROLL --------
+    const halfBObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const type = entry.target.dataset.preview;
+                if (type === 'constellation' && window.__startConstellation) {
+                    setTimeout(window.__startConstellation, 400);
+                }
+                if (type === 'sleep' && window.__startSleepLoop) {
+                    setTimeout(window.__startSleepLoop, 600);
+                }
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.preview-card').forEach(el => {
+        halfBObserver.observe(el);
+    });
+
+})();
+
+// ==========================================
+// STORY PAGE — SCROLL-TRIGGERED SLEEP TOAST
+// ==========================================
+
+(function initStorySleepTrigger() {
+
+    // Find the "quiet part" section
+    const sections = document.querySelectorAll('#story-page .story-section');
+    let quietSection = null;
+
+    sections.forEach(sec => {
+        if (sec.textContent.includes("It even tells you to go to sleep")) {
+            quietSection = sec;
+        }
+    });
+
+    if (!quietSection) return;
+
+    let hasFired = false;
+
+    const sleepObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !hasFired) {
+                hasFired = true;
+
+                // wait a beat so the text settles first
+                setTimeout(() => {
+                    triggerStorySleepToast();
+                }, 1200);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    sleepObserver.observe(quietSection);
+
+})();
+
+// ==========================================
+// STORY-ONLY SLEEP TOAST (works on desktop + mobile)
+// ==========================================
+
+function triggerStorySleepToast() {
+    // Build the toast element if it doesn't exist
+        let toast = document.getElementById('story-sleep-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'story-sleep-toast';
+        toast.className = 'story-sleep-toast';
+        toast.onclick = openStorySleepModal;
+        toast.innerHTML = `
+            <div class="story-sleep-toast-icon">🌙</div>
+            <div class="story-sleep-toast-body">
+                <div class="story-sleep-toast-title">IT'S LATE</div>
+                <div class="story-sleep-toast-text">The stars are out. Rest — you can pick this up tomorrow.</div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+    }
+
+    // Backdrop
+    let backdrop = document.getElementById('story-sleep-toast-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'story-sleep-toast-backdrop';
+        backdrop.className = 'story-sleep-toast-backdrop';
+        document.body.appendChild(backdrop);
+    }
+
+    // Show
+    requestAnimationFrame(() => {
+        backdrop.classList.add('open');
+        toast.classList.add('visible');
+    });
+
+        // Auto-dismiss after 5s
+    setTimeout(() => {
+        toast.classList.remove('visible');
+        backdrop.classList.remove('open');
+    }, 5000);
+}
+
+window.openStorySleepModal = function() {
+    let modal = document.getElementById('story-sleep-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'story-sleep-modal';
+        modal.className = 'story-sleep-modal';
+        modal.onclick = (e) => {
+            if (e.target === modal) closeStorySleepModal();
+        };
+        modal.innerHTML = `
+            <div class="story-sleep-modal-card">
+                <div class="story-sleep-modal-icon">🌙</div>
+                <h2 class="story-sleep-modal-title">IT'S LATE</h2>
+                <p class="story-sleep-modal-text">
+                    The stars are out. Your mind needs sleep to remember what you learned today. Rest — you can pick this up tomorrow.
+                </p>
+                <button class="story-sleep-modal-btn" type="button" onclick="closeStorySleepModal()">I'LL SLEEP SOON</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    const toast = document.getElementById('story-sleep-toast');
+    const backdrop = document.getElementById('story-sleep-toast-backdrop');
+
+    if (toast) toast.classList.remove('visible');
+    if (backdrop) backdrop.classList.remove('open');
+    modal.classList.add('open');
+};
+
+window.closeStorySleepModal = function() {
+    const modal = document.getElementById('story-sleep-modal');
+    if (!modal) return;
+    if (modal.classList.contains('closing')) return;
+
+    modal.classList.add('closing');
+
+    setTimeout(() => {
+        modal.classList.remove('open');
+        modal.classList.remove('closing');
+    }, 550);
+};
+
+// ==========================================
+// MANIFESTO — ANIMATED FLOATING CONSTELLATIONS
+// ==========================================
+
+(function initManifestoConstellations() {
+
+    const patterns = [
+        // TRIANGULUM
+        [{x:0.25,y:0.7}, {x:0.5,y:0.3}, {x:0.75,y:0.7}],
+        // ARIES
+        [{x:0.2,y:0.6}, {x:0.4,y:0.4}, {x:0.6,y:0.5}, {x:0.8,y:0.35}],
+        // CASSIOPEIA (W shape)
+        [{x:0.15,y:0.5}, {x:0.3,y:0.7}, {x:0.5,y:0.4}, {x:0.7,y:0.7}, {x:0.85,y:0.5}],
+        // CYGNUS
+        [{x:0.5,y:0.2}, {x:0.5,y:0.5}, {x:0.25,y:0.55}, {x:0.75,y:0.55}, {x:0.5,y:0.8}]
+    ];
+
+    // Set up canvases
+    const canvases = [];
+    patterns.forEach((nodes, i) => {
+        const canvas = document.getElementById(`manifesto-canvas-${i + 1}`);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const size = 180;
+        canvas.width = size;
+        canvas.height = size;
+        canvases.push({
+            ctx,
+            nodes,
+            size,
+            visibleStars: 0,
+            starRadii: nodes.map(() => 0),
+            running: false
+        });
+    });
+
+        function drawOne(c) {
+        c.ctx.clearRect(0, 0, c.size, c.size);
+
+        // Lines between visible stars
+        c.ctx.strokeStyle = 'rgba(255, 204, 0, 0.35)';
+        c.ctx.lineWidth = 1;
+        c.ctx.beginPath();
+        for (let i = 0; i < c.visibleStars - 1; i++) {
+            const a = c.nodes[i];
+            const b = c.nodes[i + 1];
+            c.ctx.moveTo(a.x * c.size, a.y * c.size);
+            c.ctx.lineTo(b.x * c.size, b.y * c.size);
+        }
+        c.ctx.stroke();
+
+        // Stars — smaller, tighter glow
+        c.nodes.forEach((n, i) => {
+            if (i >= c.visibleStars) return;
+            const x = n.x * c.size;
+            const y = n.y * c.size;
+
+            if (c.starRadii[i] < 2.2) c.starRadii[i] += 0.15;
+
+            // Small glow halo — radius 6, not 15
+            c.ctx.beginPath();
+            const grd = c.ctx.createRadialGradient(x, y, 0, x, y, 6);
+            grd.addColorStop(0, 'rgba(255, 204, 0, 0.35)');
+            grd.addColorStop(1, 'rgba(255, 204, 0, 0)');
+            c.ctx.fillStyle = grd;
+            c.ctx.arc(x, y, 6, 0, Math.PI * 2);
+            c.ctx.fill();
+
+            // Star core — small
+            c.ctx.beginPath();
+            c.ctx.fillStyle = 'rgba(255, 204, 0, 0.95)';
+            c.ctx.shadowBlur = 8;
+            c.ctx.shadowColor = '#ffcc00';
+            c.ctx.arc(x, y, c.starRadii[i], 0, Math.PI * 2);
+            c.ctx.fill();
+        });
+        c.ctx.shadowBlur = 0;
+
+        if (c.running) requestAnimationFrame(() => drawOne(c));
+    }
+
+    function startAnimating(c) {
+        if (c.running) return;
+        c.running = true;
+        drawOne(c);
+
+        const interval = setInterval(() => {
+            c.visibleStars++;
+            if (c.visibleStars >= c.nodes.length) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    // reset and replay after a pause
+                    c.visibleStars = 0;
+                    c.starRadii = c.nodes.map(() => 0);
+                    startAnimating(c);
+                }, 4000);
+            }
+        }, 600);
+    }
+
+    // Reveal when manifesto enters view
+    const manifesto = document.querySelector('.story-manifesto');
+    if (manifesto) {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.manifesto-card').forEach((card, i) => {
+                        setTimeout(() => card.classList.add('visible'), i * 250);
+                    });
+                    // start drawing each constellation
+                    canvases.forEach((c, i) => {
+                        setTimeout(() => startAnimating(c), 400 + i * 250);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+        obs.observe(manifesto);
+    }
+
+})();
+// ==========================================
+// EVIDENCE CARDS — JS fallback for :has()
+// ==========================================
+
+(function initEvidenceHoverFallback() {
+    // Only run if the browser doesn't support :has()
+    if (CSS.supports && CSS.supports('selector(:has(*))')) return;
+
+    const grid = document.getElementById('evidence-grid');
+    if (!grid) return;
+
+    const cards = grid.querySelectorAll('.evidence-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            cards.forEach(c => {
+                if (c !== card) {
+                    c.style.filter = 'blur(3px)';
+                    c.style.opacity = '0.35';
+                    c.style.transform = 'scale(0.97)';
+                }
+            });
+        });
+        card.addEventListener('mouseleave', () => {
+            cards.forEach(c => {
+                c.style.filter = '';
+                c.style.opacity = '';
+                c.style.transform = '';
+            });
+        });
+    });
+})();

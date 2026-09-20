@@ -84,23 +84,158 @@ window.handleAuthSubmit = async function(event) {
     window.location.reload();
 };
 
-window.showLoginPage = function() {
+// ==========================================
+// PAGE ROUTING
+// ==========================================
+
+function hideAllPages() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+}
+
+window.showStoryPage = function() {
+    hideAllPages();
+    document.getElementById('story-page').classList.add('active');
+};
+
+window.showLoginPage = function() {
+    hideAllPages();
     document.getElementById('login-page').classList.add('active');
 };
 
 window.showAppPage = function() {
-    document.getElementById('login-page').classList.remove('active');
+    hideAllPages();
     document.getElementById('home-page').classList.add('active');
 };
 
+// ==========================================
+// STORY PAGE BUTTONS
+// ==========================================
+
+window.enterTryMode = function() {
+    showLoginPage();
+};
+
+window.goToLogin = function() {
+    showLoginPage();
+};
+
+// ==========================================
+// BOOT — decide which page to show
+// ==========================================
+
 window.addEventListener('DOMContentLoaded', async () => {
+    showStoryPage();
+
     const user = await getCurrentUser();
+
     if (user) {
         console.log('✅ Logged in as:', user.email);
-        showAppPage();
+        document.body.classList.add('logged-in');
     } else {
-        console.log('❌ No user — showing login');
-        showLoginPage();
+        console.log('❌ No user');
     }
 });
+// ==========================================
+// PHASE 2 — INTERACTIVE PREVIEWS
+// ==========================================
+
+(function initPreviewCards() {
+
+    // -------- 01 · TIMER --------
+    const timerDisplay = document.getElementById('preview-timer-display');
+    const timerFill = document.getElementById('preview-timer-fill');
+    if (timerDisplay && timerFill) {
+        let secondsLeft = 25 * 60;
+        let totalSeconds = 25 * 60;
+
+        setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft < 0) secondsLeft = totalSeconds;
+
+            const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+            const s = (secondsLeft % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+            timerFill.style.width = `${(secondsLeft / totalSeconds) * 100}%`;
+        }, 1000);
+    }
+
+    // -------- 02 · JOURNAL (typing) --------
+    const journalBody = document.getElementById('preview-journal-body');
+    if (journalBody) {
+        const entries = [
+            "today i studied for 47 minutes. didn't check my phone once.",
+            "— — —",
+            "started the essay. actually started it."
+        ];
+
+        let hasStarted = false;
+
+        function startJournalTyping() {
+            if (hasStarted) return;
+            hasStarted = true;
+
+            journalBody.innerHTML = '';
+            let eIdx = 0;
+            let cIdx = 0;
+            let html = '';
+
+            function typeChar() {
+                if (eIdx >= entries.length) {
+                    // done — remove caret
+                    journalBody.innerHTML = html.replace(/<span class="caret"><\/span>/, '');
+                    return;
+                }
+
+                const line = entries[eIdx];
+
+                // divider entry
+                if (line === '— — —') {
+                    html += '<span class="mini-divider"></span>';
+                    eIdx++;
+                    cIdx = 0;
+                    setTimeout(typeChar, 500);
+                    return;
+                }
+
+                if (cIdx < line.length) {
+                    html = html.replace(/<span class="caret"><\/span>/, '');
+                    html += line[cIdx];
+                    html += '<span class="caret"></span>';
+                    cIdx++;
+                    journalBody.innerHTML = html;
+                    setTimeout(typeChar, 30);
+                } else {
+                    html = html.replace(/<span class="caret"><\/span>/, '');
+                    html += '<br><br>';
+                    eIdx++;
+                    cIdx = 0;
+                    setTimeout(typeChar, 400);
+                }
+            }
+
+            typeChar();
+        }
+
+        // Expose so the scroll observer can trigger it
+        window.__startJournalTyping = startJournalTyping;
+    }
+
+    // -------- REVEAL OBSERVER (triggers animations) --------
+    const previewObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+
+                // trigger journal typing when its card enters view
+                if (entry.target.dataset.preview === 'journal') {
+                    setTimeout(() => window.__startJournalTyping && window.__startJournalTyping(), 400);
+                }
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.preview-card').forEach(el => {
+        previewObserver.observe(el);
+    });
+
+})();

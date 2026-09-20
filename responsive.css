@@ -605,5 +605,450 @@
     .sleep-toast-backdrop.open {
         opacity: 1;
     }
+
+    /* =========================================
+   MOBILE — STORY (CTA) + LOGIN ONLY
+========================================= */
+
+    /* =========================
+       STORY PAGE
+    ========================= */
+
+    .story-section {
+        min-height: 90vh;
+        padding: 3rem 1.25rem;
+    }
+
+    .story-inner {
+        max-width: 100%;
+    }
+
+    .story-logo {
+        font-size: 2.4rem;
+        letter-spacing: 6px;
+    }
+
+    .story-tagline {
+        font-size: 1.05rem;
+        padding: 0 1rem;
+    }
+
+    .story-scroll-hint {
+        margin-top: 3rem;
+        font-size: 0.7rem;
+    }
+
+    .story-label {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .story-big {
+        font-size: 1.55rem;
+        line-height: 1.3;
+        padding: 0 0.5rem;
+    }
+
+    .story-small {
+        font-size: 0.98rem;
+        padding: 0 0.75rem;
+    }
+
+    .story-manifesto .story-big {
+        font-size: 1.8rem;
+    }
+
+    .story-cta-title {
+        font-size: 2rem;
+        letter-spacing: 4px;
+    }
+
+    .story-cta-sub {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+
+    .story-cta-small {
+        font-size: 0.68rem;
+        letter-spacing: 1.5px;
+        padding: 0 1rem;
+    }
+
+    .story-cta-buttons {
+        flex-direction: column;
+        padding: 0 1.5rem;
+        gap: 10px;
+    }
+
+    .story-cta-buttons .glow-button {
+        width: 100%;
+    }
+
+    /* Evidence cards */
+    .evidence-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 0 0.5rem;
+    }
+
+    .evidence-card {
+        padding: 1rem 0.85rem;
+    }
+
+    .evidence-card-label {
+        font-size: 0.55rem;
+        letter-spacing: 1.5px;
+        margin-bottom: 0.6rem;
+    }
+
+    .evidence-card-stat {
+        font-size: 1.5rem;
+    }
+
+    .evidence-card-sub {
+        font-size: 0.72rem;
+    }
+
+    /* Evidence modal */
+    .evidence-modal {
+        padding: 1rem;
+    }
+
+    .evidence-modal-card {
+        padding: 2.25rem 1.5rem 1.75rem;
+        max-width: 100%;
+    }
+
+    .evidence-modal-stat {
+        font-size: 2.2rem;
+    }
+
+    .evidence-modal-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .evidence-modal-summary {
+        font-size: 0.88rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Preview cards */
+    .story-previews .story-inner {
+        max-width: 100%;
+    }
+
+    .preview-card {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin: 3rem 0;
+        padding: 1.25rem 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 204, 0, 0.12);
+        border-radius: 20px;
+        text-align: center;
+    }
+
+    .preview-card.preview-left .preview-visual,
+    .preview-card.preview-right .preview-visual {
+        order: 2;
+    }
+
+    .preview-card.preview-left .preview-text,
+    .preview-card.preview-right .preview-text {
+        order: 1;
+        text-align: center;
+    }
+
+    .preview-num {
+        text-align: center;
+        margin-bottom: 0.6rem;
+    }
+
+    .preview-title {
+        font-size: 1.15rem;
+        text-align: center;
+    }
+
+    .preview-desc {
+        font-size: 0.88rem;
+        text-align: center;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .preview-visual {
+        min-height: auto;
+        padding-top: 0.5rem;
+    }
+
+    /* Mini previews */
+    .mini-timer {
+        max-width: 240px;
+        padding: 1.25rem 1rem;
+    }
+    .mini-timer-display { font-size: 2rem; }
+    .mini-timer-mode { font-size: 0.55rem; }
+
+    .mini-journal {
+        max-width: 280px;
+        padding: 1.1rem;
+        min-height: auto;
+    }
+    .mini-journal-body { font-size: 0.78rem; min-height: 60px; }
+    .mini-journal-header { font-size: 0.55rem; }
+    .mini-journal-date { font-size: 0.65rem; }
+
+    .mini-constellation {
+        max-width: 260px;
+        height: 220px;
+        margin: 0 auto;
+    }
+    .mini-constellation-label { font-size: 0.6rem; bottom: 0.9rem; }
+
+    .mini-launchpad {
+        max-width: 260px;
+        height: 240px;
+        padding: 1rem;
+        margin: 0 auto;
+    }
+    .mini-launchpad-header { font-size: 0.58rem; letter-spacing: 2px; }
+    .mini-launchpad-scroll {
+        top: 2.4rem;
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+    }
+    .mini-launchpad-item { padding: 0.6rem 0.75rem; }
+    .mini-launchpad-item-title { font-size: 0.7rem; }
+    .mini-launchpad-item-meta { font-size: 0.55rem; }
+
+    /* Manifesto constellations */
+    .manifesto-card {
+        width: 90px;
+        height: 90px;
+    }
+    .manifesto-card:nth-child(1) { top: 10%; left: 5%; }
+    .manifesto-card:nth-child(2) { top: 10%; right: 5%; }
+    .manifesto-card:nth-child(3) { bottom: 10%; left: 6%; }
+    .manifesto-card:nth-child(4) { bottom: 10%; right: 6%; }
+
+    /* Story sleep toast */
+    .story-sleep-toast {
+        padding: 0.65rem 0.5rem;
+        border-radius: 16px;
+        max-width: calc(100% - 1.5rem);
+    }
+    .story-sleep-toast-icon { font-size: 1.3rem; }
+    .story-sleep-toast-title { font-size: 0.65rem; letter-spacing: 2px; }
+    .story-sleep-toast-text { font-size: 0.78rem; }
+
+    /* Story sleep modal */
+    .story-sleep-modal {
+        padding: 1rem;
+    }
+    .story-sleep-modal-card {
+        padding: 2.25rem 1.5rem 1.85rem;
+        max-width: 100%;
+    }
+    .story-sleep-modal-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .story-sleep-modal-title {
+        font-size: 1.1rem;
+        letter-spacing: 3px;
+        margin-bottom: 1rem;
+    }
+    .story-sleep-modal-text { font-size: 0.92rem; margin-bottom: 1.5rem; }
+    .story-sleep-modal-btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 0.78rem;
+    }
+
+    /* =========================
+       LOGIN PAGE
+    ========================= */
+
+    .login-shell {
+        padding: 1.5rem 1rem;
+    }
+
+    .login-card {
+        padding: 2.5rem 1.5rem;
+        border-radius: 24px;
+    }
+
+    .login-logo {
+        font-size: 1.6rem;
+        letter-spacing: 6px;
+    }
+
+    .login-tagline {
+        font-size: 0.88rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .login-toggle {
+        margin-bottom: 1.5rem;
+    }
+
+    .login-tab {
+        padding: 10px 16px;
+        font-size: 0.7rem;
+    }
+
+    #auth-email,
+    #auth-password {
+        padding: 12px 16px;
+        font-size: 0.88rem;
+    }
+
+    .auth-submit {
+        padding: 0.95rem;
+        font-size: 0.8rem;
+    }
+
+    ================================
+       JOURNAL MOBILE
+    ================================ */
+
+        .commit-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 10px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .mobile-past-btn,
+    .commit-btn {
+        flex: 0 0 auto;
+        width: auto;
+        padding: 0.85rem 1.2rem;
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+    .mobile-past-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(20, 20, 20, 0.95);
+        border: 1px solid rgba(255, 204, 0, 0.25);
+        color: var(--accent);
+        padding: 0.95rem 1.4rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+    .mobile-past-btn:active {
+        background: var(--accent);
+        color: #111;
+    }
+
+    .mobile-history-overlay.open {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        z-index: 99999;
+        animation: overlayFadeIn 0.25s ease;
+    }
+    @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .mobile-history-sheet {
+        width: 100%;
+        max-height: 80vh;
+        background: #161616;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        border: 1px solid rgba(255, 204, 0, 0.2);
+        border-bottom: none;
+        padding: 1.5rem 1.25rem 2rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        animation: sheetSlideUp 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+    }
+    @keyframes sheetSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .mobile-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        color: #bbb;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .mobile-history-close {
+        background: transparent;
+        border: none;
+        color: #888;
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .mobile-history-list {
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-right: 4px;
+    }
+
+    .mobile-history-list .history-item {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 16px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: border-color 0.2s ease;
+    }
+    .mobile-history-list .history-item:active { border-color: var(--accent); }
+
+    .mobile-history-list .receipt-day {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 3px;
+        text-align: center;
+    }
+    .mobile-history-list .receipt-date {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        color: #8f8f8f;
+        letter-spacing: 2px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    .mobile-history-list .receipt-divider {
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+    .mobile-history-list .receipt-meta {
+        text-align: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--accent);
+        letter-spacing: 2px;
+    }
 }
 
