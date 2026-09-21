@@ -81,6 +81,9 @@ window.handleAuthSubmit = async function(event) {
         return;
     }
 
+    // Mark this as a "just logged in" session
+    sessionStorage.setItem('just_authenticated', 'true');
+
     window.location.reload();
 };
 
@@ -124,9 +127,20 @@ window.goToLogin = function() {
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', async () => {
-    showStoryPage();
-
     const user = await getCurrentUser();
+
+    // If they JUST logged in/signed up → go straight to home
+    const justAuth = sessionStorage.getItem('just_authenticated') === 'true';
+    if (user && justAuth) {
+        sessionStorage.removeItem('just_authenticated');
+        console.log('✅ Just authenticated — going to home');
+        document.body.classList.add('logged-in');
+        showAppPage();
+        return;
+    }
+
+    // Otherwise, always show the story first
+    showStoryPage();
 
     if (user) {
         console.log('✅ Logged in as:', user.email);
