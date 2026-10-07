@@ -2399,3 +2399,245 @@ body:has(#story-page.active) {
 body.logged-in .illuminate-btn {
     display: inline-block;
 }
+
+/* =========================================
+   APP SIDEBAR SHELL
+========================================= */
+
+.app-shell {
+    display: none;  /* hidden until user enters the app */
+    min-height: 100vh;
+}
+
+body.app-active .app-shell {
+    display: flex;
+}
+
+/* Hide the top nav when the app is showing */
+body.app-active nav,
+body.app-active .mobile-menu,
+body.app-active #time-limit-drawer {
+    display: none !important;
+}
+
+/* -----------------------------------------
+   SIDEBAR
+----------------------------------------- */
+
+.app-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: #0e0900;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 4rem 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.app-sidebar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+}
+
+/* Brand */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-logo {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 12px rgba(255, 120, 0, 0.4));
+}
+
+.sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.sidebar-brand-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.sidebar-brand-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.68rem;
+    color: #666;
+    line-height: 1.2;
+}
+
+/* Nav sections */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.sidebar-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2.5px;
+    color: #555;
+    text-transform: uppercase;
+    padding: 0 0.25rem 0.6rem;
+    font-weight: 500;
+    text-align: left;
+    width: 100%;
+}
+
+/* Nav items */
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.85rem;
+    padding: 0.75rem 0.85rem;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: #999;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: white;
+}
+
+.sidebar-item.active {
+    background: rgba(255, 204, 0, 0.08);
+    color: var(--accent);
+}
+
+.sidebar-item.active .sidebar-icon {
+    filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.5));
+}
+
+.sidebar-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: inherit;
+}
+
+/* Main content area */
+.app-shell #main-content {
+    flex: 1;
+    min-width: 0;
+}
+.sidebar-item.active .sidebar-icon,
+.sidebar-item:hover .sidebar-icon {
+    filter: brightness(0) saturate(100%) invert(82%) sepia(60%) saturate(1000%) hue-rotate(0deg) brightness(105%);
+}
+body.app-active .app-shell {
+    display: flex !important;
+}
+
+body.app-active .app-sidebar {
+    display: flex !important;
+}
+
+body.app-active #main-content {
+    display: block !important;
+}
+.app-sidebar .sidebar-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+}
+
+.app-sidebar .sidebar-section {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: fit-content !important;
+}
+
+.app-sidebar .sidebar-section-label {
+    display: block !important;
+    height: auto !important;
+    min-height: 20px !important;
+    width: 100% !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #888 !important;
+}
+
+.app-sidebar .sidebar-item {
+    display: flex !important;
+    height: auto !important;
+    min-height: 40px !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+body.app-active .app-sidebar .sidebar-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    padding: 0 !important;
+}
+
+body.app-active .app-sidebar .sidebar-section {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    text-align: left !important;
+}
+
+body.app-active .app-sidebar .sidebar-section-label {
+    text-align: left !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    align-self: flex-start !important;
+}
+
+body.app-active .app-sidebar .sidebar-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: 100% !important;
+    margin: 0 !important;
+}

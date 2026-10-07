@@ -97,16 +97,19 @@ function hideAllPages() {
 
 window.showStoryPage = function() {
     hideAllPages();
+    document.body.classList.remove('app-active');
     document.getElementById('story-page').classList.add('active');
 };
 
 window.showLoginPage = function() {
     hideAllPages();
+    document.body.classList.remove('app-active');
     document.getElementById('login-page').classList.add('active');
 };
 
 window.showAppPage = function() {
     hideAllPages();
+    document.body.classList.add('app-active');
     document.getElementById('home-page').classList.add('active');
 };
 

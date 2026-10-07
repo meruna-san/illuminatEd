@@ -112,15 +112,6 @@
         <img src="lightbulb.png" alt="Menu">
     </button>
 
-    <div class="nav-links">
-        <span id="nav-home" class="nav-item active-link" onclick="showPage('home')">Home</span>
-        <span id="nav-timer" class="nav-item" onclick="showPage('timer')">Timer</span>
-        <span id="nav-dashboard" class="nav-item" onclick="showPage('dashboard')">Dashboard</span>
-        <span id="nav-launchpad" class="nav-item" onclick="showPage('launchpad')">Launchpad</span>
-        <span id="nav-vault" class="nav-item" onclick="showPage('vault')">Vault of Fame</span>
-        <span id="nav-thoughts" class="nav-item" onclick="showPage('thoughts')">Thoughts</span>
-    </div>
-
 </nav>
 
 <div class="mobile-menu">
@@ -316,6 +307,58 @@
         <a class="evidence-modal-link" id="evidence-modal-link" target="_blank" rel="noopener">Read the study ↗</a>
     </div>
 </div>
+
+<div id="app-shell" class="app-shell">
+
+    <aside class="app-sidebar">
+    <div class="sidebar-brand">
+        <img src="phoenix.svg" alt="IlluminatEd" class="sidebar-logo">
+        <div class="sidebar-brand-text">
+            <div class="sidebar-brand-name">IlluminatEd</div>
+            <div class="sidebar-brand-tagline">"arise from the ashes"</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Focus</div>
+            <button class="sidebar-item active" data-page="home" onclick="showPage('home')">
+                <img src="home.svg" alt="" class="sidebar-icon">
+                <span>Home</span>
+            </button>
+            <button class="sidebar-item" data-page="timer" onclick="showPage('timer')">
+                <img src="timer.svg" alt="" class="sidebar-icon">
+                <span>Timer</span>
+            </button>
+            <button class="sidebar-item" data-page="dashboard" onclick="showPage('dashboard')">
+                <img src="dashboard.svg" alt="" class="sidebar-icon">
+                <span>Dashboard</span>
+            </button>
+            <button class="sidebar-item" data-page="thoughts" onclick="showPage('thoughts')">
+                <img src="thoughts.svg" alt="" class="sidebar-icon">
+                <span>Thoughts</span>
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Horizons</div>
+            <button class="sidebar-item" data-page="launchpad" onclick="showPage('launchpad')">
+                <img src="launchpad.svg" alt="" class="sidebar-icon">
+                <span>Launchpad</span>
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Constellations</div>
+            <button class="sidebar-item" data-page="vault" onclick="showPage('vault')">
+                <img src="vault.svg" alt="" class="sidebar-icon">
+                <span>Vault of Fame</span>
+            </button>
+        </div>
+
+    </nav>
+</aside>
 
 <main id="main-content">
     <section id="home-page" class="page">
@@ -587,6 +630,8 @@
         </div>
         </section>
     </main>
+</div>
+
     <div id="sleep-modal" class="sleep-modal">
     <div class="sleep-modal-card">
         <div class="sleep-modal-icon">🌙</div>

@@ -33,12 +33,15 @@ let currentMainSector = 'all';
 window.showPage = function(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active-link'));
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
 
     const targetPage = document.getElementById(pageId + '-page');
     const targetLink = document.getElementById('nav-' + pageId);
+    const sidebarItem = document.querySelector(`.sidebar-item[data-page="${pageId}"]`);
 
     if (targetPage) targetPage.classList.add('active');
     if (targetLink) targetLink.classList.add('active-link');
+    if (sidebarItem) sidebarItem.classList.add('active');
 
     if (pageId === 'dashboard') {
         setTimeout(() => {
