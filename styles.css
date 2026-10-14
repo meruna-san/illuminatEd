@@ -2640,3 +2640,213 @@ body.app-active .app-sidebar .sidebar-item {
     width: 100% !important;
     margin: 0 !important;
 }
+
+/* =========================================
+   INTRO / LOADING SCREEN
+   ========================================= */
+
+.intro-screen {
+    position: fixed;
+    inset: 0;
+    background: #0a0a0a;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.intro-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(1.04);
+}
+
+.intro-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 120px;
+}
+
+/* --- The bulb --- */
+.intro-bulb-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 1s cubic-bezier(0.6, 0, 0.2, 1);
+    transform-origin: center center;
+    z-index: 2;
+}
+
+/* When the word appears, bulb slides left and shrinks to I-size */
+.intro-screen.word-on .intro-bulb-wrap {
+    transform: translateX(-175px) scale(0.22);
+}
+
+.intro-bulb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    filter:
+        brightness(0.15)
+        drop-shadow(0 0 0 rgba(255, 204, 0, 0));
+    transition:
+        opacity 0.5s ease,
+        filter 1.2s ease;
+}
+
+/* Faint outline before ignite */
+.intro-bulb.faint {
+    opacity: 0.12;
+    filter: brightness(0.3) drop-shadow(0 0 6px rgba(255, 204, 0, 0.15));
+}
+
+/* The ignition moment */
+.intro-bulb.on {
+    opacity: 1;
+    animation: bulb-ignite 2s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes bulb-ignite {
+    0% {
+        opacity: 0;
+        filter: brightness(0.2) drop-shadow(0 0 0 rgba(255, 204, 0, 0));
+    }
+    8% {
+        opacity: 1;
+        filter:
+            brightness(2.6)
+            drop-shadow(0 0 80px rgba(255, 245, 150, 1))
+            drop-shadow(0 0 140px rgba(255, 200, 60, 0.9));
+    }
+    18% {
+        opacity: 0.3;
+        filter:
+            brightness(0.5)
+            drop-shadow(0 0 15px rgba(255, 204, 0, 0.5));
+    }
+    28% {
+        opacity: 1;
+        filter:
+            brightness(2.4)
+            drop-shadow(0 0 75px rgba(255, 245, 150, 1))
+            drop-shadow(0 0 130px rgba(255, 200, 60, 0.85));
+    }
+    38% {
+        opacity: 0.55;
+        filter:
+            brightness(1.1)
+            drop-shadow(0 0 25px rgba(255, 204, 0, 0.65));
+    }
+    50% {
+        opacity: 1;
+        filter:
+            brightness(2.2)
+            drop-shadow(0 0 90px rgba(255, 230, 100, 1))
+            drop-shadow(0 0 180px rgba(255, 170, 40, 0.75));
+    }
+    100% {
+        opacity: 1;
+        filter:
+            brightness(1.7)
+            saturate(1.4)
+            drop-shadow(0 0 50px rgba(255, 220, 60, 1))
+            drop-shadow(0 0 110px rgba(255, 160, 20, 0.85))
+            drop-shadow(0 0 180px rgba(255, 100, 0, 0.55));
+    }
+}
+
+/* --- The word --- */
+.intro-word {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: 30px;
+    display: flex;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: #fff;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.intro-letter {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.intro-screen.word-on .intro-letter {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger letters */
+.intro-screen.word-on .intro-letter:nth-child(1)  { transition-delay: 0.55s; }
+.intro-screen.word-on .intro-letter:nth-child(2)  { transition-delay: 0.60s; }
+.intro-screen.word-on .intro-letter:nth-child(3)  { transition-delay: 0.65s; }
+.intro-screen.word-on .intro-letter:nth-child(4)  { transition-delay: 0.70s; }
+.intro-screen.word-on .intro-letter:nth-child(5)  { transition-delay: 0.75s; }
+.intro-screen.word-on .intro-letter:nth-child(6)  { transition-delay: 0.80s; }
+.intro-screen.word-on .intro-letter:nth-child(7)  { transition-delay: 0.85s; }
+.intro-screen.word-on .intro-letter:nth-child(8)  { transition-delay: 0.90s; }
+.intro-screen.word-on .intro-letter:nth-child(9)  { transition-delay: 0.95s; }
+.intro-screen.word-on .intro-letter:nth-child(10) { transition-delay: 1.00s; }
+
+/* --- Tagline --- */
+.intro-tagline {
+    position: absolute;
+    bottom: 30%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    opacity: 0;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: #888;
+    letter-spacing: 1px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    white-space: nowrap;
+}
+
+.intro-screen.word-on .intro-tagline {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    transition-delay: 1.4s;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .intro-word {
+        font-size: 1.6rem;
+        letter-spacing: 4px;
+        margin-left: 20px;
+    }
+    .intro-bulb-wrap {
+        width: 160px;
+        height: 160px;
+    }
+    .intro-screen.word-on .intro-bulb-wrap {
+        transform: translateX(-115px) scale(0.22);
+    }
+    .intro-tagline {
+        font-size: 0.85rem;
+        bottom: 32%;
+        padding: 0 1rem;
+        text-align: center;
+        white-space: normal;
+        max-width: 280px;
+    }
+}

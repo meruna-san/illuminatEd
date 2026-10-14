@@ -26,7 +26,23 @@ const OPPORTUNITIES_DATABASE = [
     { title: "Coca-Cola Scholars Program", category: "scholarship", tags: ["Service", "Merit"], description: "Achievement-based scholarship awarded to graduating high school seniors recognized for their capacity to lead and serve.", deadline: "OCTOBER", meta: "$20,000 AWARD", link: "https://www.coca-colascholarsfoundation.org" },
     { title: "Regeneron Science Talent Search", category: "scholarship", tags: ["STEM", "Research"], description: "The nation's oldest and most prestigious science and math competition for high school seniors doing independent research.", deadline: "NOVEMBER", meta: "UP TO $250,000 PRIZES", link: "https://www.societyforscience.org/regeneron-sts" }
 ];
+/* =========================================
+   INTRO / LOADING SCREEN SEQUENCE
+   ========================================= */
+(function runIntro() {
+    const intro = document.getElementById('intro-screen');
+    const bulb = document.querySelector('.intro-bulb');
+    if (!intro || !bulb) return;
 
+    // Skip intro on subsequent visits in same session
+
+        // Timeline — slower, more deliberate
+    setTimeout(() => bulb.classList.add('faint'),    200); // faint outline
+    setTimeout(() => bulb.classList.add('on'),       800); // ignite
+    setTimeout(() => intro.classList.add('word-on'), 1900); // slide left + reveal word
+    setTimeout(() => intro.classList.add('hidden'),  4200); // fade out
+    setTimeout(() => intro.remove(),                 5200); // remove from DOM
+})();
 let currentMainSector = 'all';
 
 // --- GLOBAL ROUTING & NAVIGATION UNDERLINE ---
