@@ -1059,7 +1059,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
 .workspace-container.shrink-out { opacity: 0; transform: scale(0.92); pointer-events: none; }
 
 .content-transition-layer.is-switching { opacity: 0; }
-.fead-ignored { }
 
 .flipping-page-mesh.flip-forward { left: 50%; transform-origin: left center; opacity: 1; transform: rotateY(-180deg); }
 .flipping-page-mesh.flip-backward { right: 50%; transform-origin: right center; opacity: 1; transform: rotateY(180deg); }

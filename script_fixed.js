@@ -1508,17 +1508,6 @@ window.closeEvidenceModal = function(event) {
     modal.classList.remove('open');
 };
 
-// Navigation
-window.enterTryMode = function() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('login-page').classList.add('active');
-};
-
-window.goToLogin = function() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('login-page').classList.add('active');
-};
-
 // ==========================================
 // STORY PAGE — LIVE STARFIELD (with sparkle)
 // ==========================================
