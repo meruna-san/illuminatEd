@@ -133,7 +133,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Intro plays for everyone. After it finishes, we route based on auth.
     // Timing matches the intro sequence in script_fixed.js (~4.8s buffer).
-    const INTRO_DURATION = 4800;
+    const INTRO_DURATION = 5000;
 
     if (user) {
         // Logged in — intro → app

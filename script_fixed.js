@@ -40,8 +40,8 @@ const OPPORTUNITIES_DATABASE = [
     setTimeout(() => bulb.classList.add('faint'),    200); // faint outline
     setTimeout(() => bulb.classList.add('on'),       800); // ignite
     setTimeout(() => intro.classList.add('word-on'), 1900); // slide left + reveal word
-    setTimeout(() => intro.classList.add('hidden'),  4200); // fade out
-    setTimeout(() => intro.remove(),                 5200); // remove from DOM
+    setTimeout(() => intro.classList.add('hidden'),  5200); // fade out
+    setTimeout(() => intro.remove(),                 5600); // remove from DOM
 })();
 let currentMainSector = 'all';
 
