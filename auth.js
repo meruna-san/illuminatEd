@@ -124,7 +124,6 @@ window.enterTryMode = function() {
 window.goToLogin = function() {
     showLoginPage();
 };
-
 // ==========================================
 // BOOT — decide which page to show
 // ==========================================
@@ -132,24 +131,26 @@ window.goToLogin = function() {
 window.addEventListener('DOMContentLoaded', async () => {
     const user = await getCurrentUser();
 
-    // If they JUST logged in/signed up → go straight to home
-    const justAuth = sessionStorage.getItem('just_authenticated') === 'true';
-    if (user && justAuth) {
-        sessionStorage.removeItem('just_authenticated');
-        console.log('✅ Just authenticated — going to home');
-        document.body.classList.add('logged-in');
-        showAppPage();
-        return;
-    }
-
-    // Otherwise, always show the story first
-    showStoryPage();
+    // Intro plays for everyone. After it finishes, we route based on auth.
+    // Timing matches the intro sequence in script_fixed.js (~4.8s buffer).
+    const INTRO_DURATION = 4800;
 
     if (user) {
+        // Logged in — intro → app
         console.log('✅ Logged in as:', user.email);
         document.body.classList.add('logged-in');
+        sessionStorage.removeItem('just_authenticated');
+
+        setTimeout(() => {
+            showAppPage();
+        }, INTRO_DURATION);
     } else {
-        console.log('❌ No user');
+        // Not logged in — intro → story page
+        console.log('❌ No user — story after intro');
+
+        setTimeout(() => {
+            showStoryPage();
+        }, INTRO_DURATION);
     }
 });
 // ==========================================
