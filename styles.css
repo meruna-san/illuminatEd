@@ -2412,8 +2412,8 @@ body.app-active .app-shell {
     display: flex;
 }
 
-/* Hide the top nav when the app is showing */
-body.app-active nav,
+/* Hide the top nav when the app is showing (but NOT the mobile pill nav) */
+body.app-active nav:not(.mobile-pill-nav),
 body.app-active .mobile-menu,
 body.app-active #time-limit-drawer {
     display: none !important;
