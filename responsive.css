@@ -1113,6 +1113,11 @@
         z-index: 100000;
     }
 
+        /* Hide the pill nav when we're NOT in the app */
+    body:not(.app-active) .mobile-pill-nav {
+        display: none !important;
+    }
+
     /* Phoenix brand on the left */
     .pill-brand {
         display: flex;
