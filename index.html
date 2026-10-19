@@ -687,6 +687,31 @@
 
 </nav>
 
+<!-- TIMER COMPLETE MODAL & TOAST -->
+<div id="timer-complete-modal" class="timer-modal">
+    <div class="timer-modal-card">
+        <div class="timer-modal-icon" id="timer-modal-icon">✨</div>
+        <h2 class="timer-modal-title" id="timer-modal-title">FOCUS COMPLETE</h2>
+        <p class="timer-modal-text" id="timer-modal-text">
+            You just finished a session. Your constellation grew a little brighter.
+        </p>
+        <button class="timer-modal-btn" id="timer-modal-primary-btn">START BREAK</button>
+        <button class="timer-modal-btn secondary" onclick="closeTimerModal()">I'M DONE FOR NOW</button>
+    </div>
+</div>
+
+<div id="timer-toast" class="timer-toast" onclick="tapTimerToast()">
+    <div class="timer-toast-icon" id="timer-toast-icon">✨</div>
+    <div class="timer-toast-body">
+        <div class="timer-toast-title" id="timer-toast-title">FOCUS COMPLETE</div>
+        <div class="timer-toast-text" id="timer-toast-text">
+            Loading your results...
+        </div>
+    </div>
+</div>
+
+<div id="timer-toast-backdrop" class="timer-toast-backdrop"></div>
+
     <div id="sleep-modal" class="sleep-modal">
     <div class="sleep-modal-card">
         <div class="sleep-modal-icon">🌙</div>

@@ -2805,3 +2805,92 @@ body.app-active .app-sidebar .sidebar-item {
     display: none !important;
 }
 
+/* =========================================
+   TIMER COMPLETE MODAL & TOAST
+   ========================================= */
+
+/* Desktop & Base Modal */
+.timer-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 100000;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+.timer-modal.open {
+    display: flex;
+    animation: timerFadeIn 0.4s ease;
+}
+@keyframes timerFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.timer-modal-card {
+    background: linear-gradient(135deg, #14110a 0%, #0a0a0a 100%);
+    border: 1px solid rgba(255, 204, 0, 0.25);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(255, 204, 0, 0.08);
+    animation: timerSlideUp 0.5s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+@keyframes timerSlideUp { 
+    from { transform: translateY(20px) scale(0.96); opacity: 0; } 
+    to { transform: translateY(0) scale(1); opacity: 1; } 
+}
+
+.timer-modal-icon { font-size: 2.5rem; margin-bottom: 1rem; filter: drop-shadow(0 0 12px rgba(255, 204, 0, 0.4)); }
+.timer-modal-title { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; letter-spacing: 4px; color: var(--accent); margin: 0 0 1.25rem 0; text-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
+.timer-modal-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; line-height: 1.65; color: #bbb; margin: 0 0 2rem 0; }
+
+.timer-modal-btn {
+    width: 100%;
+    padding: 0.95rem 1.8rem;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    background: var(--accent);
+    color: #111;
+    border: 1px solid var(--accent);
+    margin-bottom: 10px;
+    transition: background 0.2s ease;
+}
+.timer-modal-btn:hover { background: #e6b800; }
+.timer-modal-btn.secondary { background: transparent; color: #888; border: 1px solid rgba(255, 255, 255, 0.1); }
+.timer-modal-btn.secondary:hover { color: white; border-color: rgba(255, 255, 255, 0.3); background: transparent; }
+
+/* Mobile Toast Base (Hidden on Desktop) */
+.timer-toast { display: none; }
+
+/* Timer Toast Backdrop (Hidden on Desktop) */
+.timer-toast-backdrop {
+    display: none;
+}
+
+/* Closing Animations */
+.timer-modal.closing {
+    animation: timerFadeOut 0.4s ease forwards;
+}
+
+.timer-modal.closing .timer-modal-card {
+    animation: timerCardOut 0.4s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+@keyframes timerFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes timerCardOut {
+    from { transform: translateY(0) scale(1); opacity: 1; }
+    to { transform: translateY(20px) scale(0.96); opacity: 0; }
+}

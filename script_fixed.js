@@ -93,6 +93,7 @@ window.__checkRequiredDOM = function(list) {
 
 // --- CORE POMODORO ENGINE WITH BACKGROUND TIME TRACKING & SYNC ---
 let timeLeft = 25 * 60;
+let currentModeMinutes = 25;
 let timerId = null;
 let display = null;
 let startBtn = null;
@@ -145,6 +146,7 @@ window.setTimer = function(minutes, element) {
     startBtn = document.getElementById('start-btn');
     if (startBtn) startBtn.textContent = "START";
     timeLeft = minutes * 60;
+    currentModeMinutes = minutes;
     localStorage.setItem('timerTimeLeft', timeLeft);
 
     if (element) {
@@ -200,7 +202,7 @@ function triggerTimerLoop(targetEndTime) {
             timeLeft = remaining;
             localStorage.setItem('timerTimeLeft', timeLeft);
             window.updateDisplay();
-        } else {
+                      } else {
             clearInterval(timerId);
             timerId = null;
             timeLeft = 0;
@@ -209,7 +211,16 @@ function triggerTimerLoop(targetEndTime) {
             localStorage.removeItem('timerIsRunning');
             if (startBtn) startBtn.textContent = "START";
             playChime();
-            setTimeout(() => { alert("Time is up!"); }, 100);
+            
+            // --- SMART POMODORO LOGIC ---
+            setTimeout(() => {
+                // Determine if we just finished focusing or taking a break
+                const wasFocus = currentModeMinutes > 15;
+                
+                // Trigger the beautiful custom modal/toast
+                showTimerModal(wasFocus);
+                
+            }, 100);
         }
     }, 1000);
 }
@@ -246,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const resetBtn = document.getElementById('reset-btn');
-    if (resetBtn) resetBtn.addEventListener('click', () => window.setTimer(25));
+    if (resetBtn) resetBtn.addEventListener('click', () => window.setTimer(currentModeMinutes));
 
     restoreTimerState();
     verifyStreakIntegrity(false);
@@ -2167,3 +2178,101 @@ window.closeStorySleepModal = function() {
         });
     });
 })();
+
+// ==========================================
+// CUSTOM TIMER MODAL & TOAST LOGIC
+// ==========================================
+
+window.showTimerModal = function(wasFocus) {
+    const title = wasFocus ? "FOCUS COMPLETE" : "BREAK OVER";
+    const text = wasFocus ? "You just finished a session. Your constellation grew a little brighter." : "Time to get back to it. Ready to focus?";
+    const btnText = wasFocus ? "START BREAK" : "START FOCUS";
+    const icon = wasFocus ? "✨" : "🚀";
+
+    // Update content
+    document.getElementById('timer-modal-title').textContent = title;
+    document.getElementById('timer-modal-text').textContent = text;
+    document.getElementById('timer-modal-icon').textContent = icon;
+    
+    document.getElementById('timer-toast-title').textContent = title;
+    document.getElementById('timer-toast-text').textContent = "Loading your results...";
+    document.getElementById('timer-toast-icon').textContent = icon;
+
+    // Set up Button Action
+    const primaryBtn = document.getElementById('timer-modal-primary-btn');
+    primaryBtn.textContent = btnText;
+    primaryBtn.onclick = () => {
+        closeTimerModal();
+        const modeBtn = wasFocus ? document.querySelectorAll('.mode-btn')[1] : document.querySelectorAll('.mode-btn')[0];
+        const mins = wasFocus ? 5 : 25;
+        window.setTimer(mins, modeBtn);
+        document.getElementById('start-btn').click(); 
+    };
+
+    // Trigger UI based on device
+    if (window.innerWidth <= 768) {
+        showTimerToast();
+        
+        // AUTOMATICALLY EXPAND AFTER 2.5 SECONDS
+        setTimeout(() => {
+            const toast = document.getElementById('timer-toast');
+            if (toast.classList.contains('open')) {
+                tapTimerToast();
+            }
+        }, 2500); 
+        
+    } else {
+        document.getElementById('timer-complete-modal').classList.add('open'); 
+    }
+};
+
+window.closeTimerModal = function() {
+    const modal = document.getElementById('timer-complete-modal');
+    if (!modal) return;
+    
+    // If it's already closing, don't trigger it again
+    if (modal.classList.contains('closing')) return;
+
+    // Add the closing animation class
+    modal.classList.add('closing');
+    
+    // Dismiss the toast/backdrop at the same time
+    dismissTimerToast();
+
+    // Wait for the animation to finish, then hide it
+    setTimeout(() => {
+        modal.classList.remove('open');
+        modal.classList.remove('force-show');
+        modal.classList.remove('closing');
+    }, 400); // Matches the 0.4s animation duration
+};
+
+window.showTimerToast = function() {
+    const toast = document.getElementById('timer-toast');
+    const backdrop = document.getElementById('timer-toast-backdrop');
+    
+    if (backdrop) backdrop.classList.add('open');
+    
+    toast.classList.remove('dismissing');
+    toast.classList.add('open');
+};
+
+window.dismissTimerToast = function() {
+    const toast = document.getElementById('timer-toast');
+    const backdrop = document.getElementById('timer-toast-backdrop');
+    
+    if(!toast) return;
+    
+    toast.classList.remove('open');
+    toast.classList.add('dismissing');
+    if (backdrop) backdrop.classList.remove('open');
+    
+    setTimeout(() => toast.classList.remove('dismissing'), 600);
+};
+
+window.tapTimerToast = function() {
+    dismissTimerToast();
+    const modal = document.getElementById('timer-complete-modal');
+    modal.classList.add('force-show');
+    modal.classList.add('open');
+};
