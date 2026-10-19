@@ -2800,26 +2800,8 @@ body.app-active .app-sidebar .sidebar-item {
     transition-delay: 1.4s;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    .intro-word {
-        font-size: 1.6rem;
-        letter-spacing: 4px;
-        margin-left: 20px;
-    }
-    .intro-bulb-wrap {
-        width: 160px;
-        height: 160px;
-    }
-    .intro-screen.word-on .intro-bulb-wrap {
-        transform: translateX(-115px) scale(0.22);
-    }
-    .intro-tagline {
-        font-size: 0.85rem;
-        bottom: 32%;
-        padding: 0 1rem;
-        text-align: center;
-        white-space: normal;
-        max-width: 280px;
-    }
+/* KILL SWITCH: Hide the mobile pill nav on desktop */
+.mobile-pill-nav {
+    display: none !important;
 }
+

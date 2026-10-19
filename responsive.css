@@ -1081,8 +1081,10 @@
        MOBILE — TOP NAV BAR
        ========================================= */
 
+           /* Hide mobile pill nav by default everywhere */
+
     .mobile-pill-nav {
-        display: flex !important;
+        display: none !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -1111,6 +1113,11 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 
         z-index: 100000;
+    }
+
+        /* ONLY show the pill nav when the user is inside the app */
+    body.app-active .mobile-pill-nav {
+        display: flex !important;
     }
 
         /* Hide the pill nav when we're NOT in the app */
@@ -1198,5 +1205,28 @@
         padding-top: 80px !important;
         padding-bottom: 0 !important;
     }
+
+    /* Mobile */
+    .intro-word {
+        font-size: 1.6rem;
+        letter-spacing: 4px;
+        margin-left: 20px;
+    }
+    .intro-bulb-wrap {
+        width: 160px;
+        height: 160px;
+    }
+    .intro-screen.word-on .intro-bulb-wrap {
+        transform: translateX(-115px) scale(0.22);
+    }
+    .intro-tagline {
+        font-size: 0.85rem;
+        bottom: 32%;
+        padding: 0 1rem;
+        text-align: center;
+        white-space: normal;
+        max-width: 280px;
+    }
+
 }
 
