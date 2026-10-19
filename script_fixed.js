@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'workspace','focus-toggle','book-left-title-render','flipping-paper-sheet','book-count','studio-header-title',
         'deck-card-container','transition-wrapper','chronicle-page-index','chronicle-toggle','realistic-stage','page-index','history-shelf'
     ]);
-    
+    loadProgress();
     loadStoredLists();
 
     startBtn = document.getElementById('start-btn');
@@ -284,6 +284,7 @@ function verifyStreakIntegrity(isNewTaskCompleted = false) {
             const yesterdayStr = new Date(Date.now() - 86400000).toDateString();
             if (lastActiveDate !== yesterdayStr) currentStreak = 0;
         }
+        saveProgress();
     }
 
     const displayEl = document.getElementById('streak-count-display');
@@ -309,6 +310,34 @@ let catalogIndex = 0;
 let currentProgressStars = 0;
 let vaultCollection = [];
 let starNodes = [];
+
+// --- PERSISTENCE ENGINE ---
+function saveProgress() {
+    const progressData = {
+        currentStreak: currentStreak,
+        lastActiveDate: lastActiveDate,
+        catalogIndex: catalogIndex,
+        currentProgressStars: currentProgressStars,
+        vaultCollection: vaultCollection
+    };
+    localStorage.setItem('illuminated_progress', JSON.stringify(progressData));
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem('illuminated_progress');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            currentStreak = data.currentStreak ?? 0;
+            lastActiveDate = data.lastActiveDate ?? "";
+            catalogIndex = data.catalogIndex ?? 0;
+            currentProgressStars = data.currentProgressStars ?? 0;
+            vaultCollection = data.vaultCollection ?? [];
+        } catch (e) {
+            console.error("Failed to load progress", e);
+        }
+    }
+}
 
 function resizeAppCanvas() {
     const canvas = document.getElementById('app-canvas');
@@ -357,6 +386,7 @@ function advanceAstronomicalProgress() {
     }
 
     buildActiveStellarModel();
+    saveProgress();
 }
 
 function renderVaultGallery() {
@@ -604,6 +634,7 @@ window.handleItemCompletion = function(checkboxElement) {
             saveListsToStorage();
         }, 400);
     }
+
 };
 
 // --- LAUNCHPAD SUBSYSTEM RENDER ENGINE ---
