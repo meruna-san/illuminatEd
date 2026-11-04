@@ -42,6 +42,24 @@ window.signOutUser = async function() {
 
 // -------- Get current user --------
 window.getCurrentUser = async function() {
+    window.populateProfile = async function() {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const emailEl = document.getElementById('profile-email');
+    if (emailEl) emailEl.textContent = user.email;
+
+    const joinDateEl = document.getElementById('profile-join-date');
+    if (joinDateEl && user.created_at) {
+        const date = new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        joinDateEl.textContent = `Member since ${date}`;
+    }
+
+    window.handleLogout = async function() {
+        await signOutUser();
+        window.location.reload();
+    };
+};
     const { data: { user } } = await supabaseClient.auth.getUser();
     return user;
 };
@@ -131,8 +149,6 @@ window.goToLogin = function() {
 window.addEventListener('DOMContentLoaded', async () => {
     const user = await getCurrentUser();
 
-    // Intro plays for everyone. After it finishes, we route based on auth.
-    // Timing matches the intro sequence in script_fixed.js (~4.8s buffer).
     const INTRO_DURATION = 5000;
 
     if (user) {
@@ -140,6 +156,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         console.log('✅ Logged in as:', user.email);
         document.body.classList.add('logged-in');
         sessionStorage.removeItem('just_authenticated');
+
+        populateProfile();
 
         setTimeout(() => {
             showAppPage();

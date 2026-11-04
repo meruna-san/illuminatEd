@@ -379,18 +379,84 @@
             </button>
         </div>
 
+                <div class="sidebar-section">
+            <div class="sidebar-section-label">Account</div>
+            <button class="sidebar-item" data-page="settings" onclick="showPage('settings')">
+                <img src="settings.svg" alt="" class="sidebar-icon">
+                <span>Settings</span>
+            </button>
+        </div>
+
     </nav>
 </aside>
 
 <main id="main-content">
-    <section id="home-page" class="page">
-        <div class="hero">
-                <h1 class="breathing-logo">IlluminatEd</h1>
-                <p class="base-quote">“expect the unexpected; believe the unbelievable; achieve the unachievable.”</p>
-                <button class="glow-button" onclick="showPage('timer')">Start Focusing</button>
+   <section id="home-page" class="page">
+    <div class="home-dashboard">
+        
+        <!-- 1. Welcome Banner -->
+        <div class="home-welcome">
+            <div class="profile-avatar" style="width: 60px; height: 60px;">
+                <img src="phoenix.svg" alt="Avatar">
             </div>
-        </section>
+            <div>
+                <h2 class="home-greeting" id="home-username-display">Welcome back.</h2>
+                <p class="home-date" id="home-date-display">Let's build your sky.</p>
+            </div>
+        </div>
 
+        <!-- 2. Quick Stats Grid -->
+        <div class="profile-stats-grid" style="margin-bottom: 2rem;">
+            <div class="profile-stat-card">
+                <div class="profile-stat-value" id="home-streak">0</div>
+                <div class="profile-stat-label">Day Streak</div>
+            </div>
+            <div class="profile-stat-card">
+                <div class="profile-stat-value" id="home-stars">0</div>
+                <div class="profile-stat-label">Stars Lit</div>
+            </div>
+            <div class="profile-stat-card">
+                <div class="profile-stat-value" id="home-constellations">0</div>
+                <div class="profile-stat-label">Constellations</div>
+            </div>
+        </div>
+
+        <!-- 3. The Activity Tracker (Bento Grid) -->
+        <div class="bento-grid">
+            
+            <!-- Left: What you did today -->
+            <div class="card glass">
+                <h3>Today's Activity</h3>
+                <div class="daily-activity-stats">
+                    <div class="daily-stat">
+                        <div class="daily-stat-value" id="today-focus-minutes">0</div>
+                        <div class="daily-stat-label">Minutes Focused</div>
+                    </div>
+                    <div class="daily-stat">
+                        <div class="daily-stat-value" id="today-tasks">0</div>
+                        <div class="daily-stat-label">Tasks Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Quick Tasks & Goals -->
+            <div class="card glass">
+                <h3>Your Board</h3>
+                <div class="home-board-section">
+                    <div class="board-label">Tasks</div>
+                    <ul id="home-task-list" class="scroll-list" style="max-height: 100px; margin-bottom: 1rem;"></ul>
+                </div>
+                <div class="home-board-section">
+                    <div class="board-label">Goals</div>
+                    <ul id="home-goal-list" class="scroll-list" style="max-height: 100px;"></ul>
+                </div>
+                <button class="pill-button small" onclick="showPage('dashboard')" style="width: 100%; margin-top: 1rem;">Go to Dashboard</button>
+            </div>
+
+        </div>
+
+    </div>
+</section>
         <section id="timer-page" class="page">
             <div class="timer-container">
                 <div class="timer-card glass">
@@ -482,6 +548,71 @@
 
             <div id="opps-grid" class="opps-grid"></div>
         </section>
+
+<section id="settings-page" class="page">
+    <div class="vault-hero">
+        <h2>Settings</h2>
+        <p class="vault-subtitle">Customize your space</p>
+    </div>
+
+    <div class="settings-grid">
+        <div class="card glass">
+            <h3>Vibe</h3>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-title">Theme</div>
+                    <div class="setting-desc">Midnight (More coming soon)</div>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <div class="toggle-track">
+                        <div class="toggle-thumb">
+                            <span class="toggle-icon">🌙</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card glass">
+            <h3>Identity</h3>
+            <div class="setting-row" style="flex-direction: column; align-items: stretch; gap: 12px;">
+                <div>
+                    <div class="setting-title">Display Name</div>
+                    <div class="setting-desc">What should we call you?</div>
+                </div>
+                <div class="input-box" style="margin: 0;">
+                    <input type="text" id="username-input" placeholder="e.g. StarGazer">
+                    <button onclick="saveUsername()" style="width: auto; padding: 0 20px;">SAVE</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card glass">
+            <h3>Your Data</h3>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-title">Export Data</div>
+                    <div class="setting-desc">Download your tasks and stats.</div>
+                </div>
+                <button class="pill-button small" onclick="exportData()">DOWNLOAD</button>
+            </div>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-title">Log Out</div>
+                    <div class="setting-desc">Sign out of your account.</div>
+                </div>
+                <button class="pill-button small" onclick="handleLogout()">LOG OUT</button>
+            </div>
+            <div class="setting-row" style="border-bottom: none;">
+                <div>
+                    <div class="setting-title" style="color: #ff5555;">Wipe Data</div>
+                    <div class="setting-desc">Delete everything.</div>
+                </div>
+                <button class="pill-button small" onclick="wipeData()" style="color: #ff5555; border-color: rgba(255, 85, 85, 0.3);">WIPE</button>
+            </div>
+        </div>
+    </div>
+</section>
 
         <section id="vault-page" class="page">
             <div class="vault-hero">

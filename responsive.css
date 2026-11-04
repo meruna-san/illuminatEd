@@ -1281,5 +1281,34 @@
         opacity: 1;
         pointer-events: auto; /* Block clicks to the page behind */
     }
+
+
+     .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .profile-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-container {
+        padding: 1.5rem;
+    }
+    .setting-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    /* =========================================
+       MOBILE — SETTINGS
+       ========================================= */
+    .home-welcome {
+        flex-direction: column;
+        text-align: center;
+    }
+    .home-greeting {
+        font-size: 1.5rem;
+    }
+
 }
 

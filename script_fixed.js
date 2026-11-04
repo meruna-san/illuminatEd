@@ -47,6 +47,9 @@ let currentMainSector = 'all';
 
 // --- GLOBAL ROUTING & NAVIGATION UNDERLINE ---
 window.showPage = function(pageId) {
+        if (pageId === 'home') {
+        populateHomeDashboard();
+    }
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active-link'));
     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
@@ -211,6 +214,10 @@ function triggerTimerLoop(targetEndTime) {
             localStorage.removeItem('timerIsRunning');
             if (startBtn) startBtn.textContent = "START";
             playChime();
+
+                    if (currentModeMinutes > 15 && window.ActivityTracker) {
+                ActivityTracker.addFocusMinutes(currentModeMinutes);
+            }
             
             // --- SMART POMODORO LOGIC ---
             setTimeout(() => {
@@ -2275,4 +2282,156 @@ window.tapTimerToast = function() {
     const modal = document.getElementById('timer-complete-modal');
     modal.classList.add('force-show');
     modal.classList.add('open');
+};
+
+// ==========================================
+// PROFILE & SETTINGS LOGIC
+// ==========================================
+
+// 1. Toggle Theme (Placeholder)
+window.toggleTheme = function() {
+    const toggle = document.querySelector('.theme-toggle');
+    toggle.classList.toggle('active');
+    
+    if (toggle.classList.contains('active')) {
+        alert("Daylight mode is coming in the next update! For now, enjoy Midnight.");
+        toggle.classList.remove('active'); 
+    }
+};
+
+// 2. Save Username
+window.saveUsername = function() {
+    const input = document.getElementById('username-input');
+    const val = input.value.trim();
+    if (!val) return;
+    
+    localStorage.setItem('illuminated_username', val);
+    alert("Username saved as: " + val);
+};
+
+// 3. Export Data
+window.exportData = function() {
+    const data = {
+        tasks: JSON.parse(localStorage.getItem('dashboard_tasks') || '[]'),
+        goals: JSON.parse(localStorage.getItem('dashboard_goals') || '[]'),
+        progress: JSON.parse(localStorage.getItem('illuminated_progress') || '{}'),
+        journal: JSON.parse(localStorage.getItem('book_studio_entries') || '[]')
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "illuminated_backup.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+};
+
+// 4. Wipe Data
+window.wipeData = function() {
+    if (!confirm("Are you sure? This will delete your streak, journal, and constellations.")) return;
+    if (!confirm("This cannot be undone. Wipe everything?")) return;
+    
+    localStorage.clear();
+    alert("Data wiped. Reloading...");
+    window.location.reload();
+};
+
+// 5. Populate Profile Stats on Page Load
+window.populateProfileStats = function() {
+    const streakEl = document.getElementById('profile-streak');
+    const starsEl = document.getElementById('profile-stars');
+    const constEl = document.getElementById('profile-constellations');
+
+    if (streakEl) streakEl.textContent = currentStreak;
+    if (starsEl) starsEl.textContent = currentProgressStars;
+    if (constEl) constEl.textContent = vaultCollection.length;
+};
+
+// ==========================================
+// HOME DASHBOARD LOGIC
+// ==========================================
+window.populateHomeDashboard = function() {
+    // 1. Set Greeting & Date
+    const savedName = localStorage.getItem('illuminated_username');
+    const nameEl = document.getElementById('home-username-display');
+    const dateEl = document.getElementById('home-date-display');
+
+    if (nameEl) {
+        nameEl.textContent = savedName ? `Welcome back, ${savedName}.` : "Welcome back.";
+    }
+    if (dateEl) {
+        const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        dateEl.textContent = today;
+    }
+
+    // 2. Set Top Stats (from your global variables)
+    const streakEl = document.getElementById('home-streak');
+    const starsEl = document.getElementById('home-stars');
+    const constEl = document.getElementById('home-constellations');
+
+    if (streakEl) streakEl.textContent = currentStreak;
+    if (starsEl) starsEl.textContent = currentProgressStars;
+    if (constEl) constEl.textContent = vaultCollection.length;
+
+    // 3. Set Daily Activity (from ActivityTracker)
+    if (window.ActivityTracker) {
+        const todayData = ActivityTracker.getTodayActivity();
+        const minutesEl = document.getElementById('today-focus-minutes');
+        const tasksEl = document.getElementById('today-tasks');
+
+        if (minutesEl) minutesEl.textContent = todayData.focusMinutes || 0;
+        if (tasksEl) tasksEl.textContent = todayData.tasks.length || 0;
+    }
+
+    // 4. Populate Mini Board (Tasks & Goals)
+    const homeTaskList = document.getElementById('home-task-list');
+    const homeGoalList = document.getElementById('home-goal-list');
+    
+    if (homeTaskList) {
+        const storedTasks = JSON.parse(localStorage.getItem('dashboard_tasks')) || [];
+        homeTaskList.innerHTML = storedTasks.length > 0 
+            ? storedTasks.map(t => `<li><span>${t}</span></li>`).join('')
+            : `<li><span style="color:#555; font-style:italic;">No tasks yet.</span></li>`;
+    }
+
+    if (homeGoalList) {
+        const storedGoals = JSON.parse(localStorage.getItem('dashboard_goals')) || [];
+        homeGoalList.innerHTML = storedGoals.length > 0 
+            ? storedGoals.map(g => `<li><span>🎯 ${g}</span></li>`).join('')
+            : `<li><span style="color:#555; font-style:italic;">No goals yet.</span></li>`;
+    }
+};
+
+// ==========================================
+// WHAT'S NEW / UPDATE LOGIC
+// ==========================================
+
+// YOU UPDATE THIS EVERY TIME YOU LAUNCH A NEW FEATURE!
+const LATEST_VERSION = "1.1"; 
+const UPDATE_NOTES = [
+    "Added the new Home Dashboard.",
+    "Built the Activity Tracker to log your focus minutes.",
+    "You can now export your data in Settings.",
+    "Performance improvements and bug fixes."
+];
+
+window.checkForUpdates = function() {
+    const lastSeenVersion = localStorage.getItem('illuminated_app_version');
+    
+    // If they haven't seen this version yet, show the modal
+    if (lastSeenVersion !== LATEST_VERSION) {
+        document.getElementById('update-version-text').textContent = `Version ${LATEST_VERSION}`;
+        
+        const listEl = document.getElementById('update-list-text');
+        listEl.innerHTML = UPDATE_NOTES.map(note => `<li>${note}</li>`).join('');
+        
+        document.getElementById('update-modal').classList.add('open');
+    }
+};
+
+window.closeUpdateModal = function() {
+    document.getElementById('update-modal').classList.remove('open');
+    // Save that they've seen this version so it doesn't pop up again
+    localStorage.setItem('illuminated_app_version', LATEST_VERSION);
 };
