@@ -95,6 +95,27 @@
     <script src="auth.js" defer></script>
 </head>
 <body>
+    <!-- ONBOARDING MODALS -->
+<div id="onboarding-modal" class="onboarding-modal">
+    <div class="onboarding-card cinematic-step" id="onboarding-step-1">
+        <h2 class="onboarding-title">ARE YOU READY?</h2>
+        <p class="onboarding-subtitle">To become an academic weapon.</p>
+        <p class="onboarding-small">(Don't worry. Your mental health is safe here.)</p>
+        <button class="glow-button" onclick="nextOnboardingStep()" style="margin-top: 2rem;">I'M READY</button>
+    </div>
+    <div class="onboarding-card hidden-step" id="onboarding-step-2">
+        <h2 class="onboarding-title">WHAT SHOULD WE CALL YOU?</h2>
+        <p class="onboarding-subtitle">Your identity in the stars.</p>
+        
+        <input type="text" id="onboarding-username" placeholder="e.g. StarGazer" autocomplete="off" spellcheck="false">
+        
+        <div id="onboarding-error" style="color: #ff5555; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 10px; min-height: 20px;"></div>
+        
+        <p class="onboarding-rules">3-15 characters. lowercase letters, numbers, and underscores only.</p>
+
+        <button class="glow-button" onclick="finishOnboarding()" style="margin: 1rem auto 0 auto; display: block; width: 100%; max-width: 350px;">ENTER THE APP</button>
+    </div>
+</div>
     <!-- =========================================
      INTRO / LOADING SCREEN
      ========================================= -->

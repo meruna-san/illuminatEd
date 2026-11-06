@@ -42,28 +42,25 @@ window.signOutUser = async function() {
 
 // -------- Get current user --------
 window.getCurrentUser = async function() {
-    window.populateProfile = async function() {
-    const user = await getCurrentUser();
-    if (!user) return;
-
-    const emailEl = document.getElementById('profile-email');
-    if (emailEl) emailEl.textContent = user.email;
-
-    const joinDateEl = document.getElementById('profile-join-date');
-    if (joinDateEl && user.created_at) {
-        const date = new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-        joinDateEl.textContent = `Member since ${date}`;
-    }
-
-    window.handleLogout = async function() {
-        await signOutUser();
-        window.location.reload();
-    };
-};
     const { data: { user } } = await supabaseClient.auth.getUser();
     return user;
 };
 
+// -------- Populate Profile (Fetch Username from DB) --------
+window.populateProfile = async function() {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
+
+    if (profile) {
+        localStorage.setItem('illuminated_username', profile.username);
+    }
+};
 // ==========================================
 // LOGIN UI LOGIC
 // ==========================================
@@ -99,10 +96,11 @@ window.handleAuthSubmit = async function(event) {
         return;
     }
 
-    // Mark this as a "just logged in" session
+        // Mark this as a "just logged in" session
     sessionStorage.setItem('just_authenticated', 'true');
-
-    window.location.reload();
+    
+    // Show the cinematic onboarding instead of reloading immediately!
+    document.getElementById('onboarding-modal').classList.add('open');
 };
 
 // ==========================================
@@ -275,3 +273,84 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 
 })();
+window.nextOnboardingStep = function() {
+    const step1 = document.getElementById('onboarding-step-1');
+    const step2 = document.getElementById('onboarding-step-2');
+    
+    // Fade out step 1
+    step1.style.opacity = '0';
+    step1.style.transform = 'scale(1.1)';
+    
+    setTimeout(() => {
+        step1.style.display = 'none';
+        step2.style.display = 'block';
+        step2.classList.add('cinematic-step'); // Re-trigger animation
+        document.getElementById('onboarding-username').focus();
+    }, 400);
+};
+
+window.finishOnboarding = async function() {
+    const usernameInput = document.getElementById('onboarding-username').value.trim().toLowerCase();
+    const errorEl = document.getElementById('onboarding-error');
+
+    // 1. THE BANNED WORD LIST 
+    const bannedWords = ["fuck", "shit", "bitch", "nazi", "racist", "nigga", "nigger","cunt", "motherfucker", "pussy", "dick", "cock", "asshole", "bullshit", "dumbass", "cocksucker", "dickhead", "faggot", "fucker", "fucked", "fucking", "jackass", "shite", "twat", "wanker","dick-head", "cocksucker", "dumb-ass", "child-fucker", "jeffreyepstein", "donaldtrump", "miakhalifa", "bullocks", "bastard", "arsehead", "arsehole"]; 
+    
+    // Check if the username contains any banned words
+    const containsBannedWord = bannedWords.some(word => usernameInput.includes(word));
+    if (containsBannedWord) {
+        errorEl.textContent = "This username contains restricted words. Please choose another.";
+        return;
+    }
+
+    // 2. LENGTH CHECK
+    if (usernameInput.length < 3) {
+        errorEl.textContent = "Username must be at least 3 characters.";
+        return;
+    }
+    if (usernameInput.length > 15) {
+        errorEl.textContent = "Username must be under 15 characters.";
+        return;
+    }
+
+    // 3. FORMAT CHECK (Only letters, numbers, and underscores)
+    const formatRegex = /^[a-z0-9_]+$/;
+    if (!formatRegex.test(usernameInput)) {
+        errorEl.textContent = "Only lowercase letters, numbers, and underscores (_) are allowed.";
+        return;
+    }
+
+    // 4. CHECK IF TAKEN IN SUPABASE
+    const { data: existingUser } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .eq('username', usernameInput)
+        .maybeSingle();
+
+    if (existingUser) {
+        errorEl.textContent = "That star is already taken. Try another.";
+        return;
+    }
+
+    // 5. SAVE TO SUPABASE
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const { error } = await supabaseClient
+        .from('profiles')
+        .update({ username: usernameInput })
+        .eq('id', user.id);
+
+    if (error) {
+        errorEl.textContent = "Something went wrong. Try again.";
+        return;
+    }
+
+    // 6. SUCCESS! Reload and enter.
+    localStorage.setItem('illuminated_username', usernameInput);
+    document.getElementById('onboarding-modal').classList.remove('open');
+    window.location.reload();
+};
+// -------- Logout Logic --------
+window.handleLogout = async function() {
+    await signOutUser();
+    window.location.reload();
+};

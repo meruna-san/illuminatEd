@@ -1310,5 +1310,58 @@
         font-size: 1.5rem;
     }
 
+        /* --- MOBILE ONBOARDING --- */
+    .onboarding-title {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+    }
+    
+    .onboarding-subtitle {
+        font-size: 1rem;
+    }
+    
+    #onboarding-username {
+        font-size: 1.2rem;
+    }
+
+        /* =========================================
+       MOBILE ONBOARDING FIX
+       ========================================= */
+
+    /* 1. Fix the input box */
+    #onboarding-username {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin: 2rem 0 0 0; /* Full width on mobile */
+        padding: 14px 16px;
+    }
+
+    /* 2. Fix the title */
+    .onboarding-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        padding: 0 10px;
+    }
+
+    /* 3. Fix the subtitle */
+    .onboarding-subtitle {
+        font-size: 1rem;
+    }
+
+    /* 4. Fix the rules text */
+    .onboarding-rules {
+        font-size: 0.7rem;
+        line-height: 1.4;
+        padding: 0 10px;
+    }
+
+    /* 5. Fix the button */
+    #onboarding-step-2 .glow-button {
+        width: 100%;
+        max-width: 100%;
+        margin: 1rem 0 0 0;
+    }
+
 }
 
