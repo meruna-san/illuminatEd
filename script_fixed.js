@@ -2299,53 +2299,119 @@ window.toggleTheme = function() {
     }
 };
 
-// 2. Save Username
-window.saveUsername = function() {
+// 2. Save Username (Now with Database Sync & Validation)
+window.saveUsername = async function() {
     const input = document.getElementById('username-input');
-    const val = input.value.trim();
-    if (!val) return;
-    
-    localStorage.setItem('illuminated_username', val);
-    alert("Username saved as: " + val);
-};
+    const errorEl = document.getElementById('username-error');
+    const saveBtn = document.getElementById('username-save-btn');
 
-// 3. Export Data
-window.exportData = function() {
-    const data = {
-        tasks: JSON.parse(localStorage.getItem('dashboard_tasks') || '[]'),
-        goals: JSON.parse(localStorage.getItem('dashboard_goals') || '[]'),
-        progress: JSON.parse(localStorage.getItem('illuminated_progress') || '{}'),
-        journal: JSON.parse(localStorage.getItem('book_studio_entries') || '[]')
-    };
+    if (!input) return;
 
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "illuminated_backup.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-};
+    const usernameInput = input.value.trim().toLowerCase();
 
-// 4. Wipe Data
-window.wipeData = function() {
-    if (!confirm("Are you sure? This will delete your streak, journal, and constellations.")) return;
-    if (!confirm("This cannot be undone. Wipe everything?")) return;
-    
-    localStorage.clear();
-    alert("Data wiped. Reloading...");
-    window.location.reload();
-};
+    // Reset error
+    if (errorEl) errorEl.textContent = '';
 
-// 5. Populate Profile Stats on Page Load
-window.populateProfileStats = function() {
-    const streakEl = document.getElementById('profile-streak');
-    const starsEl = document.getElementById('profile-stars');
-    const constEl = document.getElementById('profile-constellations');
+    // ---------- 1. BANNED WORDS ----------
+    const bannedWords = [
+        "fuck", "shit", "bitch", "nazi", "racist", "nigga", "nigger", "cunt",
+        "motherfucker", "pussy", "dick", "cock", "asshole", "bullshit", "dumbass",
+        "cocksucker", "dickhead", "faggot", "fucker", "fucked", "fucking",
+        "jackass", "shite", "twat", "wanker", "dick-head", "dumb-ass",
+        "child-fucker", "jeffreyepstein", "donaldtrump", "miakhalifa",
+        "bullocks", "bastard", "arsehead", "arsehole"
+    ];
+    if (bannedWords.some(word => usernameInput.includes(word))) {
+        if (errorEl) errorEl.textContent = "That username contains restricted words.";
+        return;
+    }
 
-    if (streakEl) streakEl.textContent = currentStreak;
-    if (starsEl) starsEl.textContent = currentProgressStars;
-    if (constEl) constEl.textContent = vaultCollection.length;
+    // ---------- 2. LENGTH ----------
+    if (usernameInput.length < 3) {
+        if (errorEl) errorEl.textContent = "Username must be at least 3 characters.";
+        return;
+    }
+    if (usernameInput.length > 15) {
+        if (errorEl) errorEl.textContent = "Username must be under 15 characters.";
+        return;
+    }
+
+    // ---------- 3. FORMAT ----------
+    const formatRegex = /^[a-z0-9_]+$/;
+    if (!formatRegex.test(usernameInput)) {
+        if (errorEl) errorEl.textContent = "Only lowercase letters, numbers, and underscores.";
+        return;
+    }
+
+    // ---------- 4. GET CURRENT USER ----------
+    const user = await window.getCurrentUser();
+    if (!user) {
+        if (errorEl) errorEl.textContent = "You're not signed in. Please refresh.";
+        return;
+    }
+
+    // ---------- 5. GET CURRENT USERNAME ----------
+    const { data: currentProfile } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
+
+    if (currentProfile && currentProfile.username === usernameInput) {
+        if (errorEl) {
+            errorEl.style.color = '#888';
+            errorEl.textContent = "That's already your username.";
+            setTimeout(() => { errorEl.textContent = ''; errorEl.style.color = '#ff5555'; }, 2500);
+        }
+        return;
+    }
+
+    // ---------- 6. CHECK IF TAKEN ----------
+    const { data: existingUser } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .eq('username', usernameInput)
+        .maybeSingle();
+
+    if (existingUser) {
+        if (errorEl) errorEl.textContent = "That star is already taken. Try another.";
+        return;
+    }
+
+    // ---------- 7. SAVE TO SUPABASE ----------
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = '...';
+    }
+
+    const { error } = await supabaseClient
+        .from('profiles')
+        .update({ username: usernameInput })
+        .eq('id', user.id);
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'SAVE';
+    }
+
+    if (error) {
+        if (errorEl) errorEl.textContent = "Something went wrong. Try again.";
+        console.error('Username save error:', error);
+        return;
+    }
+
+    // ---------- 8. SUCCESS ----------
+    localStorage.setItem('illuminated_username', usernameInput);
+    input.value = usernameInput;
+
+    if (errorEl) {
+        errorEl.style.color = '#7ac47a';
+        errorEl.textContent = "Saved ✓";
+        setTimeout(() => {
+            errorEl.textContent = '';
+            errorEl.style.color = '#ff5555';
+        }, 2500);
+    }
 };
 
 // ==========================================
