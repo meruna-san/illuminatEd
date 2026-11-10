@@ -86,21 +86,31 @@ window.handleAuthSubmit = async function(event) {
     submitBtn.textContent = '...';
     submitBtn.disabled = true;
 
-    const fn = currentAuthMode === 'signin' ? signInUser : signUpUser;
-    const result = await fn(email, password);
-
-    if (result.error) {
-        errorEl.textContent = result.error;
-        submitBtn.textContent = currentAuthMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
-        submitBtn.disabled = false;
-        return;
+    if (currentAuthMode === 'signin') {
+        // --- SIGN IN FLOW ---
+        const result = await signInUser(email, password);
+        if (result.error) {
+            errorEl.textContent = result.error;
+            submitBtn.textContent = 'SIGN IN';
+            submitBtn.disabled = false;
+            return;
+        }
+        // If sign in works, just reload. No modal!
+        window.location.reload();
+        
+    } else {
+        // --- SIGN UP FLOW ---
+        const result = await signUpUser(email, password);
+        if (result.error) {
+            errorEl.textContent = result.error;
+            submitBtn.textContent = 'CREATE ACCOUNT';
+            submitBtn.disabled = false;
+            return;
+        }
+        // If sign up works, show the modal!
+        document.getElementById('onboarding-modal').classList.add('open');
+        submitBtn.textContent = 'ENTER THE APP';
     }
-
-        // Mark this as a "just logged in" session
-    sessionStorage.setItem('just_authenticated', 'true');
-    
-    // Show the cinematic onboarding instead of reloading immediately!
-    document.getElementById('onboarding-modal').classList.add('open');
 };
 
 // ==========================================
@@ -135,6 +145,19 @@ window.showAppPage = function() {
 
 window.enterTryMode = function() {
     showLoginPage();
+    
+    // Check if they have an active session in their browser
+    const hasVisitedBefore = localStorage.getItem('illuminated_has_visited') === 'true';
+    
+    if (hasVisitedBefore) {
+        // Returning user: default to Sign In
+        switchAuthTab('signin');
+    } else {
+        // Brand new user: default to Sign Up
+        switchAuthTab('signup');
+        // Mark this device as "visited" so next time it goes to Sign In
+        localStorage.setItem('illuminated_has_visited', 'true');
+    }
 };
 
 window.goToLogin = function() {
@@ -146,24 +169,34 @@ window.goToLogin = function() {
 
 window.addEventListener('DOMContentLoaded', async () => {
     const user = await getCurrentUser();
-
     const INTRO_DURATION = 5000;
 
     if (user) {
-        // Logged in — intro → app
-        console.log('✅ Logged in as:', user.email);
         document.body.classList.add('logged-in');
-        sessionStorage.removeItem('just_authenticated');
 
-        populateProfile();
+        // 1. Fetch their profile
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('username')
+            .eq('id', user.id)
+            .single();
 
+        // 2. If their name is still the default "user_12345", they need to pick a name
+        if (profile && profile.username.startsWith('user_')) {
+            setTimeout(() => {
+                document.getElementById('onboarding-modal').classList.add('open');
+            }, INTRO_DURATION);
+            return;
+        }
+
+        // 3. Otherwise, they have a name. Go to the app.
+        if (profile) {
+            localStorage.setItem('illuminated_username', profile.username);
+        }
         setTimeout(() => {
             showAppPage();
         }, INTRO_DURATION);
     } else {
-        // Not logged in — intro → story page
-        console.log('❌ No user — story after intro');
-
         setTimeout(() => {
             showStoryPage();
         }, INTRO_DURATION);
@@ -347,7 +380,11 @@ window.finishOnboarding = async function() {
     // 6. SUCCESS! Reload and enter.
     localStorage.setItem('illuminated_username', usernameInput);
     document.getElementById('onboarding-modal').classList.remove('open');
-    window.location.reload();
+
+    // Wait a split second to ensure the database save completes, THEN reload
+    setTimeout(() => {
+        window.location.reload();
+    }, 500);
 };
 // -------- Logout Logic --------
 window.handleLogout = async function() {
