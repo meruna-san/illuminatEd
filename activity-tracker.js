@@ -1,83 +1,89 @@
 const ActivityTracker = (() => {
 
-    const STORAGE_KEY = "illuminated_daily_activity";
-
-    function getData() {
-        return JSON.parse(
-            localStorage.getItem(STORAGE_KEY) || "{}"
-        );
-    }
-
-    function saveData(data) {
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(data)
-        );
-    }
-
     function getTodayKey() {
         return new Date().toLocaleDateString("en-CA");
     }
 
-    function getToday() {
-        const data = getData();
+    async function getUserId() {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        return user ? user.id : null;
+    }
+
+    async function getTodayActivity() {
+        const userId = await getUserId();
+        if (!userId) return { tasks: [], goals: [], focusMinutes: 0, journalCommitted: false };
+
         const today = getTodayKey();
 
-        if (!data[today]) {
-            data[today] = {
-                tasks: [],
-                goals: [],
-                focusMinutes: 0,
-                journalCommitted: false
-            };
+        const { data, error } = await supabaseClient
+            .from('daily_activity')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('date_key', today)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Error fetching activity:", error);
         }
 
-        saveData(data);
-        return data[today];
+        if (data) {
+            return {
+                tasks: data.tasks || [],
+                goals: data.goals || [],
+                focusMinutes: data.focus_minutes || 0,
+                journalCommitted: data.journal_committed || false
+            };
+        } else {
+            return { tasks: [], goals: [], focusMinutes: 0, journalCommitted: false };
+        }
     }
 
-    function addTask(text) {
-        const day = getToday();
+    async function saveTodayActivity(updatedData) {
+        const userId = await getUserId();
+        if (!userId) return;
 
+        const today = getTodayKey();
+
+        const payload = {
+            user_id: userId,
+            date_key: today,
+            tasks: updatedData.tasks,
+            goals: updatedData.goals,
+            focus_minutes: updatedData.focusMinutes,
+            journal_committed: updatedData.journalCommitted
+        };
+
+        const { error } = await supabaseClient
+            .from('daily_activity')
+            .upsert(payload, { onConflict: 'user_id, date_key' });
+
+        if (error) {
+            console.error("Error saving activity:", error);
+        }
+    }
+
+    async function addTask(text) {
+        const day = await getTodayActivity();
         day.tasks.push(text);
-
-        const data = getData();
-        data[getTodayKey()] = day;
-        saveData(data);
+        await saveTodayActivity(day);
     }
 
-    function addGoal(text) {
-        const day = getToday();
-
+    async function addGoal(text) {
+        const day = await getTodayActivity();
         day.goals.push(text);
-
-        const data = getData();
-        data[getTodayKey()] = day;
-        saveData(data);
+        await saveTodayActivity(day);
     }
 
-    function addFocusMinutes(minutes) {
-        const day = getToday();
-
+    async function addFocusMinutes(minutes) {
+        const day = await getTodayActivity();
         day.focusMinutes += minutes;
-
-        const data = getData();
-        data[getTodayKey()] = day;
-        saveData(data);
+        await saveTodayActivity(day);
     }
 
-    function markJournalCommitted() {
-        const day = getToday();
-
+    async function markJournalCommitted() {
+        const day = await getTodayActivity();
         day.journalCommitted = true;
-
-        const data = getData();
-        data[getTodayKey()] = day;
-        saveData(data);
-    }
-
-    function getTodayActivity() {
-        return getToday();
+        await saveTodayActivity(day);
     }
 
     return {

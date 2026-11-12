@@ -232,7 +232,7 @@ function triggerTimerLoop(targetEndTime) {
     }, 1000);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     if (window.__checkRequiredDOM) window.__checkRequiredDOM([
         'time-display','start-btn','reset-btn','custom-settings','custom-min',
         'streak-count-display','trail-canvas','app-canvas','constellation-title','constellation-difficulty',
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'workspace','focus-toggle','book-left-title-render','flipping-paper-sheet','book-count','studio-header-title',
         'deck-card-container','transition-wrapper','chronicle-page-index','chronicle-toggle','realistic-stage','page-index','history-shelf'
     ]);
-    loadProgress();
+    await loadProgress();
     loadStoredLists();
 
     startBtn = document.getElementById('start-btn');
@@ -329,31 +329,51 @@ let currentProgressStars = 0;
 let vaultCollection = [];
 let starNodes = [];
 
-// --- PERSISTENCE ENGINE ---
-function saveProgress() {
-    const progressData = {
-        currentStreak: currentStreak,
-        lastActiveDate: lastActiveDate,
-        catalogIndex: catalogIndex,
-        currentProgressStars: currentProgressStars,
-        vaultCollection: vaultCollection
+// --- PERSISTENCE ENGINE (Cloud) ---
+async function saveProgress() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return; 
+
+    const payload = {
+        user_id: user.id,
+        current_streak: currentStreak,
+        last_active_date: lastActiveDate,
+        catalog_index: catalogIndex,
+        current_progress_stars: currentProgressStars,
+        vault_collection: vaultCollection
     };
-    localStorage.setItem('illuminated_progress', JSON.stringify(progressData));
+
+    const { error } = await supabaseClient
+        .from('user_stats')
+        .upsert(payload, { onConflict: 'user_id' });
+
+    if (error) console.error("Error saving progress to cloud:", error);
 }
 
-function loadProgress() {
-    const saved = localStorage.getItem('illuminated_progress');
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            currentStreak = data.currentStreak ?? 0;
-            lastActiveDate = data.lastActiveDate ?? "";
-            catalogIndex = data.catalogIndex ?? 0;
-            currentProgressStars = data.currentProgressStars ?? 0;
-            vaultCollection = data.vaultCollection ?? [];
-        } catch (e) {
-            console.error("Failed to load progress", e);
-        }
+async function loadProgress() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabaseClient
+        .from('user_stats')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (error) {
+        console.error("Error loading progress:", error);
+        return;
+    }
+
+    if (data) {
+        currentStreak = data.current_streak || 0;
+        lastActiveDate = data.last_active_date || "";
+        catalogIndex = data.catalog_index || 0;
+        currentProgressStars = data.current_progress_stars || 0;
+        vaultCollection = data.vault_collection || [];
+    } else {
+        // If they don't have a row yet, create one
+        await saveProgress();
     }
 }
 
@@ -739,13 +759,6 @@ window.addEventListener('resize', () => {
 // Thoughts Studio Core Engine
 // ===============================
 const IlluminatEdThoughts = (function(){
-    const Storage = {
-        save: (key, val) => localStorage.setItem(`book_studio_${key}`, JSON.stringify(val)),
-        get: (key, fallback) => {
-            const item = localStorage.getItem(`book_studio_${key}`);
-            return item ? JSON.parse(item) : fallback;
-        }
-    };
 
     const MOTIVATIONAL_QUOTES = [
         "\"Forget your mood; follow the plan.\"",
@@ -771,22 +784,11 @@ const IlluminatEdThoughts = (function(){
         { bg: "#f7e1e3", text: "#3d2024" }
     ];
 
-    let currentPaletteIndex = Storage.get('palette_idx', 0);
-    let compiledBookEntries = Storage.get('entries', []);
+       let currentPaletteIndex = 0;
+    let compiledBookEntries = [];
     let currentViewingPageIndex = -1;
     let isChronicleModeActive = false;
     let singleChronicleIndex = 0;
-
-    // MIGRATION: convert old string entries to array-of-parts
-compiledBookEntries = compiledBookEntries.map(entry => {
-    if (typeof entry.text === 'string') {
-        // split old entries on the em-dash separator
-        const parts = entry.text.split(/\n*— — —\n*/).map(p => p.trim()).filter(Boolean);
-        return { text: parts.length ? parts : [entry.text], date: entry.date };
-    }
-    return entry; // already array
-});
-Storage.save('entries', compiledBookEntries);
 
     // Elements
     const input = document.getElementById('journal-input');
@@ -1001,8 +1003,8 @@ transitionWrapper.innerHTML = `
             if(textureStyle) bookTexture.style.backgroundSize = '12px 12px';
         }
 
-        Storage.save('cover_bg', backgroundStyle);
-        Storage.save('cover_tex', textureStyle || '');
+                localStorage.setItem('book_studio_cover_bg', backgroundStyle);
+        localStorage.setItem('book_studio_cover_tex', textureStyle || '');
 
         if(singleChronicleIndex === 0) renderSingleDeckContent();
     }
@@ -1015,7 +1017,7 @@ transitionWrapper.innerHTML = `
         const selectedPalette = WEALTHY_FOOD_PALETTES[currentPaletteIndex];
         document.documentElement.style.setProperty('--book-page', selectedPalette.bg);
         document.documentElement.style.setProperty('--page-text', selectedPalette.text);
-        Storage.save('palette_idx', currentPaletteIndex);
+        localStorage.setItem('book_studio_palette_idx', currentPaletteIndex);
 
         if(previewRightPageElement){
             previewRightPageElement.style.background = selectedPalette.bg;
@@ -1067,7 +1069,7 @@ transitionWrapper.innerHTML = `
     return parts;
 }
 
-   function commitCurrentDayLog() {
+   async function commitCurrentDayLog() {
     const parts = extractPartsFromEditor(input);
 
     if(parts.length === 0) {
@@ -1075,26 +1077,22 @@ transitionWrapper.innerHTML = `
         return;
     }
 
-    const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    // Save to Supabase
+    const savedData = await saveJournalEntryToDB(parts);
 
-    if(currentViewingPageIndex !== -1) {
-        compiledBookEntries[currentViewingPageIndex] = { text: parts, date: todayStr };
-    } else {
-        const lastIndex = compiledBookEntries.length - 1;
-        const lastEntry = lastIndex >= 0 ? compiledBookEntries[lastIndex] : null;
-
-        if(lastEntry && lastEntry.date === todayStr) {
-            const lastParts = Array.isArray(lastEntry.text) ? lastEntry.text : [lastEntry.text];
-            compiledBookEntries[lastIndex] = {
-                text: [...lastParts, ...parts],
-                date: todayStr
-            };
-        } else {
-            compiledBookEntries.push({ text: parts, date: todayStr });
-        }
+    if (currentViewingPageIndex !== -1) {
+        // If we edited an existing one, update the local array
+        compiledBookEntries[currentViewingPageIndex].text = parts;
+        compiledBookEntries[currentViewingPageIndex].date = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } else if (savedData) {
+        // If it was a new entry, add it to our local array
+        compiledBookEntries.push({ 
+            text: savedData.parts, 
+            date: savedData.date, 
+            id: savedData.id 
+        });
     }
 
-    Storage.save('entries', compiledBookEntries);
     updateHistoryUI();
     resetInputWorkspace();
     updateRandomQuote();
@@ -1162,7 +1160,7 @@ if (toggleBtn) {
             if(bookLeftTitleRender) bookLeftTitleRender.textContent = titleValue;
             const studioHeaderTitle = document.getElementById('studio-header-title');
             if(studioHeaderTitle) studioHeaderTitle.textContent = titleValue;
-            Storage.save('title', titleValue);
+          localStorage.setItem('book_studio_title', titleValue);
             renderSingleDeckContent();
         };
     }
@@ -1182,23 +1180,80 @@ if (toggleBtn) {
     }
 
     // Initialize Studio on DOM Ready
-    (function initStudio(){
-        const savedTitle = Storage.get('title','Thoughts');
+        // --- SUPABASE FUNCTIONS FOR JOURNAL ---
+    async function fetchJournalFromDB() {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabaseClient
+            .from('journal_entries')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error("Error fetching journal:", error);
+            return;
+        }
+
+        if (data) {
+            compiledBookEntries = data.map(entry => ({
+                text: entry.parts,
+                date: entry.date,
+                id: entry.id // Save the DB id for updating
+            }));
+        }
+    }
+
+    async function saveJournalEntryToDB(newEntryParts) {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return null;
+
+        const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        
+        // Check if we are editing an existing entry or making a new one
+        if(currentViewingPageIndex !== -1) {
+            const entryId = compiledBookEntries[currentViewingPageIndex].id;
+            const { error } = await supabaseClient
+                .from('journal_entries')
+                .update({ parts: newEntryParts, date: todayStr })
+                .eq('id', entryId);
+            if (error) console.error("Error updating entry:", error);
+        } else {
+            const { data, error } = await supabaseClient
+                .from('journal_entries')
+                .insert([{ user_id: user.id, parts: newEntryParts, date: todayStr }])
+                .select();
+            if (error) console.error("Error inserting entry:", error);
+            return data ? data[0] : null;
+        }
+    }
+
+    // --- INIT STUDIO ---
+    async function initStudio() {
+        const savedTitle = localStorage.getItem('book_studio_title') || 'Thoughts'; // We'll keep the title in local for now
         if(bookTitleInput) bookTitleInput.value = savedTitle;
         if(bookLeftTitleRender) bookLeftTitleRender.textContent = savedTitle;
         const studioHeaderTitle = document.getElementById('studio-header-title');
         if(studioHeaderTitle) studioHeaderTitle.textContent = savedTitle;
 
-        const savedBg = Storage.get('cover_bg','linear-gradient(135deg, #2b1f11 0%, #1c150c 100%)');
-        const savedTex = Storage.get('cover_tex','');
+        // Load cover from local storage (just for visuals)
+        const savedBg = localStorage.getItem('book_studio_cover_bg') || 'linear-gradient(135deg, #2b1f11 0%, #1c150c 100%)';
+        const savedTex = localStorage.getItem('book_studio_cover_tex') || '';
         applyCoverPreset(savedBg, savedTex);
 
+        // Fetch entries from Supabase
+        await fetchJournalFromDB();
+        
         updateHistoryUI();
         resetInputWorkspace();
         cycleGourmetPageColor(0);
         updateRandomQuote();
         renderSingleDeckContent();
-    })();
+    }
+
+    // Call the init function
+    initStudio();
     return {
         toggleFocusMode,
         toggleChronicleMode,
@@ -2417,7 +2472,7 @@ window.saveUsername = async function() {
 // ==========================================
 // HOME DASHBOARD LOGIC
 // ==========================================
-window.populateHomeDashboard = function() {
+window.populateHomeDashboard = async function() {
     // 1. Set Greeting & Date
     const savedName = localStorage.getItem('illuminated_username');
     const nameEl = document.getElementById('home-username-display');
@@ -2440,16 +2495,15 @@ window.populateHomeDashboard = function() {
     if (starsEl) starsEl.textContent = currentProgressStars;
     if (constEl) constEl.textContent = vaultCollection.length;
 
-    // 3. Set Daily Activity (from ActivityTracker)
+       // 3. Set Daily Activity (from ActivityTracker)
     if (window.ActivityTracker) {
-        const todayData = ActivityTracker.getTodayActivity();
+        const todayData = await ActivityTracker.getTodayActivity();
         const minutesEl = document.getElementById('today-focus-minutes');
         const tasksEl = document.getElementById('today-tasks');
 
         if (minutesEl) minutesEl.textContent = todayData.focusMinutes || 0;
         if (tasksEl) tasksEl.textContent = todayData.tasks.length || 0;
     }
-
     // 4. Populate Mini Board (Tasks & Goals)
     const homeTaskList = document.getElementById('home-task-list');
     const homeGoalList = document.getElementById('home-goal-list');
