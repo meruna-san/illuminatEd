@@ -34,14 +34,11 @@ const OPPORTUNITIES_DATABASE = [
     const bulb = document.querySelector('.intro-bulb');
     if (!intro || !bulb) return;
 
-    // Skip intro on subsequent visits in same session
-
-        // Timeline — slower, more deliberate
-    setTimeout(() => bulb.classList.add('faint'),    200); // faint outline
-    setTimeout(() => bulb.classList.add('on'),       800); // ignite
-    setTimeout(() => intro.classList.add('word-on'), 1900); // slide left + reveal word
-    setTimeout(() => intro.classList.add('hidden'),  5200); // fade out
-    setTimeout(() => intro.remove(),                 5600); // remove from DOM
+    setTimeout(() => bulb.classList.add('faint'),    200);
+    setTimeout(() => bulb.classList.add('on'),       800);
+    setTimeout(() => intro.classList.add('word-on'), 1900); 
+    setTimeout(() => intro.classList.add('hidden'),  5200); 
+    setTimeout(() => intro.remove(),                 5600); 
 })();
 let currentMainSector = 'all';
 
@@ -94,7 +91,7 @@ window.__checkRequiredDOM = function(list) {
     return missing;
 };
 
-// --- CORE POMODORO ENGINE WITH BACKGROUND TIME TRACKING & SYNC ---
+// ---POMODORO ENGINE---
 let timeLeft = 25 * 60;
 let currentModeMinutes = 25;
 let timerId = null;
@@ -219,12 +216,8 @@ function triggerTimerLoop(targetEndTime) {
                 ActivityTracker.addFocusMinutes(currentModeMinutes);
             }
             
-            // --- SMART POMODORO LOGIC ---
             setTimeout(() => {
-                // Determine if we just finished focusing or taking a break
                 const wasFocus = currentModeMinutes > 15;
-                
-                // Trigger the beautiful custom modal/toast
                 showTimerModal(wasFocus);
                 
             }, 100);
@@ -372,7 +365,6 @@ async function loadProgress() {
         currentProgressStars = data.current_progress_stars || 0;
         vaultCollection = data.vault_collection || [];
     } else {
-        // If they don't have a row yet, create one
         await saveProgress();
     }
 }
@@ -790,7 +782,6 @@ const IlluminatEdThoughts = (function(){
     let isChronicleModeActive = false;
     let singleChronicleIndex = 0;
 
-    // Elements
     const input = document.getElementById('journal-input');
     const overlay = document.getElementById('quote-placeholder');
     const stamp = document.getElementById('journal-date');
@@ -1043,13 +1034,11 @@ transitionWrapper.innerHTML = `
     const walk = (node) => {
         node.childNodes.forEach(child => {
             if (child.nodeType === 1) {
-                // element node
                 if (child.tagName === 'HR' && child.classList.contains('entry-divider')) {
                     flush();
                 } else if (child.tagName === 'BR') {
                     current += '\n';
                 } else if (child.tagName === 'DIV' || child.tagName === 'P') {
-                    // block → treat as line break before/after
                     if (current && !current.endsWith('\n')) current += '\n';
                     walk(child);
                     if (current && !current.endsWith('\n')) current += '\n';
@@ -1057,7 +1046,6 @@ transitionWrapper.innerHTML = `
                     walk(child);
                 }
             } else if (child.nodeType === 3) {
-                // text node
                 current += child.textContent;
             }
         });
@@ -1077,15 +1065,12 @@ transitionWrapper.innerHTML = `
         return;
     }
 
-    // Save to Supabase
     const savedData = await saveJournalEntryToDB(parts);
 
     if (currentViewingPageIndex !== -1) {
-        // If we edited an existing one, update the local array
         compiledBookEntries[currentViewingPageIndex].text = parts;
         compiledBookEntries[currentViewingPageIndex].date = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     } else if (savedData) {
-        // If it was a new entry, add it to our local array
         compiledBookEntries.push({ 
             text: savedData.parts, 
             date: savedData.date, 
@@ -1153,7 +1138,6 @@ if (toggleBtn) {
         }
     }
 
-    // Input Events
     if(bookTitleInput){
         bookTitleInput.oninput = () => {
             const titleValue = bookTitleInput.value || 'Thoughts';
@@ -1179,7 +1163,6 @@ if (toggleBtn) {
         };
     }
 
-    // Initialize Studio on DOM Ready
         // --- SUPABASE FUNCTIONS FOR JOURNAL ---
     async function fetchJournalFromDB() {
         const { data: { user } } = await supabaseClient.auth.getUser();
@@ -1200,7 +1183,7 @@ if (toggleBtn) {
             compiledBookEntries = data.map(entry => ({
                 text: entry.parts,
                 date: entry.date,
-                id: entry.id // Save the DB id for updating
+                id: entry.id 
             }));
         }
     }
@@ -1211,7 +1194,6 @@ if (toggleBtn) {
 
         const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
         
-        // Check if we are editing an existing entry or making a new one
         if(currentViewingPageIndex !== -1) {
             const entryId = compiledBookEntries[currentViewingPageIndex].id;
             const { error } = await supabaseClient
@@ -1237,12 +1219,10 @@ if (toggleBtn) {
         const studioHeaderTitle = document.getElementById('studio-header-title');
         if(studioHeaderTitle) studioHeaderTitle.textContent = savedTitle;
 
-        // Load cover from local storage (just for visuals)
         const savedBg = localStorage.getItem('book_studio_cover_bg') || 'linear-gradient(135deg, #2b1f11 0%, #1c150c 100%)';
         const savedTex = localStorage.getItem('book_studio_cover_tex') || '';
         applyCoverPreset(savedBg, savedTex);
 
-        // Fetch entries from Supabase
         await fetchJournalFromDB();
         
         updateHistoryUI();
@@ -1252,7 +1232,6 @@ if (toggleBtn) {
         renderSingleDeckContent();
     }
 
-    // Call the init function
     initStudio();
     return {
         toggleFocusMode,
@@ -1271,7 +1250,6 @@ if (toggleBtn) {
     };
 })();
 
-// Attach globally so HTML buttons work!
 window.IlluminatEdThoughts = IlluminatEdThoughts;
 
 function toggleMobileMenu(){
@@ -1308,20 +1286,16 @@ document.addEventListener("click", function(e) {
 });
 function showStudioTab(tab, button) {
 
-    // remove active state from all buttons
     document.querySelectorAll(".studio-tab")
         .forEach(btn => btn.classList.remove("active"));
 
-    // activate clicked button
     button.classList.add("active");
 
     startStudioParticles(button);
 
-    // hide all panels
     document.querySelectorAll(".studio-panel")
         .forEach(panel => panel.classList.remove("active-panel"));
 
-    // show requested panel
     const panel = document.getElementById("studio-" + tab);
 
     if (panel) {
@@ -1349,25 +1323,21 @@ function startStudioParticles(button){
 
 switch(side){
 
-    // top
     case 0:
         spark.style.left = Math.random() * 100 + "%";
         spark.style.top = "-4px";
         break;
 
-    // right
     case 1:
         spark.style.left = "calc(100% + 4px)";
         spark.style.top = Math.random() * 100 + "%";
         break;
 
-    // bottom
     case 2:
         spark.style.left = Math.random() * 100 + "%";
         spark.style.top = "calc(100% + 4px)";
         break;
 
-    // left
     case 3:
         spark.style.left = "-4px";
         spark.style.top = Math.random() * 100 + "%";
@@ -1462,10 +1432,8 @@ function dismissSleepToast() {
 }
 
 window.tapSleepToast = function() {
-    // tap → dismiss toast AND show the full modal (mobile users get the ritual card too)
     dismissSleepToast();
 
-    // temporarily force the modal to show even on mobile for this one tap
     const modal = document.getElementById('sleep-modal');
     const textEl = document.getElementById('sleep-modal-text');
     if (!modal) return;
@@ -1475,7 +1443,6 @@ window.tapSleepToast = function() {
     modal.classList.add('open');
     modal.classList.add('force-show');
 
-    // remove the force-show class once closed
     const observer = new MutationObserver(() => {
         if (!modal.classList.contains('open')) {
             modal.classList.remove('force-show');
@@ -1508,7 +1475,6 @@ window.closeSleepModal = function() {
     }, 600);
 };
 
-// Override the mobile CSS hide when force-show is on
 const sleepStyle = document.createElement('style');
 sleepStyle.textContent = `
     @media (max-width: 768px) {
@@ -1519,7 +1485,6 @@ sleepStyle.textContent = `
 `;
 document.head.appendChild(sleepStyle);
 
-// Trigger on load
 (function initSleepCheck() {
     if (!isLateNight()) return;
     if (sessionStorage.getItem('sleep_modal_shown') === 'true') return;
@@ -1585,7 +1550,6 @@ const EVIDENCE_DATA = [
 
 (function initEvidence() {
 
-    // Render cards
     const grid = document.getElementById('evidence-grid');
     if (!grid) return;
 
@@ -1597,7 +1561,6 @@ const EVIDENCE_DATA = [
         </button>
     `).join('');
 
-    // Reveal observer
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -1647,7 +1610,6 @@ window.closeEvidenceModal = function(event) {
     resize();
     window.addEventListener('resize', resize);
 
-    // Evenly spread stars using grid jitter
     const STAR_COUNT = 220;
     const stars = [];
     const cols = Math.ceil(Math.sqrt(STAR_COUNT * (W / H)));
@@ -1674,13 +1636,13 @@ window.closeEvidenceModal = function(event) {
     function draw() {
         t += 0.016;
         const age = (Date.now() - startTime) / 1000;
-        const globalFade = Math.min(1, age / 2.5); // fade in over 2.5s
+        const globalFade = Math.min(1, age / 2.5);
 
         ctx.clearRect(0, 0, W, H);
 
         stars.forEach(s => {
             const twinkle = (Math.sin(t * s.twinkleSpeed + s.twinkleOffset) + 1) / 2;
-            const flare = Math.pow(twinkle, 4); // sharp peak = sparkle
+            const flare = Math.pow(twinkle, 4);
             const alpha = (0.15 + twinkle * 0.5 + flare * 0.5) * globalFade;
             const radius = s.baseR + flare * 1.2;
 
@@ -1825,7 +1787,6 @@ window.closeEvidenceModal = function(event) {
             cH = cCanvas.height = rect.height;
         }
 
-        // Cassiopeia — 5 points, normalized
         const STARS = [
             { x: 0.15, y: 0.35 },
             { x: 0.32, y: 0.65 },
@@ -1841,7 +1802,6 @@ window.closeEvidenceModal = function(event) {
         function drawConstellation() {
             cCtx.clearRect(0, 0, cW, cH);
 
-            // connecting lines
             cCtx.strokeStyle = 'rgba(255, 204, 0, 0.4)';
             cCtx.lineWidth = 1.2;
             cCtx.beginPath();
@@ -1853,7 +1813,6 @@ window.closeEvidenceModal = function(event) {
             }
             cCtx.stroke();
 
-            // stars
             STARS.forEach((s, i) => {
                 if (i >= visibleStars) return;
                 const x = s.x * cW;
@@ -1880,7 +1839,6 @@ window.closeEvidenceModal = function(event) {
             resizeC();
             window.addEventListener('resize', resizeC);
 
-            // reveal one star every 500ms
             const interval = setInterval(() => {
                 visibleStars++;
                 if (visibleStars >= STARS.length) {
@@ -1910,9 +1868,7 @@ window.closeEvidenceModal = function(event) {
             }, 4500);
         }
 
-        // first show after 800ms
         setTimeout(showThenHide, 800);
-        // then loop every 8s
         sleepInterval = setInterval(showThenHide, 8000);
     }
 
@@ -1932,7 +1888,6 @@ window.closeEvidenceModal = function(event) {
             { title: 'Yale Young Global Scholars', meta: 'YALE CAMPUS' }
         ];
 
-        // duplicate items so scroll loops seamlessly
         const doubled = [...items, ...items, ...items];
         scroll.innerHTML = `<div class="mini-launchpad-track">${doubled.map(item => `
     <div class="mini-launchpad-item">
@@ -1970,7 +1925,6 @@ window.closeEvidenceModal = function(event) {
 
 (function initStorySleepTrigger() {
 
-    // Find the "quiet part" section
     const sections = document.querySelectorAll('#story-page .story-section');
     let quietSection = null;
 
@@ -1988,8 +1942,6 @@ window.closeEvidenceModal = function(event) {
         entries.forEach(entry => {
             if (entry.isIntersecting && !hasFired) {
                 hasFired = true;
-
-                // wait a beat so the text settles first
                 setTimeout(() => {
                     triggerStorySleepToast();
                 }, 1200);
@@ -2006,7 +1958,6 @@ window.closeEvidenceModal = function(event) {
 // ==========================================
 
 function triggerStorySleepToast() {
-    // Build the toast element if it doesn't exist
         let toast = document.getElementById('story-sleep-toast');
     if (!toast) {
         toast = document.createElement('div');
@@ -2022,8 +1973,6 @@ function triggerStorySleepToast() {
         `;
         document.body.appendChild(toast);
     }
-
-    // Backdrop
     let backdrop = document.getElementById('story-sleep-toast-backdrop');
     if (!backdrop) {
         backdrop = document.createElement('div');
@@ -2032,13 +1981,11 @@ function triggerStorySleepToast() {
         document.body.appendChild(backdrop);
     }
 
-    // Show
     requestAnimationFrame(() => {
         backdrop.classList.add('open');
         toast.classList.add('visible');
     });
 
-        // Auto-dismiss after 5s
     setTimeout(() => {
         toast.classList.remove('visible');
         backdrop.classList.remove('open');
@@ -2095,17 +2042,12 @@ window.closeStorySleepModal = function() {
 (function initManifestoConstellations() {
 
     const patterns = [
-        // TRIANGULUM
         [{x:0.25,y:0.7}, {x:0.5,y:0.3}, {x:0.75,y:0.7}],
-        // ARIES
         [{x:0.2,y:0.6}, {x:0.4,y:0.4}, {x:0.6,y:0.5}, {x:0.8,y:0.35}],
-        // CASSIOPEIA (W shape)
         [{x:0.15,y:0.5}, {x:0.3,y:0.7}, {x:0.5,y:0.4}, {x:0.7,y:0.7}, {x:0.85,y:0.5}],
-        // CYGNUS
         [{x:0.5,y:0.2}, {x:0.5,y:0.5}, {x:0.25,y:0.55}, {x:0.75,y:0.55}, {x:0.5,y:0.8}]
     ];
 
-    // Set up canvases
     const canvases = [];
     patterns.forEach((nodes, i) => {
         const canvas = document.getElementById(`manifesto-canvas-${i + 1}`);
@@ -2127,7 +2069,6 @@ window.closeStorySleepModal = function() {
         function drawOne(c) {
         c.ctx.clearRect(0, 0, c.size, c.size);
 
-        // Lines between visible stars
         c.ctx.strokeStyle = 'rgba(255, 204, 0, 0.35)';
         c.ctx.lineWidth = 1;
         c.ctx.beginPath();
@@ -2139,7 +2080,6 @@ window.closeStorySleepModal = function() {
         }
         c.ctx.stroke();
 
-        // Stars — smaller, tighter glow
         c.nodes.forEach((n, i) => {
             if (i >= c.visibleStars) return;
             const x = n.x * c.size;
@@ -2147,7 +2087,6 @@ window.closeStorySleepModal = function() {
 
             if (c.starRadii[i] < 2.2) c.starRadii[i] += 0.15;
 
-            // Small glow halo — radius 6, not 15
             c.ctx.beginPath();
             const grd = c.ctx.createRadialGradient(x, y, 0, x, y, 6);
             grd.addColorStop(0, 'rgba(255, 204, 0, 0.35)');
@@ -2156,7 +2095,6 @@ window.closeStorySleepModal = function() {
             c.ctx.arc(x, y, 6, 0, Math.PI * 2);
             c.ctx.fill();
 
-            // Star core — small
             c.ctx.beginPath();
             c.ctx.fillStyle = 'rgba(255, 204, 0, 0.95)';
             c.ctx.shadowBlur = 8;
@@ -2179,7 +2117,6 @@ window.closeStorySleepModal = function() {
             if (c.visibleStars >= c.nodes.length) {
                 clearInterval(interval);
                 setTimeout(() => {
-                    // reset and replay after a pause
                     c.visibleStars = 0;
                     c.starRadii = c.nodes.map(() => 0);
                     startAnimating(c);
@@ -2188,7 +2125,6 @@ window.closeStorySleepModal = function() {
         }, 600);
     }
 
-    // Reveal when manifesto enters view
     const manifesto = document.querySelector('.story-manifesto');
     if (manifesto) {
         const obs = new IntersectionObserver((entries) => {
@@ -2197,7 +2133,6 @@ window.closeStorySleepModal = function() {
                     document.querySelectorAll('.manifesto-card').forEach((card, i) => {
                         setTimeout(() => card.classList.add('visible'), i * 250);
                     });
-                    // start drawing each constellation
                     canvases.forEach((c, i) => {
                         setTimeout(() => startAnimating(c), 400 + i * 250);
                     });
@@ -2213,7 +2148,6 @@ window.closeStorySleepModal = function() {
 // ==========================================
 
 (function initEvidenceHoverFallback() {
-    // Only run if the browser doesn't support :has()
     if (CSS.supports && CSS.supports('selector(:has(*))')) return;
 
     const grid = document.getElementById('evidence-grid');
@@ -2251,7 +2185,6 @@ window.showTimerModal = function(wasFocus) {
     const btnText = wasFocus ? "START BREAK" : "START FOCUS";
     const icon = wasFocus ? "✨" : "🚀";
 
-    // Update content
     document.getElementById('timer-modal-title').textContent = title;
     document.getElementById('timer-modal-text').textContent = text;
     document.getElementById('timer-modal-icon').textContent = icon;
@@ -2260,7 +2193,6 @@ window.showTimerModal = function(wasFocus) {
     document.getElementById('timer-toast-text').textContent = "Loading your results...";
     document.getElementById('timer-toast-icon').textContent = icon;
 
-    // Set up Button Action
     const primaryBtn = document.getElementById('timer-modal-primary-btn');
     primaryBtn.textContent = btnText;
     primaryBtn.onclick = () => {
@@ -2271,11 +2203,9 @@ window.showTimerModal = function(wasFocus) {
         document.getElementById('start-btn').click(); 
     };
 
-    // Trigger UI based on device
     if (window.innerWidth <= 768) {
         showTimerToast();
         
-        // AUTOMATICALLY EXPAND AFTER 2.5 SECONDS
         setTimeout(() => {
             const toast = document.getElementById('timer-toast');
             if (toast.classList.contains('open')) {
@@ -2292,21 +2222,17 @@ window.closeTimerModal = function() {
     const modal = document.getElementById('timer-complete-modal');
     if (!modal) return;
     
-    // If it's already closing, don't trigger it again
     if (modal.classList.contains('closing')) return;
 
-    // Add the closing animation class
     modal.classList.add('closing');
     
-    // Dismiss the toast/backdrop at the same time
     dismissTimerToast();
 
-    // Wait for the animation to finish, then hide it
     setTimeout(() => {
         modal.classList.remove('open');
         modal.classList.remove('force-show');
         modal.classList.remove('closing');
-    }, 400); // Matches the 0.4s animation duration
+    }, 400);
 };
 
 window.showTimerToast = function() {
@@ -2343,7 +2269,6 @@ window.tapTimerToast = function() {
 // PROFILE & SETTINGS LOGIC
 // ==========================================
 
-// 1. Toggle Theme (Placeholder)
 window.toggleTheme = function() {
     const toggle = document.querySelector('.theme-toggle');
     toggle.classList.toggle('active');
@@ -2353,8 +2278,6 @@ window.toggleTheme = function() {
         toggle.classList.remove('active'); 
     }
 };
-
-// 2. Save Username (Now with Database Sync & Validation)
 window.saveUsername = async function() {
     const input = document.getElementById('username-input');
     const errorEl = document.getElementById('username-error');
@@ -2364,10 +2287,9 @@ window.saveUsername = async function() {
 
     const usernameInput = input.value.trim().toLowerCase();
 
-    // Reset error
     if (errorEl) errorEl.textContent = '';
 
-    // ---------- 1. BANNED WORDS ----------
+    // ---------- BANNED WORDS ----------
     const bannedWords = [
         "fuck", "shit", "bitch", "nazi", "racist", "nigga", "nigger", "cunt",
         "motherfucker", "pussy", "dick", "cock", "asshole", "bullshit", "dumbass",
@@ -2381,7 +2303,6 @@ window.saveUsername = async function() {
         return;
     }
 
-    // ---------- 2. LENGTH ----------
     if (usernameInput.length < 3) {
         if (errorEl) errorEl.textContent = "Username must be at least 3 characters.";
         return;
@@ -2391,21 +2312,17 @@ window.saveUsername = async function() {
         return;
     }
 
-    // ---------- 3. FORMAT ----------
     const formatRegex = /^[a-z0-9_]+$/;
     if (!formatRegex.test(usernameInput)) {
         if (errorEl) errorEl.textContent = "Only lowercase letters, numbers, and underscores.";
         return;
     }
 
-    // ---------- 4. GET CURRENT USER ----------
     const user = await window.getCurrentUser();
     if (!user) {
         if (errorEl) errorEl.textContent = "You're not signed in. Please refresh.";
         return;
     }
-
-    // ---------- 5. GET CURRENT USERNAME ----------
     const { data: currentProfile } = await supabaseClient
         .from('profiles')
         .select('username')
@@ -2420,8 +2337,6 @@ window.saveUsername = async function() {
         }
         return;
     }
-
-    // ---------- 6. CHECK IF TAKEN ----------
     const { data: existingUser } = await supabaseClient
         .from('profiles')
         .select('username')
@@ -2432,8 +2347,6 @@ window.saveUsername = async function() {
         if (errorEl) errorEl.textContent = "That star is already taken. Try another.";
         return;
     }
-
-    // ---------- 7. SAVE TO SUPABASE ----------
     if (saveBtn) {
         saveBtn.disabled = true;
         saveBtn.textContent = '...';
@@ -2455,7 +2368,6 @@ window.saveUsername = async function() {
         return;
     }
 
-    // ---------- 8. SUCCESS ----------
     localStorage.setItem('illuminated_username', usernameInput);
     input.value = usernameInput;
 
@@ -2473,7 +2385,6 @@ window.saveUsername = async function() {
 // HOME DASHBOARD LOGIC
 // ==========================================
 window.populateHomeDashboard = async function() {
-    // 1. Set Greeting & Date
     const savedName = localStorage.getItem('illuminated_username');
     const nameEl = document.getElementById('home-username-display');
     const dateEl = document.getElementById('home-date-display');
@@ -2485,8 +2396,6 @@ window.populateHomeDashboard = async function() {
         const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
         dateEl.textContent = today;
     }
-
-    // 2. Set Top Stats (from your global variables)
     const streakEl = document.getElementById('home-streak');
     const starsEl = document.getElementById('home-stars');
     const constEl = document.getElementById('home-constellations');
@@ -2495,7 +2404,6 @@ window.populateHomeDashboard = async function() {
     if (starsEl) starsEl.textContent = currentProgressStars;
     if (constEl) constEl.textContent = vaultCollection.length;
 
-       // 3. Set Daily Activity (from ActivityTracker)
     if (window.ActivityTracker) {
         const todayData = await ActivityTracker.getTodayActivity();
         const minutesEl = document.getElementById('today-focus-minutes');
@@ -2504,7 +2412,6 @@ window.populateHomeDashboard = async function() {
         if (minutesEl) minutesEl.textContent = todayData.focusMinutes || 0;
         if (tasksEl) tasksEl.textContent = todayData.tasks.length || 0;
     }
-    // 4. Populate Mini Board (Tasks & Goals)
     const homeTaskList = document.getElementById('home-task-list');
     const homeGoalList = document.getElementById('home-goal-list');
     
@@ -2527,7 +2434,6 @@ window.populateHomeDashboard = async function() {
 // WHAT'S NEW / UPDATE LOGIC
 // ==========================================
 
-// YOU UPDATE THIS EVERY TIME YOU LAUNCH A NEW FEATURE!
 const LATEST_VERSION = "1.1"; 
 const UPDATE_NOTES = [
     "Added the new Home Dashboard.",
@@ -2539,7 +2445,6 @@ const UPDATE_NOTES = [
 window.checkForUpdates = function() {
     const lastSeenVersion = localStorage.getItem('illuminated_app_version');
     
-    // If they haven't seen this version yet, show the modal
     if (lastSeenVersion !== LATEST_VERSION) {
         document.getElementById('update-version-text').textContent = `Version ${LATEST_VERSION}`;
         
@@ -2552,6 +2457,5 @@ window.checkForUpdates = function() {
 
 window.closeUpdateModal = function() {
     document.getElementById('update-modal').classList.remove('open');
-    // Save that they've seen this version so it doesn't pop up again
     localStorage.setItem('illuminated_app_version', LATEST_VERSION);
 };

@@ -30,7 +30,6 @@ body {
     pointer-events: none;
 }
 
-/* NAV LINKS WITH SELECTION UNDERLINE EFFECT */
 nav {
     display: flex;
     justify-content: space-between;
@@ -187,13 +186,9 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     display: none;
 }
 
-/* Hide legacy unused iframe selectors */
-.thoughts-iframe-wrap,
-.thoughts-iframe { display:none; }
-
 .thoughts-studio-shell {
     position: relative;
-    padding-top: 90px; /* keep below app navbar */
+    padding-top: 90px;
     min-height: 70vh;
 }
 
@@ -275,9 +270,7 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     overflow: hidden;
 }
 
-/* Make the journal writing area take more space than the sidebar */
 .thoughts-workspace-container .journal-card {
-    /* make journal scale responsively beside archive */
     flex: 1 1 68%;
     min-width: 360px;
     transition: all 0.35s cubic-bezier(0.2,0.9,0.2,1);
@@ -287,7 +280,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     flex: 0 0 28%;
     min-width: 180px;
     max-width: 320px;
-    /* nudge studio left for visual balance */
     transform: translateX(-12px);
     display: flex;
     flex-direction: column;
@@ -297,9 +289,7 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     overflow: hidden;
 }
 
-/* Animated hide/expand helpers for studio focus mode (faster) */
 .thoughts-workspace-container .archive-sidebar {
-    /* slightly slower hide so it's readable but still snappy */
     transition: transform 0.32s cubic-bezier(0.2,0.9,0.2,1), opacity 0.32s cubic-bezier(0.2,0.9,0.2,1), width 0.32s ease;
 }
 .thoughts-workspace-container .archive-sidebar.shrink-out {
@@ -310,7 +300,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     display: none !important;
 }
 
-/* When workspace is in focus-mode (studio hidden), shift the journal slightly left into the studio area */
 .thoughts-workspace-container.focus-mode {
     justify-content: center;
 }
@@ -340,15 +329,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     0% { transform: translateY(0) scale(1); }
     60% { transform: translateY(-10px) scale(1.06); }
     100% { transform: translateY(-6px) scale(1.03); }
-}
-
-.thoughts-workspace-container .journal-card.expanded {
-    /* gentler pop: smaller overshoot and subtle final scale */
-    flex: 1 1 88%;
-    min-width: 780px;
-    margin-left: auto;
-    margin-right: auto;
-    animation: journal-pop 360ms cubic-bezier(0.2,0.9,0.2,1) both;
 }
 
 .thoughts-workspace-container .archive-sidebar > .archive-section:not(.studio-panel) {
@@ -746,7 +726,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
 }
 
 .thoughts-workspace-container .journal-card {
-    /* use percentage basis so journal scales and stays beside archive */
     flex: 1 1 68%;
     min-width: 280px;
     display: flex;
@@ -775,7 +754,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
 .thoughts-workspace-container .journal-card .textarea-container {
     position: relative;
     width: 100%;
-    /* slightly reduced vertical writing space (~10% down from previous) */
     min-height: 620px;
     border-radius: 24px;
     background: rgba(255,255,255,0.03);
@@ -845,16 +823,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     transition: opacity 0.4s ease;
 }
 
-.thoughts-workspace-container .commit-row {
-    display: flex;
-    justify-content: flex-end;
-}
-
-/* Constrain journal textarea height so it doesn’t blow layout */
-.thoughts-workspace-container #journal-input {
-    font-size: 0.95rem;
-}
-
 .thoughts-workspace-container #book-mirror-text {
     font-size: 0.5rem;
 }
@@ -864,7 +832,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
     max-height: 200px;
 }
 
-/* Add missing studio transition/focus classes so inline studio behaves like standalone */
 .thoughts-workspace-container.hide-mode { display: none !important; }
 .thoughts-workspace-container.shrink-out { opacity: 0; transform: scale(0.92); pointer-events: none; }
 .thoughts-workspace-container.focus-mode .archive-sidebar {
@@ -1066,7 +1033,7 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
 
 
 
-/* LAUNCHPAD GRID MODULE MODULE OVERLAYS */
+/* LAUNCHPAD GRID MODULE OVERLAYS */
 .filter-bar, .sub-filter-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
 .sub-filter-bar { margin-bottom: 3rem; background: rgba(255, 255, 255, 0.01); padding: 12px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.02); max-width: fit-content; margin-left: auto; margin-right: auto; }
@@ -1405,7 +1372,6 @@ input[type="checkbox"]:checked { background: var(--accent); border-color: var(--
 }
 #story-page.page.active { display: block; }
 
-/* Hide nav + time drawer when story is open */
 body:has(#story-page.active) nav,
 body:has(#story-page.active) #time-limit-drawer {
     display: none;
@@ -1553,7 +1519,6 @@ body:has(#story-page.active) #time-limit-drawer {
     will-change: transform;
 }
 
-/* === On hover: card lifts + glows === */
 .evidence-card:hover {
     transform: translateY(-8px) scale(1.04);
     border-color: rgba(255, 204, 0, 0.7);
@@ -1564,7 +1529,6 @@ body:has(#story-page.active) #time-limit-drawer {
     z-index: 10;
 }
 
-/* Inner glow overlay — a soft light behind the card */
 .evidence-card::before {
     content: '';
     position: absolute;
@@ -1584,14 +1548,12 @@ body:has(#story-page.active) #time-limit-drawer {
     opacity: 1;
 }
 
-/* === Everything else in the grid softens when one is hovered === */
 .evidence-grid:has(.evidence-card:hover) .evidence-card:not(:hover) {
     filter: blur(3px);
     opacity: 0.35;
     transform: scale(0.97);
 }
 
-/* Text inside the card also stays crisp */
 .evidence-card:hover .evidence-card-label {
     color: var(--accent);
     opacity: 0.9;
@@ -1600,7 +1562,6 @@ body:has(#story-page.active) #time-limit-drawer {
     text-shadow: 0 0 30px rgba(255, 204, 0, 0.6);
 }
 
-/* === The original text styles (unchanged) === */
 .evidence-card-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
@@ -1731,7 +1692,6 @@ body:has(#story-page.active) #time-limit-drawer {
 }
 .evidence-modal-link:hover { opacity: 0.7; }
 
-/* REVEAL */
 .reveal {
     opacity: 0;
     transform: translateY(50px);
@@ -1740,23 +1700,19 @@ body:has(#story-page.active) #time-limit-drawer {
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* Slow pulse on the scroll hint */
 .story-scroll-hint {
     animation: breathe 3s ease-in-out infinite;
 }
 
-/* Subtle glow on the evidence cards when they reveal */
 .evidence-card.visible {
     box-shadow: 0 0 40px rgba(255, 204, 0, 0.05);
     transition: box-shadow 1s ease;
 }
 
-/* Force-hide all pages except the active one */
 .page:not(.active) {
     display: none !important;
 }
 
-/* Story page takes exactly the height it needs, no extra */
 body:has(#story-page.active) {
     overflow-x: hidden;
 }
@@ -1819,7 +1775,6 @@ body:has(#story-page.active) {
     transform: translateY(0);
 }
 
-/* Alternate direction */
 .preview-card.preview-left .preview-visual { order: 2; }
 .preview-card.preview-left .preview-text   { order: 1; }
 .preview-card.preview-right .preview-visual { order: 1; }
@@ -2219,7 +2174,6 @@ body:has(#story-page.active) {
 }
 .story-sleep-toast-backdrop.open { opacity: 1; }
 
-/* Centered modal — opens when user taps the toast */
 .story-sleep-modal {
     position: fixed;
     inset: 0;
@@ -2293,7 +2247,6 @@ body:has(#story-page.active) {
     background: var(--accent);
     color: #111;
 }
-/* Closing animation for the story sleep modal */
 .story-sleep-modal.closing {
     animation: storySleepFadeOut 0.55s ease forwards;
 }
@@ -2385,7 +2338,6 @@ body.app-active .app-shell {
     display: flex;
 }
 
-/* Hide the top nav when the app is showing (but NOT the mobile pill nav) */
 body.app-active nav:not(.mobile-pill-nav),
 body.app-active .mobile-menu,
 body.app-active #time-limit-drawer {
@@ -2529,7 +2481,6 @@ body.app-active #time-limit-drawer {
     color: inherit;
 }
 
-/* Main content area */
 .app-shell #main-content {
     flex: 1;
     min-width: 0;
@@ -2644,7 +2595,6 @@ body.app-active .app-sidebar .sidebar-item {
     height: 120px;
 }
 
-/* --- The bulb --- */
 .intro-bulb-wrap {
     position: relative;
     width: 220px;
@@ -2657,7 +2607,6 @@ body.app-active .app-sidebar .sidebar-item {
     z-index: 2;
 }
 
-/* When the word appears, bulb slides left and shrinks to I-size */
 .intro-screen.word-on .intro-bulb-wrap {
     transform: translateX(-175px) scale(0.22);
 }
@@ -2675,7 +2624,6 @@ body.app-active .app-sidebar .sidebar-item {
         filter 1.2s ease;
 }
 
-/* Faint outline before ignite */
 .intro-bulb.faint {
     opacity: 0.12;
     filter: brightness(0.3) drop-shadow(0 0 6px rgba(255, 204, 0, 0.15));
@@ -2736,7 +2684,6 @@ body.app-active .app-sidebar .sidebar-item {
     }
 }
 
-/* --- The word --- */
 .intro-word {
     position: absolute;
     left: 50%;
@@ -2766,7 +2713,6 @@ body.app-active .app-sidebar .sidebar-item {
     transform: translateY(0);
 }
 
-/* Stagger letters */
 .intro-screen.word-on .intro-letter:nth-child(1)  { transition-delay: 0.55s; }
 .intro-screen.word-on .intro-letter:nth-child(2)  { transition-delay: 0.60s; }
 .intro-screen.word-on .intro-letter:nth-child(3)  { transition-delay: 0.65s; }
@@ -2778,7 +2724,6 @@ body.app-active .app-sidebar .sidebar-item {
 .intro-screen.word-on .intro-letter:nth-child(9)  { transition-delay: 0.95s; }
 .intro-screen.word-on .intro-letter:nth-child(10) { transition-delay: 1.00s; }
 
-/* --- Tagline --- */
 .intro-tagline {
     position: absolute;
     bottom: 30%;
@@ -2800,7 +2745,6 @@ body.app-active .app-sidebar .sidebar-item {
     transition-delay: 1.4s;
 }
 
-/* KILL SWITCH: Hide the mobile pill nav on desktop */
 .mobile-pill-nav {
     display: none !important;
 }
@@ -2868,15 +2812,12 @@ body.app-active .app-sidebar .sidebar-item {
 .timer-modal-btn.secondary { background: transparent; color: #888; border: 1px solid rgba(255, 255, 255, 0.1); }
 .timer-modal-btn.secondary:hover { color: white; border-color: rgba(255, 255, 255, 0.3); background: transparent; }
 
-/* Mobile Toast Base (Hidden on Desktop) */
 .timer-toast { display: none; }
 
-/* Timer Toast Backdrop (Hidden on Desktop) */
 .timer-toast-backdrop {
     display: none;
 }
 
-/* Closing Animations */
 .timer-modal.closing {
     animation: timerFadeOut 0.4s ease forwards;
 }
@@ -3015,7 +2956,6 @@ body.app-active .app-sidebar .sidebar-item {
     color: #888;
 }
 
-/* The Theme Toggle Switch */
 .theme-toggle {
     cursor: pointer;
 }
@@ -3137,7 +3077,6 @@ body.app-active .app-sidebar .sidebar-item {
     letter-spacing: 1px;
 }
 
-/* Board List */
 .home-board-section {
     margin-bottom: 1rem;
 }
@@ -3165,7 +3104,7 @@ body.app-active .app-sidebar .sidebar-item {
     position: fixed;
     inset: 0;
     background: #0a0a0a;
-    z-index: 1000001; /* Higher than the intro screen */
+    z-index: 1000001;
     display: none;
     align-items: center;
     justify-content: center;

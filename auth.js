@@ -7,7 +7,6 @@ const SUPABASE_KEY = 'sb_publishable_PNPiR55ozNpoeKCP5C2X0w_QaTg2-Rx';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// -------- Signup --------
 window.signUpUser = async function(email, password) {
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
@@ -20,7 +19,6 @@ window.signUpUser = async function(email, password) {
     return { data };
 };
 
-// -------- Login --------
 window.signInUser = async function(email, password) {
     const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
@@ -33,20 +31,17 @@ window.signInUser = async function(email, password) {
     return { data };
 };
 
-// -------- Logout --------
 window.signOutUser = async function() {
     const { error } = await supabaseClient.auth.signOut();
     if (error) console.error('Logout error:', error.message);
     return !error;
 };
 
-// -------- Get current user --------
 window.getCurrentUser = async function() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     return user;
 };
 
-// -------- Populate Profile (Fetch Username from DB) --------
 window.populateProfile = async function() {
     const user = await getCurrentUser();
     if (!user) return;
@@ -87,7 +82,6 @@ window.handleAuthSubmit = async function(event) {
     submitBtn.disabled = true;
 
     if (currentAuthMode === 'signin') {
-        // --- SIGN IN FLOW ---
         const result = await signInUser(email, password);
         if (result.error) {
             errorEl.textContent = result.error;
@@ -95,11 +89,9 @@ window.handleAuthSubmit = async function(event) {
             submitBtn.disabled = false;
             return;
         }
-        // If sign in works, just reload. No modal!
         window.location.reload();
         
     } else {
-        // --- SIGN UP FLOW ---
         const result = await signUpUser(email, password);
         if (result.error) {
             errorEl.textContent = result.error;
@@ -107,7 +99,6 @@ window.handleAuthSubmit = async function(event) {
             submitBtn.disabled = false;
             return;
         }
-        // If sign up works, show the modal!
         document.getElementById('onboarding-modal').classList.add('open');
         submitBtn.textContent = 'ENTER THE APP';
     }
@@ -146,16 +137,12 @@ window.showAppPage = function() {
 window.enterTryMode = function() {
     showLoginPage();
     
-    // Check if they have an active session in their browser
     const hasVisitedBefore = localStorage.getItem('illuminated_has_visited') === 'true';
     
     if (hasVisitedBefore) {
-        // Returning user: default to Sign In
         switchAuthTab('signin');
     } else {
-        // Brand new user: default to Sign Up
         switchAuthTab('signup');
-        // Mark this device as "visited" so next time it goes to Sign In
         localStorage.setItem('illuminated_has_visited', 'true');
     }
 };
@@ -174,14 +161,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (user) {
         document.body.classList.add('logged-in');
 
-        // 1. Fetch their profile
         const { data: profile } = await supabaseClient
             .from('profiles')
             .select('username')
             .eq('id', user.id)
             .single();
-
-        // 2. If their name is still the default "user_12345", they need to pick a name
         if (profile && profile.username.startsWith('user_')) {
             setTimeout(() => {
                 document.getElementById('onboarding-modal').classList.add('open');
@@ -189,7 +173,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // 3. Otherwise, they have a name. Go to the app.
         if (profile) {
             localStorage.setItem('illuminated_username', profile.username);
         }
@@ -208,7 +191,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 (function initPreviewCards() {
 
-    // -------- 01 · TIMER --------
     const timerDisplay = document.getElementById('preview-timer-display');
     const timerFill = document.getElementById('preview-timer-fill');
     if (timerDisplay && timerFill) {
@@ -226,7 +208,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         }, 1000);
     }
 
-    // -------- 02 · JOURNAL (typing) --------
     const journalBody = document.getElementById('preview-journal-body');
     if (journalBody) {
         const entries = [
@@ -248,14 +229,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             function typeChar() {
                 if (eIdx >= entries.length) {
-                    // done — remove caret
                     journalBody.innerHTML = html.replace(/<span class="caret"><\/span>/, '');
                     return;
                 }
 
                 const line = entries[eIdx];
 
-                // divider entry
                 if (line === '— — —') {
                     html += '<span class="mini-divider"></span>';
                     eIdx++;
@@ -282,18 +261,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             typeChar();
         }
-
-        // Expose so the scroll observer can trigger it
         window.__startJournalTyping = startJournalTyping;
     }
 
-    // -------- REVEAL OBSERVER (triggers animations) --------
     const previewObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-
-                // trigger journal typing when its card enters view
                 if (entry.target.dataset.preview === 'journal') {
                     setTimeout(() => window.__startJournalTyping && window.__startJournalTyping(), 400);
                 }
@@ -310,14 +284,13 @@ window.nextOnboardingStep = function() {
     const step1 = document.getElementById('onboarding-step-1');
     const step2 = document.getElementById('onboarding-step-2');
     
-    // Fade out step 1
     step1.style.opacity = '0';
     step1.style.transform = 'scale(1.1)';
     
     setTimeout(() => {
         step1.style.display = 'none';
         step2.style.display = 'block';
-        step2.classList.add('cinematic-step'); // Re-trigger animation
+        step2.classList.add('cinematic-step');
         document.getElementById('onboarding-username').focus();
     }, 400);
 };
@@ -326,17 +299,14 @@ window.finishOnboarding = async function() {
     const usernameInput = document.getElementById('onboarding-username').value.trim().toLowerCase();
     const errorEl = document.getElementById('onboarding-error');
 
-    // 1. THE BANNED WORD LIST 
     const bannedWords = ["fuck", "shit", "bitch", "nazi", "racist", "nigga", "nigger","cunt", "motherfucker", "pussy", "dick", "cock", "asshole", "bullshit", "dumbass", "cocksucker", "dickhead", "faggot", "fucker", "fucked", "fucking", "jackass", "shite", "twat", "wanker","dick-head", "cocksucker", "dumb-ass", "child-fucker", "jeffreyepstein", "donaldtrump", "miakhalifa", "bullocks", "bastard", "arsehead", "arsehole"]; 
     
-    // Check if the username contains any banned words
     const containsBannedWord = bannedWords.some(word => usernameInput.includes(word));
     if (containsBannedWord) {
         errorEl.textContent = "This username contains restricted words. Please choose another.";
         return;
     }
 
-    // 2. LENGTH CHECK
     if (usernameInput.length < 3) {
         errorEl.textContent = "Username must be at least 3 characters.";
         return;
@@ -346,14 +316,12 @@ window.finishOnboarding = async function() {
         return;
     }
 
-    // 3. FORMAT CHECK (Only letters, numbers, and underscores)
     const formatRegex = /^[a-z0-9_]+$/;
     if (!formatRegex.test(usernameInput)) {
         errorEl.textContent = "Only lowercase letters, numbers, and underscores (_) are allowed.";
         return;
     }
 
-    // 4. CHECK IF TAKEN IN SUPABASE
     const { data: existingUser } = await supabaseClient
         .from('profiles')
         .select('username')
@@ -365,7 +333,6 @@ window.finishOnboarding = async function() {
         return;
     }
 
-    // 5. SAVE TO SUPABASE
     const { data: { user } } = await supabaseClient.auth.getUser();
     const { error } = await supabaseClient
         .from('profiles')
@@ -377,16 +344,14 @@ window.finishOnboarding = async function() {
         return;
     }
 
-    // 6. SUCCESS! Reload and enter.
     localStorage.setItem('illuminated_username', usernameInput);
     document.getElementById('onboarding-modal').classList.remove('open');
 
-    // Wait a split second to ensure the database save completes, THEN reload
     setTimeout(() => {
         window.location.reload();
     }, 500);
 };
-// -------- Logout Logic --------
+
 window.handleLogout = async function() {
     await signOutUser();
     window.location.reload();
