@@ -71,7 +71,6 @@ window.showPage = function(pageId) {
         renderLaunchpadGrid(OPPORTUNITIES_DATABASE);
     }
 
-    closeMobileMenu();
 };
 
 // --- RUNTIME ERROR LOGGING & DEV HELPERS ---
@@ -1261,27 +1260,10 @@ function toggleMobileMenu(){
 
 }
 
-function closeMobileMenu() {
-    document
-        .querySelector(".mobile-menu")
-        .classList
-        .remove("show");
-}
-
 document.addEventListener("click", function(e) {
 
     const menu = document.querySelector(".mobile-menu");
     const button = document.querySelector(".mobile-menu-btn");
-
-    if (
-        menu &&
-        button &&
-        menu.classList.contains("show") &&
-        !menu.contains(e.target) &&
-        !button.contains(e.target)
-    ) {
-        closeMobileMenu();
-    }
 
 });
 function showStudioTab(tab, button) {
