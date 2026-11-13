@@ -2441,3 +2441,18 @@ window.closeUpdateModal = function() {
     document.getElementById('update-modal').classList.remove('open');
     localStorage.setItem('illuminated_app_version', LATEST_VERSION);
 };
+
+window.toggleSidebar = function() {
+    console.log("HIDE button clicked");
+    document.body.classList.toggle('sidebar-collapsed');
+    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+    console.log("Sidebar collapsed:", isCollapsed);
+    localStorage.setItem('sidebar_collapsed', isCollapsed);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const wasCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+    if (wasCollapsed) {
+        document.body.classList.add('sidebar-collapsed');
+    }
+});
