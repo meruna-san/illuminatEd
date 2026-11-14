@@ -78,10 +78,12 @@ window.__appErrors = [];
 window.addEventListener('error', (e) => {
     try { console.error('App uncaught error:', e.error || e.message || e); } catch (err) {}
     window.__appErrors.push(e && (e.message || String(e)));
+     if (window.__appErrors.length > 100) window.__appErrors.shift();
 });
 window.addEventListener('unhandledrejection', (e) => {
     try { console.error('App unhandled rejection:', e.reason || e); } catch (err) {}
     window.__appErrors.push(e && (e.reason && (e.reason.message || String(e.reason))) || 'unhandledrejection');
+     if (window.__appErrors.length > 100) window.__appErrors.shift();
 });
 
 window.__checkRequiredDOM = function(list) {
@@ -1057,10 +1059,20 @@ transitionWrapper.innerHTML = `
 }
 
    async function commitCurrentDayLog() {
+        const commitBtn = document.getElementById('commit-day-btn');
+    if (commitBtn && commitBtn.disabled) return;
+    if (commitBtn) {
+        commitBtn.disabled = true;
+        commitBtn.textContent = '...';
+    }
     const parts = extractPartsFromEditor(input);
 
     if(parts.length === 0) {
         alert("Please write a log entry before committing!");
+                if (commitBtn) {
+            commitBtn.disabled = false;
+            commitBtn.textContent = '💾 COMMIT DAY';
+        }
         return;
     }
 
@@ -1083,6 +1095,10 @@ transitionWrapper.innerHTML = `
 
     singleChronicleIndex = compiledBookEntries.length;
     renderSingleDeckContent();
+        if (commitBtn) {
+        commitBtn.disabled = false;
+        commitBtn.textContent = '💾 COMMIT DAY';
+    }
 }
 
     function turnSingleChronicleDeck(direction) {
@@ -1198,7 +1214,8 @@ if (toggleBtn) {
             const { error } = await supabaseClient
                 .from('journal_entries')
                 .update({ parts: newEntryParts, date: todayStr })
-                .eq('id', entryId);
+                .eq('id', entryId)
+                .eq('user_id', user.id);
             if (error) console.error("Error updating entry:", error);
         } else {
             const { data, error } = await supabaseClient
@@ -2319,13 +2336,16 @@ window.saveUsername = async function() {
         }
         return;
     }
-    const { data: existingUser } = await supabaseClient
-        .from('profiles')
-        .select('username')
-        .eq('username', usernameInput)
-        .maybeSingle();
+    const { data: usernameExists, error: checkError } = await supabaseClient
+        .rpc('check_username_exists', { username_to_check: usernameInput });
 
-    if (existingUser) {
+    if (checkError) {
+        console.error("Error checking username:", checkError);
+        if (errorEl) errorEl.textContent = "Error checking username. Try again.";
+        return;
+    }
+
+    if (usernameExists) {
         if (errorEl) errorEl.textContent = "That star is already taken. Try another.";
         return;
     }

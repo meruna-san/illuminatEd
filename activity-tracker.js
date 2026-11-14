@@ -64,13 +64,13 @@ const ActivityTracker = (() => {
 
     async function addTask(text) {
         const day = await getTodayActivity();
-        day.tasks.push(text);
+day.tasks.push(text.substring(0, 250));
         await saveTodayActivity(day);
     }
 
     async function addGoal(text) {
         const day = await getTodayActivity();
-        day.goals.push(text);
+        day.goals.push(text.substring(0, 250));
         await saveTodayActivity(day);
     }
 

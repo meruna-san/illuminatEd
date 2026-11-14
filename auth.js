@@ -5,7 +5,12 @@
 const SUPABASE_URL = 'https://xamijbwrojzrsbegplof.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_PNPiR55ozNpoeKCP5C2X0w_QaTg2-Rx';
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabaseClient;
+
+if (!window.supabaseClient) {
+    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+supabaseClient = window.supabaseClient;
 
 window.signUpUser = async function(email, password) {
     const { data, error } = await supabaseClient.auth.signUp({
@@ -185,101 +190,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         }, INTRO_DURATION);
     }
 });
-// ==========================================
-// PHASE 2 — INTERACTIVE PREVIEWS
-// ==========================================
-
-(function initPreviewCards() {
-
-    const timerDisplay = document.getElementById('preview-timer-display');
-    const timerFill = document.getElementById('preview-timer-fill');
-    if (timerDisplay && timerFill) {
-        let secondsLeft = 25 * 60;
-        let totalSeconds = 25 * 60;
-
-        setInterval(() => {
-            secondsLeft--;
-            if (secondsLeft < 0) secondsLeft = totalSeconds;
-
-            const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
-            const s = (secondsLeft % 60).toString().padStart(2, '0');
-            timerDisplay.textContent = `${m}:${s}`;
-            timerFill.style.width = `${(secondsLeft / totalSeconds) * 100}%`;
-        }, 1000);
-    }
-
-    const journalBody = document.getElementById('preview-journal-body');
-    if (journalBody) {
-        const entries = [
-            "today i studied for 47 minutes. didn't check my phone once.",
-            "— — —",
-            "started the essay. actually started it."
-        ];
-
-        let hasStarted = false;
-
-        function startJournalTyping() {
-            if (hasStarted) return;
-            hasStarted = true;
-
-            journalBody.innerHTML = '';
-            let eIdx = 0;
-            let cIdx = 0;
-            let html = '';
-
-            function typeChar() {
-                if (eIdx >= entries.length) {
-                    journalBody.innerHTML = html.replace(/<span class="caret"><\/span>/, '');
-                    return;
-                }
-
-                const line = entries[eIdx];
-
-                if (line === '— — —') {
-                    html += '<span class="mini-divider"></span>';
-                    eIdx++;
-                    cIdx = 0;
-                    setTimeout(typeChar, 500);
-                    return;
-                }
-
-                if (cIdx < line.length) {
-                    html = html.replace(/<span class="caret"><\/span>/, '');
-                    html += line[cIdx];
-                    html += '<span class="caret"></span>';
-                    cIdx++;
-                    journalBody.innerHTML = html;
-                    setTimeout(typeChar, 30);
-                } else {
-                    html = html.replace(/<span class="caret"><\/span>/, '');
-                    html += '<br><br>';
-                    eIdx++;
-                    cIdx = 0;
-                    setTimeout(typeChar, 400);
-                }
-            }
-
-            typeChar();
-        }
-        window.__startJournalTyping = startJournalTyping;
-    }
-
-    const previewObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                if (entry.target.dataset.preview === 'journal') {
-                    setTimeout(() => window.__startJournalTyping && window.__startJournalTyping(), 400);
-                }
-            }
-        });
-    }, { threshold: 0.3 });
-
-    document.querySelectorAll('.preview-card').forEach(el => {
-        previewObserver.observe(el);
-    });
-
-})();
 window.nextOnboardingStep = function() {
     const step1 = document.getElementById('onboarding-step-1');
     const step2 = document.getElementById('onboarding-step-2');
@@ -322,13 +232,16 @@ window.finishOnboarding = async function() {
         return;
     }
 
-    const { data: existingUser } = await supabaseClient
-        .from('profiles')
-        .select('username')
-        .eq('username', usernameInput)
-        .maybeSingle();
+    const { data: usernameExists, error: checkError } = await supabaseClient
+        .rpc('check_username_exists', { username_to_check: usernameInput });
 
-    if (existingUser) {
+    if (checkError) {
+        console.error("Error checking username:", checkError);
+        errorEl.textContent = "Error checking username. Try again.";
+        return;
+    }
+
+    if (usernameExists) {
         errorEl.textContent = "That star is already taken. Try another.";
         return;
     }
