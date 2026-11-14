@@ -311,11 +311,51 @@ function verifyStreakIntegrity(isNewTaskCompleted = false) {
 
 // --- CONSTELLATION PATTERNS ---
 const SCIENTIFIC_CATALOG = [
-    { name: "TRIANGULUM", level: "LEVEL 1 (EASY)", nodes: [{x:40, y:120}, {x:80, y:40}, {x:120, y:120}] },
-    { name: "ARIES", level: "LEVEL 2 (EASY)", nodes: [{x:30, y:110}, {x:70, y:70}, {x:110, y:50}, {x:135, y:65}] },
-    { name: "CASSIOPEIA", level: "LEVEL 3 (MEDIUM)", nodes: [{x:25, y:60}, {x:50, y:100}, {x:80, y:70}, {x:110, y:110}, {x:135, y:60}] },
-    { name: "CYGNUS", level: "LEVEL 4 (HARD)", nodes: [{x:80, y:30}, {x:80, y:75}, {x:40, y:75}, {x:120, y:75}, {x:80, y:115}, {x:80, y:145}] },
-    { name: "ORION", level: "LEVEL 5 (MASTER)", nodes: [{x:45, y:40}, {x:115, y:45}, {x:65, y:90}, {x:80, y:90}, {x:95, y:90}, {x:40, y:140}, {x:120, y:135}] }
+    // --- EASY (3-4 Stars) ---
+    { name: "TRIANGULUM", level: "LEVEL 1 (EASY)", nodes: [{x:80, y:40}, {x:40, y:120}, {x:120, y:120}] },
+    { name: "ARIES", level: "LEVEL 1 (EASY)", nodes: [{x:30, y:110}, {x:70, y:70}, {x:110, y:50}, {x:135, y:65}] },
+    { name: "DELPHINUS", level: "LEVEL 2 (EASY)", nodes: [{x:40, y:60}, {x:70, y:40}, {x:100, y:60}, {x:120, y:90}] },
+    { name: "CORVUS", level: "LEVEL 2 (EASY)", nodes: [{x:40, y:40}, {x:110, y:30}, {x:120, y:110}, {x:50, y:130}] },
+    { name: "CRUX", level: "LEVEL 2 (EASY)", nodes: [{x:80, y:20}, {x:80, y:140}, {x:40, y:80}, {x:120, y:80}] },
+    
+    // --- MEDIUM (5-6 Stars) ---
+    { name: "CASSIOPEIA", level: "LEVEL 3 (MEDIUM)", nodes: [{x:20, y:60}, {x:50, y:100}, {x:80, y:70}, {x:110, y:110}, {x:140, y:60}] },
+    { name: "LYRA", level: "LEVEL 3 (MEDIUM)", nodes: [{x:80, y:20}, {x:60, y:70}, {x:100, y:70}, {x:80, y:110}, {x:80, y:140}] },
+    { name: "PEGASUS", level: "LEVEL 4 (MEDIUM)", nodes: [{x:40, y:40}, {x:120, y:40}, {x:120, y:110}, {x:40, y:110}, {x:20, y:70}, {x:140, y:120}] },
+    { name: "AURIGA", level: "LEVEL 4 (MEDIUM)", nodes: [{x:40, y:120}, {x:80, y:30}, {x:120, y:120}, {x:60, y:70}, {x:100, y:70}] },
+    { name: "LEO", level: "LEVEL 4 (MEDIUM)", nodes: [{x:30, y:40}, {x:60, y:60}, {x:80, y:40}, {x:110, y:60}, {x:130, y:110}, {x:110, y:130}] },
+    
+    // --- HARD (7-8 Stars) ---
+    { name: "CYGNUS", level: "LEVEL 5 (HARD)", nodes: [{x:80, y:20}, {x:80, y:70}, {x:40, y:70}, {x:120, y:70}, {x:80, y:110}, {x:80, y:140}] },
+    { name: "ORION", level: "LEVEL 5 (HARD)", nodes: [{x:45, y:40}, {x:115, y:45}, {x:65, y:90}, {x:80, y:90}, {x:95, y:90}, {x:40, y:140}, {x:120, y:135}] },
+    { name: "URSA MAJOR", level: "LEVEL 6 (HARD)", nodes: [{x:20, y:40}, {x:50, y:30}, {x:80, y:50}, {x:110, y:70}, {x:140, y:90}, {x:120, y:120}, {x:90, y:110}] },
+    { name: "SCORPIUS", level: "LEVEL 6 (HARD)", nodes: [{x:20, y:30}, {x:40, y:50}, {x:60, y:70}, {x:80, y:80}, {x:100, y:100}, {x:120, y:120}, {x:110, y:140}, {x:90, y:130}] },
+    { name: "TAURUS", level: "LEVEL 6 (HARD)", nodes: [{x:80, y:20}, {x:70, y:60}, {x:100, y:60}, {x:50, y:100}, {x:120, y:100}, {x:30, y:130}, {x:140, y:130}] },
+    
+    // --- EXPERT (9-10 Stars) ---
+    { name: "DRACO", level: "LEVEL 7 (EXPERT)", nodes: [{x:20, y:30}, {x:40, y:40}, {x:60, y:30}, {x:80, y:50}, {x:100, y:40}, {x:120, y:60}, {x:130, y:80}, {x:110, y:100}, {x:90, y:120}, {x:70, y:140}] },
+    { name: "PERSEUS", level: "LEVEL 7 (EXPERT)", nodes: [{x:40, y:20}, {x:70, y:50}, {x:100, y:80}, {x:80, y:120}, {x:120, y:140}, {x:20, y:70}, {x:60, y:100}, {x:130, y:60}, {x:30, y:120}] },
+    { name: "AQUILA", level: "LEVEL 8 (EXPERT)", nodes: [{x:80, y:30}, {x:100, y:60}, {x:120, y:30}, {x:100, y:100}, {x:110, y:140}, {x:80, y:110}, {x:60, y:80}, {x:40, y:100}, {x:20, y:80}] },
+    { name: "GEMINI", level: "LEVEL 8 (EXPERT)", nodes: [{x:40, y:20}, {x:50, y:60}, {x:30, y:100}, {x:120, y:20}, {x:110, y:60}, {x:130, y:100}, {x:70, y:80}, {x:90, y:80}, {x:80, y:130}, {x:80, y:150}] },
+    
+    // --- MASTER (11+ Stars) ---
+    { name: "HYDRA", level: "LEVEL 9 (MASTER)", nodes: [{x:20, y:20}, {x:40, y:40}, {x:60, y:60}, {x:80, y:80}, {x:100, y:100}, {x:120, y:120}, {x:110, y:140}, {x:90, y:150}, {x:70, y:130}, {x:50, y:110}, {x:30, y:90}] },
+    { name: "CENTAURUS", level: "LEVEL 9 (MASTER)", nodes: [{x:30, y:30}, {x:50, y:50}, {x:70, y:30}, {x:90, y:50}, {x:110, y:70}, {x:130, y:90}, {x:120, y:120}, {x:100, y:140}, {x:80, y:130}, {x:60, y:110}, {x:40, y:90}, {x:20, y:70}] },
+    { name: "CARINA", level: "LEVEL 10 (MASTER)", nodes: [{x:40, y:20}, {x:60, y:40}, {x:80, y:60}, {x:100, y:80}, {x:120, y:100}, {x:110, y:120}, {x:90, y:140}, {x:70, y:130}, {x:50, y:110}, {x:30, y:90}, {x:50, y:70}, {x:70, y:50}] },
+    { name: "ERIDANUS", level: "LEVEL 10 (MASTER)", nodes: [{x:20, y:20}, {x:40, y:40}, {x:60, y:60}, {x:80, y:80}, {x:100, y:60}, {x:120, y:40}, {x:140, y:60}, {x:130, y:100}, {x:110, y:120}, {x:90, y:140}, {x:70, y:130}, {x:50, y:110}] },
+    
+    // --- LEGENDARY (12 Stars) ---
+    { name: "CETUS", level: "LEVEL 11 (LEGENDARY)", nodes: [{x:20, y:20}, {x:40, y:40}, {x:60, y:60}, {x:80, y:80}, {x:100, y:100}, {x:120, y:120}, {x:130, y:140}, {x:110, y:150}, {x:90, y:130}, {x:70, y:110}, {x:50, y:90}, {x:30, y:70}] },
+    { name: "ANDROMEDA", level: "LEVEL 11 (LEGENDARY)", nodes: [{x:30, y:20}, {x:50, y:40}, {x:70, y:60}, {x:90, y:80}, {x:110, y:100}, {x:130, y:120}, {x:140, y:140}, {x:120, y:150}, {x:100, y:130}, {x:80, y:110}, {x:60, y:90}, {x:40, y:70}] },
+    { name: "SERPENS", level: "LEVEL 12 (LEGENDARY)", nodes: [{x:20, y:30}, {x:40, y:50}, {x:60, y:70}, {x:80, y:90}, {x:100, y:110}, {x:120, y:130}, {x:130, y:150}, {x:110, y:140}, {x:90, y:120}, {x:70, y:100}, {x:50, y:80}, {x:30, y:60}, {x:10, y:40}] },
+    { name: "AQUARIUS", level: "LEVEL 12 (LEGENDARY)", nodes: [{x:20, y:20}, {x:50, y:40}, {x:80, y:60}, {x:110, y:80}, {x:140, y:100}, {x:130, y:130}, {x:100, y:140}, {x:70, y:120}, {x:40, y:100}, {x:60, y:80}, {x:90, y:100}, {x:120, y:120}] },
+    
+    // --- MYTHIC (13-15 Stars) ---
+    { name: "OPHIUCHUS", level: "LEVEL 13 (MYTHIC)", nodes: [{x:30, y:30}, {x:60, y:50}, {x:90, y:70}, {x:120, y:90}, {x:140, y:120}, {x:130, y:140}, {x:100, y:130}, {x:70, y:110}, {x:40, y:90}, {x:20, y:70}, {x:50, y:40}, {x:80, y:60}, {x:110, y:80}] },
+    { name: "BOOTES", level: "LEVEL 14 (MYTHIC)", nodes: [{x:40, y:20}, {x:60, y:40}, {x:80, y:60}, {x:100, y:80}, {x:120, y:100}, {x:130, y:130}, {x:100, y:140}, {x:70, y:120}, {x:40, y:100}, {x:20, y:80}, {x:30, y:50}, {x:50, y:70}, {x:70, y:90}, {x:90, y:110}] },
+    
+    // --- ULTIMATE (16+ Stars) ---
+    { name: "ARGO NAVIS", level: "LEVEL 15 (ULTIMATE)", nodes: [{x:20, y:20}, {x:40, y:40}, {x:60, y:60}, {x:80, y:80}, {x:100, y:100}, {x:120, y:120}, {x:140, y:140}, {x:130, y:150}, {x:110, y:130}, {x:90, y:110}, {x:70, y:90}, {x:50, y:70}, {x:30, y:50}, {x:10, y:30}, {x:30, y:20}, {x:50, y:40}] }
 ];
 
 let catalogIndex = 0;
@@ -406,11 +446,14 @@ function advanceAstronomicalProgress() {
 
     let activePattern = SCIENTIFIC_CATALOG[catalogIndex % SCIENTIFIC_CATALOG.length];
 
-    if (currentProgressStars >= activePattern.nodes.length) {
+     if (currentProgressStars >= activePattern.nodes.length) {
         const timestamp = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
         if (!vaultCollection.some(item => item.name === activePattern.name)) {
             vaultCollection.push({ name: activePattern.name, date: timestamp, stars: activePattern.nodes.length });
         }
+        
+        openUnlockModal(activePattern.name, activePattern.nodes.length);
+        
         catalogIndex++;
         currentProgressStars = 0;
         renderVaultGallery();
@@ -2476,3 +2519,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('sidebar-collapsed');
     }
 });
+
+window.openUnlockModal = function(name, stars) {
+    document.getElementById('unlock-constellation-name').textContent = name;
+    document.getElementById('unlock-constellation-stars').textContent = "★".repeat(stars);
+    document.getElementById('constellation-unlock-modal').classList.add('open');
+};
+
+window.closeUnlockModal = function() {
+    document.getElementById('constellation-unlock-modal').classList.remove('open');
+};

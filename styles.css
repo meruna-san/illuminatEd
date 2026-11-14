@@ -3268,3 +3268,90 @@ body.sidebar-collapsed .sidebar-section {
 body.sidebar-collapsed .sidebar-nav {
     gap: 0.5rem !important;
 }
+
+/* --- CONSTELLATION UNLOCK MODAL --- */
+.constellation-unlock-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 1000002;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.constellation-unlock-modal.open {
+    display: flex;
+    animation: unlockFadeIn 0.4s ease;
+}
+
+@keyframes unlockFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.constellation-unlock-card {
+    background: linear-gradient(135deg, #14110a 0%, #0a0a0a 100%);
+    border: 1px solid rgba(255, 204, 0, 0.4);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 60px rgba(255, 204, 0, 0.15);
+    animation: unlockPop 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes unlockPop {
+    0% { transform: scale(0.8) translateY(30px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.unlock-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.6));
+    animation: iconFloat 2s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.unlock-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 4px;
+    color: #888;
+    margin: 0 0 1rem 0;
+}
+
+.unlock-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 0.5rem 0;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+}
+
+.unlock-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: #bbb;
+    margin: 0 0 1.5rem 0;
+}
+
+.unlock-stars {
+    color: var(--accent);
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    text-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}

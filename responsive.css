@@ -1216,5 +1216,20 @@
         display: none !important;
     }
 
+    .constellation-unlock-card {
+        padding: 2rem 1.5rem;
+        max-width: 90%;
+        margin: 1rem;
+    }
+    .unlock-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .unlock-title { font-size: 0.75rem; letter-spacing: 2px; }
+    .unlock-name { font-size: 1.8rem; }
+    .unlock-subtitle { font-size: 0.9rem; }
+    .unlock-stars { font-size: 1rem; letter-spacing: 2px; }
+    .constellation-unlock-card .glow-button {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+    
     }
 
