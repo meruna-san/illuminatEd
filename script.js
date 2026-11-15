@@ -1272,7 +1272,7 @@ if (toggleBtn) {
 
     // --- INIT STUDIO ---
     async function initStudio() {
-        const savedTitle = localStorage.getItem('book_studio_title') || 'Thoughts'; // We'll keep the title in local for now
+        const savedTitle = localStorage.getItem('book_studio_title') || 'Thoughts';
         if(bookTitleInput) bookTitleInput.value = savedTitle;
         if(bookLeftTitleRender) bookLeftTitleRender.textContent = savedTitle;
         const studioHeaderTitle = document.getElementById('studio-header-title');
@@ -1940,7 +1940,6 @@ window.closeEvidenceModal = function(event) {
     }
     buildLaunchpad();
 
-    // -------- TRIGGER ALL THREE ON SCROLL --------
     const halfBObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -1996,7 +1995,7 @@ window.closeEvidenceModal = function(event) {
 })();
 
 // ==========================================
-// STORY-ONLY SLEEP TOAST (works on desktop + mobile)
+// STORY-ONLY SLEEP TOAST
 // ==========================================
 
 function triggerStorySleepToast() {
@@ -2186,7 +2185,7 @@ window.closeStorySleepModal = function() {
 
 })();
 // ==========================================
-// EVIDENCE CARDS — JS fallback for :has()
+// EVIDENCE CARDS
 // ==========================================
 
 (function initEvidenceHoverFallback() {
@@ -2218,7 +2217,7 @@ window.closeStorySleepModal = function() {
 })();
 
 // ==========================================
-// CUSTOM TIMER MODAL & TOAST LOGIC
+// TIMER MODAL & TOAST LOGIC
 // ==========================================
 
 window.showTimerModal = function(wasFocus) {
