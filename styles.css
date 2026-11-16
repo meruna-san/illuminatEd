@@ -3355,3 +3355,108 @@ body.sidebar-collapsed .sidebar-nav {
     letter-spacing: 4px;
     text-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
 }
+
+/* GLOBAL FOOTER */
+.global-footer {
+    background: #080600;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem 10% 1.5rem;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    z-index: 10;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-logo {
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 0 8px rgba(255, 120, 0, 0.4));
+}
+
+.footer-brand-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-right a {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: color 0.2s ease;
+}
+
+.footer-right a:hover {
+    color: var(--accent);
+}
+
+.footer-dot {
+    color: #444;
+    font-size: 0.75rem;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: #333;
+    letter-spacing: 1px;
+}
+.login-legal-text {
+    font-size: 0.7rem;
+    color: #555;
+    text-align: center;
+    margin-top: 1rem;
+    line-height: 1.4;
+}
+.login-legal-text a {
+    color: #888;
+    text-decoration: none;
+}
+.login-legal-text a:hover {
+    color: var(--accent);
+}
+body.app-active .global-footer {
+    display: none !important;
+}
+.settings-legal-link {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.settings-legal-link:hover {
+    color: var(--accent);
+    text-shadow: 0 0 15px rgba(255, 204, 0, 0.6);
+}
+.pill-button:hover {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+}

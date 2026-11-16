@@ -183,6 +183,11 @@
                 <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password" required minlength="6">
                 <div id="auth-error" class="auth-error"></div>
                 <button type="submit" id="auth-submit" class="glow-button auth-submit">SIGN IN</button>
+                <p class="login-legal-text">
+    By continuing, you agree to our 
+    <a href="terms.html">Terms of Service</a> and 
+    <a href="privacy.html">Privacy Policy</a>.
+</p>
             </form>
         </div>
     </div>
@@ -654,6 +659,13 @@
                 <button class="pill-button small" onclick="wipeData()" style="color: #ff5555; border-color: rgba(255, 85, 85, 0.3);">WIPE</button>
             </div>
         </div>
+                    <div style="padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 1rem; display: flex; flex-direction: column; gap: 8px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Legal</div>
+    <div style="display: flex; gap: 20px;">
+        <a href="terms.html" class="settings-legal-link">Terms of Service</a>
+        <a href="privacy.html" class="settings-legal-link">Privacy Policy</a>
+    </div>
+</div>
     </div>
 </section>
 
@@ -919,5 +931,23 @@
         <button class="glow-button" onclick="closeUnlockModal()" style="margin-top: 1.5rem; width: 100%;">KEEP SHINING</button>
     </div>
 </div>
+
+<!-- GLOBAL FOOTER -->
+<footer class="global-footer">
+    <div class="footer-content">
+        <div class="footer-left">
+            <img src="phoenix.svg" alt="IlluminatEd" class="footer-logo">
+            <span class="footer-brand-name">IlluminatEd</span>
+        </div>
+        <div class="footer-right">
+            <a href="terms.html">Terms of Service</a>
+            <span class="footer-dot">•</span>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        © 2026 IlluminatEd. All rights reserved.
+    </div>
+</footer>
 </body>
 </html>

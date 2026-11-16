@@ -1230,6 +1230,20 @@
         padding: 1rem;
         font-size: 0.85rem;
     }
+
+    /* Mobile Footer */
+    .global-footer {
+        padding: 1.5rem 1rem 1rem;
+    }
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    .footer-right {
+        flex-direction: row;
+        justify-content: center;
+    }
     
     }
 
