@@ -25,7 +25,7 @@
 <meta name="description" content="IlluminatEd is a study app that makes consistency feel like building something. Focus timer, journal, opportunities, and a constellation that fills as you show up.">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="responsive.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital@1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital@1&family=JetBrains+Mono:wght@500&family=Outfit:wght@300;400;700;800&display=swap" rel="stylesheet">
     <style>
         #time-limit-drawer {
             position: fixed;
@@ -485,29 +485,37 @@
     </div>
 </section>
         <section id="timer-page" class="page">
-            <div class="timer-container">
-                <div class="timer-card glass">
-                    <div class="modes">
-                        <button class="mode-btn active" onclick="setTimer(25, this)">Focus</button>
-                        <button class="mode-btn" onclick="setTimer(5, this)">Short Break</button>
-                        <button class="mode-btn" onclick="setTimer(15, this)">Long Break</button>
-                        <button class="mode-btn" onclick="toggleSettings()">Custom</button>
-                    </div>
+    <div class="timer-container">
 
-                    <h2 id="time-display">00:25:00</h2>
+        <div class="timer-tabs glass">
+            <button class="timer-tab active" data-mode="timer" onclick="switchTimerMode('timer')">Timer</button>
+            <button class="timer-tab" data-mode="clock" onclick="switchTimerMode('clock')">Clock</button>
+            <button class="timer-tab" data-mode="pomodoro" onclick="switchTimerMode('pomodoro')">Pomodoro</button>
+            <button class="timer-tab" data-mode="stopwatch" onclick="switchTimerMode('stopwatch')">Stopwatch</button>
+        </div>
 
-                    <div class="controls">
-                        <button id="start-btn" class="glow-button">START</button>
-                        <button id="reset-btn" class="pill-button">RESET</button>
-                    </div>
+        <div class="timer-display-area">
+            <h2 id="time-display" class="huge-time">25:00</h2>
+            <p class="timer-sub-label" id="timer-sub-label">FOCUS TIME</p>
+        </div>
 
-                    <div id="custom-settings" class="settings-panel">
-                        <input type="number" id="custom-min" placeholder="Min" min="1">
-                        <button onclick="applyCustomTime()" class="pill-button small">Apply</button>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <div class="controls" id="timer-controls">
+            <button id="start-btn" class="glow-button">START</button>
+            <button id="reset-btn" class="pill-button" onclick="resetTimer()">RESET</button>
+        </div>
+
+        <div id="custom-settings" class="settings-panel">
+            <input type="number" id="custom-min" placeholder="Min" min="1">
+            <button onclick="applyCustomTime()" class="pill-button small">Apply</button>
+        </div>
+        
+        <div class="timer-toolbar glass">
+            <button onclick="toggleFullScreen()" class="tool-btn">⛶ Full Screen</button>
+            <button onclick="openMiniTimer()" class="tool-btn">▣ Mini Mode</button>
+        </div>
+
+    </div>
+</section>
 
         <section id="dashboard-page" class="page">
             <div class="bento-grid">

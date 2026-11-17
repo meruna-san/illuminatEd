@@ -1245,5 +1245,9 @@
         justify-content: center;
     }
     
+    .huge-time { font-size: 5rem; letter-spacing: -2px; }
+    .timer-tab { padding: 0.6rem 1rem; font-size: 0.8rem; }
+    .timer-tabs { flex-wrap: wrap; justify-content: center; border-radius: 20px; }
+
     }
 

@@ -3460,3 +3460,113 @@ body.app-active .global-footer {
     box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
     text-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
 }
+
+/* --- TIMER --- */
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    gap: 3rem;
+    padding-top: 2rem;
+}
+
+.timer-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 100px;
+}
+
+.timer-tab {
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 0.75rem 1.5rem;
+    border-radius: 100px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.timer-tab:hover { color: white; }
+.timer-tab.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.timer-display-area {
+    text-align: center;
+    position: relative;
+}
+
+.huge-time {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 12rem;
+    line-height: 1;
+    letter-spacing: -4px;
+    color: white;
+    margin: 0;
+    text-shadow: 0 0 60px rgba(255, 204, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.timer-sub-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: #555;
+    margin-top: 1rem;
+    text-transform: uppercase;
+}
+
+.timer-toolbar {
+    display: flex;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 100px;
+    margin-top: 2rem;
+}
+
+.tool-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--accent);
+}
+
+#timer-page.fullscreen-mode {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #0a0a0a;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#timer-page.fullscreen-mode .timer-tabs,
+#timer-page.fullscreen-mode .controls,
+#timer-page.fullscreen-mode .timer-toolbar,
+#timer-page.fullscreen-mode .settings-panel {
+    display: none !important;
+}
+#timer-page.fullscreen-mode .huge-time {
+    font-size: 20vw;
+}
+
+    
