@@ -109,8 +109,8 @@ function formatTime(seconds) {
 }
 
 function updateTimerDisplay() {
-    const displayEl = document.getElementById('time-display');
-    const subLabelEl = document.getElementById('timer-sub-label');
+    let displayEl = document.getElementById('time-display');
+    let subLabelEl = document.getElementById('timer-sub-label');
     if (!displayEl) return;
 
     if (currentMode === 'clock') {
@@ -162,18 +162,25 @@ window.switchTimerMode = function(mode) {
     }
 };
 
-window.toggleTimer = function() {
-    const startBtn = document.getElementById('start-btn');
+function toggleTimer() {
+    const btn = document.getElementById('start-btn');
+    
     if (isRunning) {
         clearInterval(timerId);
         isRunning = false;
-        if (startBtn) startBtn.textContent = 'RESUME';
+        if (btn) btn.textContent = 'RESUME';
+        localStorage.setItem('timerIsRunning', 'false');
+        localStorage.removeItem('timerEndTime');
         return;
     }
+    
     isRunning = true;
-    if (startBtn) startBtn.textContent = 'PAUSE';
+    if (btn) btn.textContent = 'PAUSE';
     
     let targetTime = Date.now() + (timeLeft * 1000);
+    localStorage.setItem('timerEndTime', targetTime);
+    localStorage.setItem('timerIsRunning', 'true');
+    
     timerId = setInterval(() => {
         if (currentMode === 'stopwatch') {
             timeElapsed++;
@@ -182,15 +189,20 @@ window.toggleTimer = function() {
             const remaining = Math.ceil((targetTime - Date.now()) / 1000);
             timeLeft = remaining >= 0 ? remaining : 0;
             updateTimerDisplay();
+            
             if (timeLeft <= 0) {
                 clearInterval(timerId);
                 isRunning = false;
-                if (startBtn) startBtn.textContent = 'START';
-                window.showTimerModal(currentMode === 'pomodoro');
+                if (btn) btn.textContent = 'START';
+                localStorage.removeItem('timerIsRunning');
+                localStorage.removeItem('timerEndTime');
+                
+                window.playChime(); 
+                showTimerModal(currentMode === 'pomodoro');
             }
         }
     }, 1000);
-};
+}
 
 window.resetTimer = function() {
     clearInterval(timerId);
@@ -211,15 +223,7 @@ window.setTimer = function(minutes) {
         updateTimerDisplay();
     }
 };
-document.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('start-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    
-    if (startBtn) startBtn.onclick = window.toggleTimer;
-    if (resetBtn) resetBtn.onclick = window.resetTimer;
-    
-    updateTimerDisplay();
-});
+
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.__checkRequiredDOM) window.__checkRequiredDOM([
         'time-display','start-btn','reset-btn','custom-settings','custom-min',
@@ -229,36 +233,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         'workspace','focus-toggle','book-left-title-render','flipping-paper-sheet','book-count','studio-header-title',
         'deck-card-container','transition-wrapper','chronicle-page-index','chronicle-toggle','realistic-stage','page-index','history-shelf'
     ]);
+
     await loadProgress();
     loadStoredLists();
 
-    startBtn = document.getElementById('start-btn');
-    if (startBtn) {
-        startBtn.addEventListener('click', () => {
-            if (timerId) {
-                clearInterval(timerId);
-                timerId = null;
-                startBtn.textContent = "START";
-                localStorage.setItem('timerIsRunning', 'false');
-                localStorage.setItem('timerTimeLeft', timeLeft);
-                localStorage.removeItem('timerEndTime');
-            } else {
-                const targetEnd = Date.now() + (timeLeft * 1000);
-                localStorage.setItem('timerEndTime', targetEnd);
-                localStorage.setItem('timerIsRunning', 'true');
-                triggerTimerLoop(targetEnd);
-            }
-        });
-    }
-
+    const startBtn = document.getElementById('start-btn');
     const resetBtn = document.getElementById('reset-btn');
-    if (resetBtn) resetBtn.addEventListener('click', () => window.setTimer(currentModeMinutes));
+    
+    if (startBtn) startBtn.onclick = window.toggleTimer;
+    if (resetBtn) resetBtn.onclick = window.resetTimer;
 
-    restoreTimerState();
+    updateTimerDisplay();
+    window.restoreTimerState();
     verifyStreakIntegrity(false);
     renderVaultGallery();
 });
-
 window.toggleSettings = function() {
     const pnl = document.getElementById('custom-settings');
     if (pnl) pnl.classList.toggle('open');
@@ -2573,5 +2562,79 @@ window.openMiniTimer = async function() {
 
     } catch (e) {
         console.log(e);
+    }
+};
+
+// ==========================================
+// MISSING FUNCTIONS 
+// ==========================================
+
+window.setTimer = function(minutes) {
+    timeLeft = parseInt(minutes, 10) * 60;
+    updateTimerDisplay();
+    const drawerDisplay = document.getElementById('drawer-time-display');
+    if (drawerDisplay) drawerDisplay.textContent = formatTime(timeLeft);
+};
+
+window.playChime = function() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.setValueAtTime(600, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.6);
+    } catch (e) { console.log("Audio not supported"); }
+};
+
+window.toggleTimeDrawer = function() {
+    const drawer = document.getElementById('time-limit-drawer');
+    if (drawer) drawer.classList.toggle('open');
+};
+
+window.exportData = function() {
+    const data = {
+        tasks: JSON.parse(localStorage.getItem('dashboard_tasks') || '[]'),
+        goals: JSON.parse(localStorage.getItem('dashboard_goals') || '[]'),
+        username: localStorage.getItem('illuminated_username')
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'illuminated_data_export.json';
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+window.wipeData = function() {
+    if (confirm("⚠️ Are you sure? This will delete all local tasks, goals, and settings. This cannot be undone.")) {
+        localStorage.clear();
+        alert("Local data wiped. Please refresh the page.");
+    }
+};
+
+window.restoreTimerState = function() {
+    const wasRunning = localStorage.getItem('timerIsRunning') === 'true';
+    const endTime = parseInt(localStorage.getItem('timerEndTime'), 10);
+    
+    if (wasRunning && endTime) {
+        const remaining = Math.ceil((endTime - Date.now()) / 1000);
+        if (remaining > 0) {
+            timeLeft = remaining;
+            updateTimerDisplay();
+            toggleTimer();
+        } else {
+            localStorage.removeItem('timerIsRunning');
+            localStorage.removeItem('timerEndTime');
+            window.playChime();
+            showTimerModal(true);
+        }
     }
 };
